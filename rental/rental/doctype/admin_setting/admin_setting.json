@@ -1,0 +1,103 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-11-20 17:15:02.314532",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "admin_e_mail",
+  "desk_cost",
+  "lab_bench_cost",
+  "per_day_credit_limit",
+  "disable_advance_booking_time",
+  "max_hours_per_day_per_room",
+  "max_booking_hours_per_room_booking",
+  "each_room_booking_price",
+  "each_equipment_booking_price",
+  "default_credit_point_to_company",
+  "default_credit_point_to_staff"
+ ],
+ "fields": [
+  {
+   "fieldname": "admin_e_mail",
+   "fieldtype": "Data",
+   "label": "Admin E-Mail",
+   "options": "Email"
+  },
+  {
+   "fieldname": "desk_cost",
+   "fieldtype": "Currency",
+   "label": "Desk Cost"
+  },
+  {
+   "fieldname": "lab_bench_cost",
+   "fieldtype": "Currency",
+   "label": "Lab Bench Cost"
+  },
+  {
+   "fieldname": "per_day_credit_limit",
+   "fieldtype": "Int",
+   "label": "Per Day Credit Limit"
+  },
+  {
+   "fieldname": "disable_advance_booking_time",
+   "fieldtype": "Int",
+   "label": "Disable advance booking time (Weeks)"
+  },
+  {
+   "fieldname": "max_hours_per_day_per_room",
+   "fieldtype": "Int",
+   "label": "Max hours per day per room"
+  },
+  {
+   "fieldname": "max_booking_hours_per_room_booking",
+   "fieldtype": "Int",
+   "label": "Max booking hours per room booking"
+  },
+  {
+   "fieldname": "each_room_booking_price",
+   "fieldtype": "Currency",
+   "label": "Each room booking price (credit deducted/30 mins block)"
+  },
+  {
+   "fieldname": "each_equipment_booking_price",
+   "fieldtype": "Currency",
+   "label": "Each equipment booking price (credit deducted/30 mins block)"
+  },
+  {
+   "fieldname": "default_credit_point_to_company",
+   "fieldtype": "Int",
+   "label": "Default credit point to Company"
+  },
+  {
+   "fieldname": "default_credit_point_to_staff",
+   "fieldtype": "Int",
+   "label": "Default credit point to Staff"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2023-11-20 17:39:38.131153",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Admin Setting",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -22,7 +22,7 @@ app_license = "MIT"
 # website_theme_scss = "rental/public/scss/website"
 
 # include js, css files in header of web form
-# webform_include_js = {"doctype": "public/js/doctype.js"}
+webform_include_js = {"Room Booking": "public/js/room_booking.js"}
 # webform_include_css = {"doctype": "public/css/doctype.css"}
 
 # include js in page
@@ -71,7 +71,14 @@ app_license = "MIT"
 
 # before_uninstall = "rental.uninstall.before_uninstall"
 # after_uninstall = "rental.uninstall.after_uninstall"
-
+scheduler_events = {
+	"cron": {
+		"0/1 * * * *": [
+			"rental.rental.doctype.room_booking.room_booking.convert_inactive_booking",
+			"rental.rental.doctype.equipment_booking.equipment_booking.convert_inactive_booking"
+		],
+    }
+}
 # Desk Notifications
 # ------------------
 # See frappe.core.notifications.get_notification_config

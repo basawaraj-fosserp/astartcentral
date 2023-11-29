@@ -1,0 +1,171 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2023-11-02 20:05:26.562149",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "customer",
+  "section_break_lhjss",
+  "naming_series",
+  "from_date",
+  "from_time",
+  "from_datetime",
+  "column_break_5sudh",
+  "to_date",
+  "to_time",
+  "to_datetime",
+  "section_break_xhbcu",
+  "equipment",
+  "section_break_oqwux",
+  "title_of_reservation",
+  "description_of_reservation",
+  "contact_name",
+  "contact_number",
+  "amended_from",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "From Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Equipment Booking",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_5sudh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "To date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_oqwux",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "title_of_reservation",
+   "fieldtype": "Data",
+   "label": "Title of reservation"
+  },
+  {
+   "fieldname": "description_of_reservation",
+   "fieldtype": "Small Text",
+   "label": "Description of reservation"
+  },
+  {
+   "fieldname": "contact_name",
+   "fieldtype": "Data",
+   "label": "Contact Name"
+  },
+  {
+   "fieldname": "contact_number",
+   "fieldtype": "Data",
+   "label": "Contact Number",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nInactive"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series",
+   "options": "EQB.####"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "equipment",
+   "fieldtype": "Table",
+   "label": "Equipment",
+   "options": "Equipment Items"
+  },
+  {
+   "fieldname": "section_break_xhbcu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_lhjss",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "from_time",
+   "fieldtype": "Select",
+   "label": "From Time",
+   "options": "12:00 am\n12:15 am\n12:30 am\n12:45 am\n01:00 am\n01:15 am\n01:30 am\n01:45 am\n02:00 am\n02:15 am\n02:30 am\n02:45 am\n03:00 am\n03:15 am\n03:30 am\n03:45 am\n04:00 am\n04:15 am\n04:30 am\n04:45 am\n05:00 am\n05:15 am\n05:30 am\n05:45 am\n06:00 am\n06:15 am\n06:30 am\n06:45 am\n07:00 am\n07:15 am\n07:30 am\n07:45 am\n08:00 am\n08:15 am\n08:30 am\n08:45 am\n09:00 am\n09:15 am\n09:30 am\n09:45 am\n10:00 am\n10:15 am\n10:30 am\n10:45 am\n11:00 am\n11:15 am\n11:30 am\n12:00 pm\n12:15 pm\n12:30 pm\n12:45 pm\n01:00 pm\n01:15 pm\n01:30 pm\n01:45 pm\n02:00 pm\n02:15 pm\n02:30 pm\n02:45 pm\n03:00 pm\n03:15 pm\n03:30 pm\n03:45 pm\n04:00 pm\n04:15 pm\n04:30 pm\n04:45 pm\n05:00 pm\n05:15 pm\n05:30 pm\n05:45 pm\n06:00 pm\n06:15 pm\n06:30 pm\n06:45 pm\n07:00 pm\n07:15 pm\n07:30 pm\n07:45 pm\n08:00 pm\n08:15 pm\n08:30 pm\n08:45 pm\n09:00 pm\n09:15 pm\n09:30 pm\n09:45 pm\n10:00 pm\n10:15 pm\n10:30 pm\n10:45 pm\n11:00 pm\n11:15 pm\n11:30 pm\n11:45 pm"
+  },
+  {
+   "fieldname": "to_time",
+   "fieldtype": "Select",
+   "label": "To Time",
+   "options": "12:00 am\n12:15 am\n12:30 am\n12:45 am\n01:00 am\n01:15 am\n01:30 am\n01:45 am\n02:00 am\n02:15 am\n02:30 am\n02:45 am\n03:00 am\n03:15 am\n03:30 am\n03:45 am\n04:00 am\n04:15 am\n04:30 am\n04:45 am\n05:00 am\n05:15 am\n05:30 am\n05:45 am\n06:00 am\n06:15 am\n06:30 am\n06:45 am\n07:00 am\n07:15 am\n07:30 am\n07:45 am\n08:00 am\n08:15 am\n08:30 am\n08:45 am\n09:00 am\n09:15 am\n09:30 am\n09:45 am\n10:00 am\n10:15 am\n10:30 am\n10:45 am\n11:00 am\n11:15 am\n11:30 am\n12:00 pm\n12:15 pm\n12:30 pm\n12:45 pm\n01:00 pm\n01:15 pm\n01:30 pm\n01:45 pm\n02:00 pm\n02:15 pm\n02:30 pm\n02:45 pm\n03:00 pm\n03:15 pm\n03:30 pm\n03:45 pm\n04:00 pm\n04:15 pm\n04:30 pm\n04:45 pm\n05:00 pm\n05:15 pm\n05:30 pm\n05:45 pm\n06:00 pm\n06:15 pm\n06:30 pm\n06:45 pm\n07:00 pm\n07:15 pm\n07:30 pm\n07:45 pm\n08:00 pm\n08:15 pm\n08:30 pm\n08:45 pm\n09:00 pm\n09:15 pm\n09:30 pm\n09:45 pm\n10:00 pm\n10:15 pm\n10:30 pm\n10:45 pm\n11:00 pm\n11:15 pm\n11:30 pm\n11:45 pm"
+  },
+  {
+   "fieldname": "from_datetime",
+   "fieldtype": "Datetime",
+   "label": "From Datetime"
+  },
+  {
+   "fieldname": "to_datetime",
+   "fieldtype": "Datetime",
+   "label": "To Datetime"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2023-11-10 19:39:10.470279",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Equipment Booking",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

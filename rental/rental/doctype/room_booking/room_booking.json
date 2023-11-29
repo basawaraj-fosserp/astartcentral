@@ -1,0 +1,169 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:RMB.####",
+ "creation": "2023-11-01 14:05:40.255461",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "customer",
+  "section_break_7r6rh",
+  "naming_series",
+  "from_date",
+  "from_time",
+  "from_datetime",
+  "column_break_vjirp",
+  "end_date",
+  "end_time",
+  "end_datetime",
+  "section_break_c572h",
+  "select_room_type",
+  "title_of_reservation",
+  "description_of_reservation",
+  "contact_name",
+  "contact_number",
+  "amended_from",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "title_of_reservation",
+   "fieldtype": "Data",
+   "label": "Title of reservation"
+  },
+  {
+   "fieldname": "description_of_reservation",
+   "fieldtype": "Small Text",
+   "label": "Description of reservation"
+  },
+  {
+   "fieldname": "contact_name",
+   "fieldtype": "Data",
+   "label": "Contact Name"
+  },
+  {
+   "fieldname": "contact_number",
+   "fieldtype": "Data",
+   "label": "Contact Number",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "select_room_type",
+   "fieldtype": "Link",
+   "label": "Select Room Type",
+   "options": "Room",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_vjirp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_c572h",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "RMB.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series",
+   "options": "RMB.####"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Room Booking",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Active\nInactive"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "section_break_7r6rh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "from_time",
+   "fieldtype": "Select",
+   "label": "From Time",
+   "options": "12:00 am\n12:30 am\n01:00 am\n01:30 am\n02:00 am\n02:30 am\n03:00 am\n03:30 am\n04:00 am\n04:30 am\n05:00 am\n05:30 am\n06:00 am\n06:30 am\n07:00 am\n07:30 am\n08:00 am\n08:30 am\n09:00 am\n09:30 am\n10:00 am\n10:30 am\n11:00 am\n11:30 am\n12:00 pm\n12:30 pm\n01:00 pm\n01:30 pm\n02:00 pm\n02:30 pm\n03:00 pm\n03:30 pm\n04:00 pm\n04:30 pm\n05:00 pm\n05:30 pm\n06:00 pm\n06:30 pm\n07:00 pm\n07:30 pm\n08:00 pm\n08:30 pm\n09:00 pm\n09:30 pm\n10:00 pm\n10:30 pm\n11:00 pm\n11:30 pm",
+   "reqd": 1
+  },
+  {
+   "fieldname": "end_time",
+   "fieldtype": "Select",
+   "label": "End time",
+   "options": "12:00 am\n12:30 am\n01:00 am\n01:30 am\n02:00 am\n02:30 am\n03:00 am\n03:30 am\n04:00 am\n04:30 am\n05:00 am\n05:30 am\n06:00 am\n06:30 am\n07:00 am\n07:30 am\n08:00 am\n08:30 am\n09:00 am\n09:30 am\n10:00 am\n10:30 am\n11:00 am\n11:30 am\n12:00 pm\n12:30 pm\n01:00 pm\n01:30 pm\n02:00 pm\n02:30 pm\n03:00 pm\n03:30 pm\n04:00 pm\n04:30 pm\n05:00 pm\n05:30 pm\n06:00 pm\n06:30 pm\n07:00 pm\n07:30 pm\n08:00 pm\n08:30 pm\n09:00 pm\n09:30 pm\n10:00 pm\n10:30 pm\n11:00 pm\n11:30 pm",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_datetime",
+   "fieldtype": "Datetime",
+   "hidden": 1,
+   "label": "From Datetime"
+  },
+  {
+   "fieldname": "end_datetime",
+   "fieldtype": "Datetime",
+   "hidden": 1,
+   "label": "End Datetime"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_calendar_and_gantt": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2023-11-29 13:19:40.303379",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Room Booking",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,83 @@
+# Copyright (c) 2023, Viral Patel and contributors
+# For license information, please see license.txt
+
+import frappe
+from frappe.model.document import Document
+import json
+from frappe.utils import now, getdate
+from datetime import datetime, timedelta
+
+class EquipmentBooking(Document):
+	def on_submit(self):
+		if self.to_datetime < self.from_datetime:
+			frappe.throw("Please Select Correct Date<br>End Date can not be less than From Date")
+		if getdate(self.from_datetime) > getdate(now()):
+			self.status = "Active"
+
+	def validate(self):
+		time = self.from_time
+		time_list = time.split(" ")
+
+		from_time = time_list[0]
+		from_date = str(self.from_date)
+
+		time_obj = datetime.strptime(str(from_time), "%H:%M").time()
+		date_obj = datetime.strptime(str(from_date), "%Y-%m-%d")
+
+		combined_datetime = datetime.combine(date_obj.date(), time_obj)
+		if time_list[1] == "pm":
+			combined_datetime = combined_datetime + timedelta(hours = 12)
+		self.from_datetime =  combined_datetime
+
+		time = self.to_time
+		time_list = time.split(" ")
+
+		end_time = time_list[0]
+		end_date = str(self.to_date)
+
+		time_obj = datetime.strptime(str(end_time), "%H:%M").time()
+		date_obj = datetime.strptime(str(end_date), "%Y-%m-%d")
+
+		combined_datetime = datetime.combine(date_obj.date(), time_obj)
+		if time_list[1] == "pm":
+			combined_datetime = combined_datetime + timedelta(hours = 12)
+		self.to_datetime =  combined_datetime
+
+		if getdate(self.to_datetime) < getdate(self.from_datetime):
+			frappe.throw("Please Select Correct Date<br>End Date can not be less than From Date")
+		if getdate(self.from_datetime) > getdate(now()):
+			self.status = "Active"
+		if getdate(self.from_datetime) < getdate(now()):
+			frappe.throw("Only Future bookings are allow<br>Please select correct date and time")
+		
+						
+		
+
+@frappe.whitelist()
+def get_booking_data(start , end , filters = None):
+	filters = json.loads(filters)
+	
+	conditions = ''
+
+	from frappe.desk.calendar import get_event_conditions
+
+	conditions = get_event_conditions("Equipment Booking", filters)
+
+	data = frappe.db.sql(f""" SELECT eb.name, eb.from_datetime, eb.to_datetime, eb.title_of_reservation , eb.status , et.equipment
+							From `tabEquipment Booking` as eb
+							left join `tabEquipment Items` as et ON et.parent = eb.name
+							where eb.docstatus = 1 {conditions}
+							Order by eb.to_datetime """, as_dict = 1)
+	
+	for row in data:
+		row.update({'title' : f"{row.get('equipment')}<br>{ frappe.format(row.get('from_datetime'), {'fieldtype': 'Datetime'}) } To { frappe.format(row.get('to_datetime'), {'fieldtype': 'Datetime'}) }"})
+	return data
+
+
+def convert_inactive_booking():
+	from frappe.utils import now
+	to_datetime = now()
+	data = frappe.db.sql(f""" Select name from `tabEquipment Booking` where docstatus = 1 and status = "Active" and to_datetime < '{str(to_datetime)}'""",as_dict = 1)
+	
+	for row in data:
+		frappe.db.set_value("Room Booking" , row.get('name') , 'status' , 'Inactive',update_modified = False)
