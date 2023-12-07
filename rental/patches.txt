@@ -1,0 +1,2 @@
+[pre_model_sync]
+rental.patches.create_item

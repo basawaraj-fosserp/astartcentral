@@ -14,6 +14,7 @@ class RoomBooking(Document):
 		if self.from_date > now():
 			self.status = "Active"
 		self.credit_utilization()
+
 	def on_cancel(self):
 		doc = frappe.get_doc("Stock Entry" , self.stock_entry)
 		doc.cancel()
@@ -99,6 +100,9 @@ class RoomBooking(Document):
 	
 	def credit_utilization(self):
 		now = datetime.now()
+		time_diff = self.end_datetime - self.from_datetime
+		time_diff_hour = time_diff.total_seconds()/3600
+		qty = time_diff_hour * frappe.db.get_value("Room" , self.select_room_type , "utilize_point")
 		current_time = now.strftime("%H:%M:%S")
 
 		doc = frappe.new_doc("Stock Entry")
@@ -109,7 +113,7 @@ class RoomBooking(Document):
 		abbr = frappe.db.get_value("Company" , self.company , 'abbr')
 		doc.append("items",{
 			"s_warehouse" : self.customer + " - {0}".format(abbr),
-			"qty":frappe.db.get_value("Room" , self.select_room_type , "utilize_point"),
+			"qty":qty,
 			"item_code":"Credit Points"
 		})
 		doc.save()
