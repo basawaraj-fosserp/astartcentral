@@ -2,7 +2,7 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "naming_series:",
+ "autoname": "field:equipment_name",
  "creation": "2023-11-01 14:01:11.867778",
  "default_view": "List",
  "doctype": "DocType",
@@ -12,6 +12,7 @@
   "basic_details_section",
   "naming_series",
   "equipment_name",
+  "stock_qty",
   "image",
   "column_break_7",
   "status",
@@ -41,7 +42,8 @@
    "fieldtype": "Data",
    "label": "Equipment Name",
    "no_copy": 1,
-   "reqd": 1
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fieldname": "image",
@@ -90,15 +92,20 @@
    "fieldname": "charges",
    "fieldtype": "Section Break",
    "label": "Charges"
+  },
+  {
+   "fieldname": "stock_qty",
+   "fieldtype": "Float",
+   "label": "Stock Qty"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2023-11-01 14:01:11.867778",
+ "modified": "2023-12-04 14:25:20.743336",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Equipment",
- "naming_rule": "By \"Naming Series\" field",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

@@ -13,6 +13,11 @@ class RoomBooking(Document):
 			frappe.throw("Please Select Correct Date<br>End Date can not be less than From Date")
 		if self.from_date > now():
 			self.status = "Active"
+		self.credit_utilization()
+	def on_cancel(self):
+		doc = frappe.get_doc("Stock Entry" , self.stock_entry)
+		doc.cancel()
+
 
 	def validate(self):
 		time = self.from_time
@@ -45,6 +50,7 @@ class RoomBooking(Document):
 		if time_list[1] == "pm":
 			combined_datetime = combined_datetime + timedelta(hours = 12)
 		self.end_datetime =  combined_datetime
+
 		if self.end_datetime < self.from_datetime:
 			frappe.throw("Please Select Correct Date<br>End Date can not be less than From Date")
 		if getdate(self.from_datetime) > getdate(now()):
@@ -53,6 +59,10 @@ class RoomBooking(Document):
 			frappe.throw("Only Future bookings are allow<br>Please select correct date and time")
 		self.check_if_available()
 		self.check_admin_validation()
+
+	def after_insert(self):
+		if self.from_web_form:
+			self.submit()
 
 	def check_if_available(self):
 		data = frappe.db.sql(f"""Select name , from_datetime ,end_datetime 
@@ -68,7 +78,7 @@ class RoomBooking(Document):
 			booked_slot = frappe.db.sql(f"""Select name , from_datetime ,end_datetime , from_time , end_time
 								From `tabRoom Booking`
 								where docstatus = 1 and select_room_type = '{self.select_room_type}' and status = 'Active' """,as_dict="true")
-			error = """<table border=1 width="100%">
+			error = """<br><table border=1 width="100%">
 							<tr>
 								<td width="10%">
 									<b>SR No</b>
@@ -85,8 +95,27 @@ class RoomBooking(Document):
 				error += f"<tr><td>{i+1}</td><td>{ frappe.format(row.from_datetime, {'fieldtype': 'Date'}) } {row.from_time}</td><td>{ frappe.format(row.end_datetime, {'fieldtype': 'Date'})} {row.end_time}</td></tr>"
 			error += "</table>"
 			error += "<br><p> Please Select another time or check with calendar </p>"
-			frappe.throw(f"{self.select_room_type} is booked for this bellow schedule" + error)
+			frappe.throw(f"{self.select_room_type} is booked for the schedule below." + error)
 	
+	def credit_utilization(self):
+		now = datetime.now()
+		current_time = now.strftime("%H:%M:%S")
+
+		doc = frappe.new_doc("Stock Entry")
+		doc.company = self.company
+		doc.posting_date = getdate()
+		doc.posting_time = current_time
+		doc.stock_entry_type = "Material Issue"
+		abbr = frappe.db.get_value("Company" , self.company , 'abbr')
+		doc.append("items",{
+			"s_warehouse" : self.customer + " - {0}".format(abbr),
+			"qty":frappe.db.get_value("Room" , self.select_room_type , "utilize_point"),
+			"item_code":"Credit Points"
+		})
+		doc.save()
+		doc.submit()
+		frappe.db.set_value("Room Booking" , self.name , "stock_entry" , doc.name)
+
 	
 	def check_admin_validation(self):
 		disable_advance_booking_time = frappe.db.get_single_value("Admin Setting" , 'disable_advance_booking_time')
@@ -105,7 +134,8 @@ class RoomBooking(Document):
 		data =  frappe.db.sql(f""" SELECT name , from_datetime , end_datetime
 									From `tabRoom Booking` 
 									where docstatus = 1 and status = "Active" and from_date = '{self.from_date}'
-									and select_room_type = '{self.select_room_type}' and customer = '{self.customer}' """,as_dict = 1)
+									and select_room_type = '{self.select_room_type}' and customer = '{self.customer}'
+									Order By from_datetime """,as_dict = 1)
 		hours = 0
 		if data:
 			for row in data:

@@ -20,7 +20,10 @@ class EquipmentBooking(Document):
 
 		from_time = time_list[0]
 		from_date = str(self.from_date)
-
+		if self.from_time == "12:00 am":
+			from_time = "00:00"
+		if self.from_time == "12:30 am":
+			from_time = "00:30"
 		time_obj = datetime.strptime(str(from_time), "%H:%M").time()
 		date_obj = datetime.strptime(str(from_date), "%Y-%m-%d")
 
@@ -49,9 +52,25 @@ class EquipmentBooking(Document):
 			self.status = "Active"
 		if getdate(self.from_datetime) < getdate(now()):
 			frappe.throw("Only Future bookings are allow<br>Please select correct date and time")
+		self.check_if_available()
 		
 						
-		
+	def check_if_available(self):
+		for row in self.equipment:
+			data = frappe.db.sql(f""" SELECT eb.name , eb.from_datetime , eb.to_datetime , ei.quantity
+								From `tabEquipment Booking` as eb
+								Left Join `tabEquipment Items` as ei ON ei.parent = eb.name
+								Where
+									eb.docstatus = 1 and eb.status="Active" and ei.equipment = "{row.equipment}" """,as_dict = 1)
+			
+			booked_qty = 0
+			if len(data):
+				for d in data:
+					if d.get('from_datetime') <= (self.from_datetime) <= (d.get('to_datetime')) or d.get('from_datetime') <= (self.to_datetime) <= (d.get('to_datetime')):
+						booked_qty += d.quantity
+			qty = frappe.db.get_value("Equipment" , row.equipment , "stock_qty")
+			if booked_qty + row.quantity > qty:
+				frappe.throw("<b>{0}</b> out of stock. Please choose another.".format(row.equipment))
 
 @frappe.whitelist()
 def get_booking_data(start , end , filters = None):

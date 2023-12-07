@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2023-11-30 13:20:42.603659",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2023-11-30 13:23:30.386725",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "booking-page",
+ "owner": "Administrator",
+ "page_name": "booking-page",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 1,
+ "title": "Room Booking"
+}

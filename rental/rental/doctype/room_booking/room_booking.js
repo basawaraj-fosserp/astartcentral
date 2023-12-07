@@ -7,5 +7,8 @@ frappe.ui.form.on('Room Booking', {
 			window.open("http://astartcentral.fameonu.com/app/room-booking/view/calendar/default")
 		})
 		
+	},
+	from_date:function(frm){
+		frm.set_value("end_date" , frm.doc.from_date)
 	}
 });

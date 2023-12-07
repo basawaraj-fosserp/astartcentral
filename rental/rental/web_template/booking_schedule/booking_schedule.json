@@ -1,0 +1,16 @@
+{
+ "__unsaved": 1,
+ "creation": "2023-11-30 13:42:56.667458",
+ "docstatus": 0,
+ "doctype": "Web Template",
+ "fields": [],
+ "idx": 0,
+ "modified": "2023-11-30 13:43:04.119444",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Booking Schedule",
+ "owner": "Administrator",
+ "standard": 1,
+ "template": "",
+ "type": "Section"
+}

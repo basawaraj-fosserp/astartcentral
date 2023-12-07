@@ -9,6 +9,8 @@
  "engine": "InnoDB",
  "field_order": [
   "customer",
+  "column_break_euxdu",
+  "company",
   "section_break_7r6rh",
   "naming_series",
   "from_date",
@@ -25,7 +27,9 @@
   "contact_name",
   "contact_number",
   "amended_from",
-  "status"
+  "status",
+  "from_web_form",
+  "stock_entry"
  ],
  "fields": [
   {
@@ -137,13 +141,37 @@
    "fieldtype": "Datetime",
    "hidden": 1,
    "label": "End Datetime"
+  },
+  {
+   "default": "0",
+   "fieldname": "from_web_form",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "From Web form",
+   "options": "0"
+  },
+  {
+   "fieldname": "column_break_euxdu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Stock Entry"
   }
  ],
- "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-29 13:19:40.303379",
+ "modified": "2023-12-06 19:24:36.017200",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Room Booking",
@@ -163,7 +191,12 @@
    "write": 1
   }
  ],
+ "show_name_in_global_search": 1,
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
 }

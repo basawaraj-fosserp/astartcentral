@@ -85,7 +85,8 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Active\nInactive"
+   "options": "Active\nInactive",
+   "read_only": 1
   },
   {
    "fieldname": "naming_series",
@@ -103,13 +104,15 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Customer",
-   "options": "Customer"
+   "options": "Customer",
+   "reqd": 1
   },
   {
    "fieldname": "equipment",
    "fieldtype": "Table",
    "label": "Equipment",
-   "options": "Equipment Items"
+   "options": "Equipment Items",
+   "reqd": 1
   },
   {
    "fieldname": "section_break_xhbcu",
@@ -134,18 +137,20 @@
   {
    "fieldname": "from_datetime",
    "fieldtype": "Datetime",
+   "hidden": 1,
    "label": "From Datetime"
   },
   {
    "fieldname": "to_datetime",
    "fieldtype": "Datetime",
+   "hidden": 1,
    "label": "To Datetime"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-10 19:39:10.470279",
+ "modified": "2023-12-06 12:11:33.219432",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Equipment Booking",
