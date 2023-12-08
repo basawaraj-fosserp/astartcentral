@@ -12,12 +12,18 @@
   "lab_bench_cost",
   "per_day_credit_limit",
   "disable_advance_booking_time",
+  "column_break_3wlsk",
   "max_hours_per_day_per_room",
   "max_booking_hours_per_room_booking",
   "each_room_booking_price",
   "each_equipment_booking_price",
   "default_credit_point_to_company",
-  "default_credit_point_to_staff"
+  "default_credit_point_to_staff",
+  "refund_validation_section",
+  "minutes_before_cancellation",
+  "booking_hours_from",
+  "booking_hours_to",
+  "max_company_booking_minutes"
  ],
  "fields": [
   {
@@ -29,12 +35,14 @@
   {
    "fieldname": "desk_cost",
    "fieldtype": "Currency",
-   "label": "Desk Cost"
+   "label": "Desk Cost",
+   "non_negative": 1
   },
   {
    "fieldname": "lab_bench_cost",
    "fieldtype": "Currency",
-   "label": "Lab Bench Cost"
+   "label": "Lab Bench Cost",
+   "non_negative": 1
   },
   {
    "fieldname": "per_day_credit_limit",
@@ -49,38 +57,76 @@
   {
    "fieldname": "max_hours_per_day_per_room",
    "fieldtype": "Int",
-   "label": "Max hours per day per room"
+   "label": "Max hours per day per room",
+   "non_negative": 1
   },
   {
    "fieldname": "max_booking_hours_per_room_booking",
    "fieldtype": "Int",
-   "label": "Max booking hours per room booking"
+   "label": "Max booking hours per room booking",
+   "non_negative": 1
   },
   {
    "fieldname": "each_room_booking_price",
    "fieldtype": "Currency",
-   "label": "Each room booking price (credit deducted/30 mins block)"
+   "label": "Each room booking price (credit deducted/30 mins block)",
+   "non_negative": 1
   },
   {
    "fieldname": "each_equipment_booking_price",
    "fieldtype": "Currency",
-   "label": "Each equipment booking price (credit deducted/30 mins block)"
+   "label": "Each equipment booking price (credit deducted/30 mins block)",
+   "non_negative": 1
   },
   {
    "fieldname": "default_credit_point_to_company",
    "fieldtype": "Int",
-   "label": "Default credit point to Company"
+   "label": "Default credit point to Company",
+   "non_negative": 1
   },
   {
    "fieldname": "default_credit_point_to_staff",
    "fieldtype": "Int",
-   "label": "Default credit point to Staff"
+   "label": "Default credit point to Staff",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "column_break_3wlsk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "refund_validation_section",
+   "fieldtype": "Section Break",
+   "label": "Refund Validation"
+  },
+  {
+   "fieldname": "booking_hours_from",
+   "fieldtype": "Select",
+   "label": "Booking Hours From",
+   "options": "12:00 am\n12:30 am\n01:00 am\n01:30 am\n02:00 am\n02:30 am\n03:00 am\n03:30 am\n04:00 am\n04:30 am\n05:00 am\n05:30 am\n06:00 am\n06:30 am\n07:00 am\n07:30 am\n08:00 am\n08:30 am\n09:00 am\n09:30 am\n10:00 am\n10:30 am\n11:00 am\n11:30 am\n12:00 pm\n12:30 pm\n01:00 pm\n01:30 pm\n02:00 pm\n02:30 pm\n03:00 pm\n03:30 pm\n04:00 pm\n04:30 pm\n05:00 pm\n05:30 pm\n06:00 pm\n06:30 pm\n07:00 pm\n07:30 pm\n08:00 pm\n08:30 pm\n09:00 pm\n09:30 pm\n10:00 pm\n10:30 pm\n11:00 pm\n11:30 pm"
+  },
+  {
+   "fieldname": "booking_hours_to",
+   "fieldtype": "Select",
+   "label": "Booking Hours To",
+   "options": "12:00 am\n12:30 am\n01:00 am\n01:30 am\n02:00 am\n02:30 am\n03:00 am\n03:30 am\n04:00 am\n04:30 am\n05:00 am\n05:30 am\n06:00 am\n06:30 am\n07:00 am\n07:30 am\n08:00 am\n08:30 am\n09:00 am\n09:30 am\n10:00 am\n10:30 am\n11:00 am\n11:30 am\n12:00 pm\n12:30 pm\n01:00 pm\n01:30 pm\n02:00 pm\n02:30 pm\n03:00 pm\n03:30 pm\n04:00 pm\n04:30 pm\n05:00 pm\n05:30 pm\n06:00 pm\n06:30 pm\n07:00 pm\n07:30 pm\n08:00 pm\n08:30 pm\n09:00 pm\n09:30 pm\n10:00 pm\n10:30 pm\n11:00 pm\n11:30 pm"
+  },
+  {
+   "fieldname": "max_company_booking_minutes",
+   "fieldtype": "Int",
+   "label": "Max Company Booking Minutes"
+  },
+  {
+   "fieldname": "minutes_before_cancellation",
+   "fieldtype": "Int",
+   "label": "Refund For Cancellation(Minutes Before Booking Time)"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-11-20 17:39:38.131153",
+ "modified": "2023-12-07 18:33:20.089422",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Admin Setting",

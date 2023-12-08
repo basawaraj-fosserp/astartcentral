@@ -20,7 +20,8 @@
   "residence_phone",
   "office_phone",
   "column_break_17",
-  "charges"
+  "charges",
+  "rate_per_hour"
  ],
  "fields": [
   {
@@ -97,11 +98,16 @@
    "fieldname": "stock_qty",
    "fieldtype": "Float",
    "label": "Stock Qty"
+  },
+  {
+   "fieldname": "rate_per_hour",
+   "fieldtype": "Float",
+   "label": "Rate Per Hour"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2023-12-04 14:25:20.743336",
+ "modified": "2023-12-07 16:16:03.579142",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Equipment",
