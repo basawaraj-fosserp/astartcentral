@@ -6,9 +6,35 @@ frappe.ui.form.on('Room Booking', {
 		frm.add_custom_button(__('Check Availablity'), function() {
 			window.open("http://astartcentral.fameonu.com/app/room-booking/view/calendar/default")
 		})
-		
+		frappe.call({
+			method:"rental.rental.doctype.room_booking.room_booking.check_log_in_user",
+			args:{
+				user:frappe.session.user
+			},
+			callback:function(r){
+				frm.set_value('customer' , r.message)
+			}
+		})
 	},
 	from_date:function(frm){
 		frm.set_value("end_date" , frm.doc.from_date)
+	},
+	customer:function(frm){
+		frm.set_query("select_room_type", function(doc, cdt, cdn) {
+			return {
+				query: "rental.rental.doctype.room_booking.room_booking.get_rooms",
+				filters: {
+					'customer': frm.doc.customer
+				}
+			}
+		});
 	}
 });
+cur_frm.fields_dict.customer.get_query = function(doc) {
+	return {
+		filters: [
+			["user", "=", frappe.session.user],
+			
+		]
+	}
+}

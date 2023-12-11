@@ -205,3 +205,6 @@ doc_events = {
 # auth_hooks = [
 #	"rental.auth.validate"
 # ]
+from erpnext.stock.doctype.stock_entry.stock_entry import StockEntry
+from rental.api import set_actual_qty
+StockEntry.set_actual_qty = set_actual_qty

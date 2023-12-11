@@ -82,7 +82,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-06 17:34:50.507342",
+ "modified": "2023-12-08 16:29:20.997393",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Credit Allocation",
@@ -99,6 +99,7 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

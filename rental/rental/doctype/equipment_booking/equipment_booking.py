@@ -156,3 +156,12 @@ def convert_inactive_booking():
     
     for row in data:
         frappe.db.set_value("Room Booking" , row.get('name') , 'status' , 'Inactive',update_modified = False)
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_equipment(doctype, txt, searchfield, start, page_len, filters):
+    # filters = json.loads(filters)
+    data = frappe.db.sql(f""" Select Equipment
+                            From `tabAgreement on Equipment`
+                            Where parent = '{filters.get('customer')}' """)
+    return data

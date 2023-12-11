@@ -10,5 +10,15 @@ frappe.ui.form.on('Equipment Booking', {
 	},
 	from_date:function(frm){
 		frm.set_value("to_date" , frm.doc.from_date)
+	},
+	customer:function(frm){
+		frm.set_query("equipment", "equipment", function(doc, cdt, cdn) {
+			return {
+				query: "rental.rental.doctype.equipment_booking.equipment_booking.get_equipment",
+				filters: {
+					'customer': frm.doc.customer
+				}
+			}
+		});
 	}
 });
