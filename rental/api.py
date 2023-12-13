@@ -1,5 +1,7 @@
 import frappe
-from erpnext.stock.stock_ledger import  get_previous_sle
+from frappe import _
+from erpnext.stock.stock_ledger import  get_previous_sle , NegativeStockError
+from frappe.utils import flt
 
 def create_warehouse(self , method):
     if self.get("__islocal"):
@@ -36,18 +38,19 @@ def set_actual_qty(self):
         ):
             frappe.throw(
                 _(
-                    "Row {0}: Quantity not available for {4} in warehouse {1} at posting time of the entry ({2} {3})"
-                ).format(
-                    d.idx,
-                    frappe.bold(d.s_warehouse),
-                    formatdate(self.posting_date),
-                    format_time(self.posting_time),
-                    frappe.bold(d.item_code),
+                    "Insufficient Credit Balance"
                 )
                 + "<br><br>"
-                + _("Available quantity is {0}, you need {1}").format(
+                + _("Available Balance is {0}, you need {1}").format(
                     frappe.bold(flt(d.actual_qty, d.precision("actual_qty"))), frappe.bold(d.transfer_qty)
                 ),
                 NegativeStockError,
-                title=_("Insufficient Stock"),
+                title=_("Insufficient Balance"),
             )
+
+
+@frappe.whitelist()
+def check_roles():
+    if "System Manager" in frappe.get_roles():
+        return True
+    return False

@@ -12,7 +12,9 @@ frappe.ui.form.on('Room Booking', {
 				user:frappe.session.user
 			},
 			callback:function(r){
-				frm.set_value('customer' , r.message)
+				if (!frm.doc.customer){
+					frm.set_value('customer' , r.message)
+				}
 			}
 		})
 	},

@@ -60,10 +60,9 @@ class RoomBooking(Document):
 		date_obj = datetime.strptime(str(end_date), "%Y-%m-%d")
 
 		combined_datetime = datetime.combine(date_obj.date(), time_obj)
-		if time_list[1] == "pm":
+		if time_list[1] == "pm" and self.end_time not in ["12:00 pm", "12:30 pm"]:
 			combined_datetime = combined_datetime + timedelta(hours = 12)
 		self.end_datetime =  combined_datetime
-
 		if self.end_datetime < self.from_datetime:
 			frappe.throw("Please Select Correct Date<br>End Date can not be less than From Date")
 		if getdate(self.from_datetime) > getdate(now()):
@@ -96,8 +95,9 @@ class RoomBooking(Document):
 			ad_from_datetime = ad_from_datetime + timedelta(hours = 12)
 		if end_time[1] == "pm":
 			ad_to_datetime = ad_to_datetime + timedelta(hours = 12)
-
-		if not ((ad_from_datetime <= self.from_datetime <= ad_to_datetime) and (ad_from_datetime <= self.end_datetime <= ad_to_datetime)):
+		from_datetime = datetime.strptime(str(self.from_datetime) , "%Y-%m-%d %H:%M:%S")
+		end_datetime = datetime.strptime(str(self.end_datetime) , "%Y-%m-%d %H:%M:%S")
+		if not ((ad_from_datetime <= from_datetime <= ad_to_datetime) or (ad_from_datetime <= end_datetime <= ad_to_datetime)):
 			frappe.throw(f"Booking is only allow from {admin_from_time} to {admin_to_time}")
 
 

@@ -24,7 +24,9 @@ app_license = "MIT"
 # include js, css files in header of web form
 webform_include_js = {"Room Booking": "public/js/room_booking.js"}
 # webform_include_css = {"doctype": "public/css/doctype.css"}
-
+app_include_js = [
+	"rental.bundle.js"
+]
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
 
