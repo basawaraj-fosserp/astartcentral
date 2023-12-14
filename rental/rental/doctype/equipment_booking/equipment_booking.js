@@ -6,6 +6,17 @@ frappe.ui.form.on('Equipment Booking', {
 		frm.add_custom_button(__('Check Availablity'), function() {
 			window.open("http://astartcentral.fameonu.com/app/equipment-booking/view/calendar/default")
 		})
+		frappe.call({
+			method:"rental.rental.doctype.room_booking.room_booking.check_log_in_user",
+			args:{
+				user:frappe.session.user
+			},
+			callback:function(r){
+				if (!frm.doc.customer){
+					frm.set_value('customer' , r.message)
+				}
+			}
+		})
 		
 	},
 	from_date:function(frm){

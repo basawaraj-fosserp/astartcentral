@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:CR-.YYYY.-.####",
+ "autoname": "CR-.YYYY.-.####",
  "creation": "2023-12-12 00:10:45.529412",
  "default_view": "List",
  "doctype": "DocType",
@@ -13,7 +13,9 @@
   "posting_date",
   "posting_time",
   "credit",
-  "amended_from"
+  "material_request",
+  "amended_from",
+  "status"
  ],
  "fields": [
   {
@@ -48,22 +50,38 @@
   {
    "fieldname": "amended_from",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Amended From",
    "no_copy": 1,
    "options": "Credit Request",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "material_request",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Material Request",
+   "options": "Material Request"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Status",
+   "options": "Pending\nAllocated"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-12 19:27:04.454482",
+ "modified": "2023-12-14 13:13:00.288321",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Credit Request",
- "naming_rule": "Expression",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {

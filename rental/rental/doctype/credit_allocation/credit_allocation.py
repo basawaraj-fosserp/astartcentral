@@ -7,8 +7,12 @@ from frappe.model.document import Document
 class CreditAllocation(Document):
 	def on_submit(self):
 		self.create_credit_allocation()
+		if self.credit_request:
+			frappe.db.set_value("Credit Request", self.credit_request, "status", "Allocated")
 
 	def on_cancel(self):
+		if self.credit_request:
+			frappe.db.set_value("Credit Request", self.credit_request, "status", "Pending")
 		doc = frappe.get_doc("Stock Entry" , self.stock_entry)
 		doc.cancel()
 

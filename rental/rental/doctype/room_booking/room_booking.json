@@ -111,6 +111,7 @@
    "fieldtype": "Link",
    "label": "Customer",
    "options": "Customer",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -172,7 +173,7 @@
  "is_calendar_and_gantt": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-11 19:15:20.523517",
+ "modified": "2023-12-13 16:29:32.872618",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Room Booking",

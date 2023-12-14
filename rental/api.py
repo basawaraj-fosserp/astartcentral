@@ -54,3 +54,23 @@ def check_roles():
     if "System Manager" in frappe.get_roles():
         return True
     return False
+
+@frappe.whitelist()
+def get_current_credit():
+    customer = frappe.db.sql(f""" Select dl.link_name
+                                From `tabDynamic Link` as dl
+                                left join `tabContact` as co  ON co.name = dl.parent
+                                Where dl.parenttype ='Contact' and co.user = '{frappe.session.user}' and
+                                dl.link_doctype = 'Customer' """,as_dict = 1)
+
+    if not len(customer):
+        return  { "value" : 0 , "fieldtype":"Float"}
+
+    warehouse = "{0} - {1}".format(customer[0].link_name , frappe.db.get_value("Company","Kingstech Pvt Ltd","abbr"))
+    data = frappe.db.sql(f""" Select qty_after_transaction From `tabStock Ledger Entry`
+                            where is_cancelled = 0 and warehouse = "{warehouse}" and item_code ="Credit Points" 
+                            Order By creation Desc """,as_dict = 1)
+    if data:
+        return { "value" : data[0].qty_after_transaction , "fieldtype":"Float"}
+        
+    return  { "value" : 0 , "fieldtype":"Float"}

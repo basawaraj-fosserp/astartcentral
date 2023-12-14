@@ -225,8 +225,12 @@ def convert_inactive_booking():
 
 @frappe.whitelist(allow_guest = True)
 def check_log_in_user(user):
-	if customer := frappe.db.exists("Customer" , {"user":user}):
-		return customer
+	if contact := frappe.db.exists("Contact" , {"user":user}):
+		customer = frappe.db.sql(f""" Select name,link_name 
+									From `tabDynamic Link` 
+									where parent = "{contact}" and link_doctype ="Customer" """,as_dict = 1)
+		
+		return customer[0].link_name
 
 
 
