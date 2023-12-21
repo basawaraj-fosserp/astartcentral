@@ -31,7 +31,7 @@ app_include_js = [
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {"Customer" : "public/js/customer.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -79,7 +79,10 @@ scheduler_events = {
 			"rental.rental.doctype.room_booking.room_booking.convert_inactive_booking",
 			"rental.rental.doctype.equipment_booking.equipment_booking.convert_inactive_booking"
 		],
-    }
+    },
+	"daily": [
+		"rental.api.check_subscription_period"
+	],
 }
 # Desk Notifications
 # ------------------

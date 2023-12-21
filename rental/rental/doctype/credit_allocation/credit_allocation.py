@@ -27,7 +27,7 @@ class CreditAllocation(Document):
 			"qty":self.credit_score,
 			"item_code":"Credit Points"
 		})
-		doc.save()
+		doc.save(ignore_permissions = True)
 		doc.submit()
 		frappe.db.set_value("Credit Allocation" , self.name , "stock_entry" , doc.name)
 		

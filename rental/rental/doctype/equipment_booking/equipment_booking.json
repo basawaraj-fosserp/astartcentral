@@ -130,13 +130,13 @@
    "fieldname": "from_time",
    "fieldtype": "Select",
    "label": "From Time",
-   "options": "12:00 am\n12:15 am\n12:30 am\n12:45 am\n01:00 am\n01:15 am\n01:30 am\n01:45 am\n02:00 am\n02:15 am\n02:30 am\n02:45 am\n03:00 am\n03:15 am\n03:30 am\n03:45 am\n04:00 am\n04:15 am\n04:30 am\n04:45 am\n05:00 am\n05:15 am\n05:30 am\n05:45 am\n06:00 am\n06:15 am\n06:30 am\n06:45 am\n07:00 am\n07:15 am\n07:30 am\n07:45 am\n08:00 am\n08:15 am\n08:30 am\n08:45 am\n09:00 am\n09:15 am\n09:30 am\n09:45 am\n10:00 am\n10:15 am\n10:30 am\n10:45 am\n11:00 am\n11:15 am\n11:30 am\n12:00 pm\n12:15 pm\n12:30 pm\n12:45 pm\n01:00 pm\n01:15 pm\n01:30 pm\n01:45 pm\n02:00 pm\n02:15 pm\n02:30 pm\n02:45 pm\n03:00 pm\n03:15 pm\n03:30 pm\n03:45 pm\n04:00 pm\n04:15 pm\n04:30 pm\n04:45 pm\n05:00 pm\n05:15 pm\n05:30 pm\n05:45 pm\n06:00 pm\n06:15 pm\n06:30 pm\n06:45 pm\n07:00 pm\n07:15 pm\n07:30 pm\n07:45 pm\n08:00 pm\n08:15 pm\n08:30 pm\n08:45 pm\n09:00 pm\n09:15 pm\n09:30 pm\n09:45 pm\n10:00 pm\n10:15 pm\n10:30 pm\n10:45 pm\n11:00 pm\n11:15 pm\n11:30 pm\n11:45 pm"
+   "options": "12:00 am\n12:30 am\n01:00 am\n01:30 am\n02:00 am\n02:30 am\n03:00 am\n03:30 am\n04:00 am\n04:30 am\n05:00 am\n05:30 am\n06:00 am\n06:30 am\n07:00 am\n07:30 am\n08:00 am\n08:30 am\n09:00 am\n09:30 am\n10:00 am\n10:30 am\n11:00 am\n11:30 am\n12:00 pm\n12:30 pm\n01:00 pm\n01:30 pm\n02:00 pm\n02:30 pm\n03:00 pm\n03:30 pm\n04:00 pm\n04:30 pm\n05:00 pm\n05:30 pm\n06:00 pm\n06:30 pm\n07:00 pm\n07:30 pm\n08:00 pm\n08:30 pm\n09:00 pm\n09:30 pm\n10:00 pm\n10:30 pm\n11:00 pm\n11:30 pm"
   },
   {
    "fieldname": "to_time",
    "fieldtype": "Select",
    "label": "To Time",
-   "options": "12:00 am\n12:15 am\n12:30 am\n12:45 am\n01:00 am\n01:15 am\n01:30 am\n01:45 am\n02:00 am\n02:15 am\n02:30 am\n02:45 am\n03:00 am\n03:15 am\n03:30 am\n03:45 am\n04:00 am\n04:15 am\n04:30 am\n04:45 am\n05:00 am\n05:15 am\n05:30 am\n05:45 am\n06:00 am\n06:15 am\n06:30 am\n06:45 am\n07:00 am\n07:15 am\n07:30 am\n07:45 am\n08:00 am\n08:15 am\n08:30 am\n08:45 am\n09:00 am\n09:15 am\n09:30 am\n09:45 am\n10:00 am\n10:15 am\n10:30 am\n10:45 am\n11:00 am\n11:15 am\n11:30 am\n12:00 pm\n12:15 pm\n12:30 pm\n12:45 pm\n01:00 pm\n01:15 pm\n01:30 pm\n01:45 pm\n02:00 pm\n02:15 pm\n02:30 pm\n02:45 pm\n03:00 pm\n03:15 pm\n03:30 pm\n03:45 pm\n04:00 pm\n04:15 pm\n04:30 pm\n04:45 pm\n05:00 pm\n05:15 pm\n05:30 pm\n05:45 pm\n06:00 pm\n06:15 pm\n06:30 pm\n06:45 pm\n07:00 pm\n07:15 pm\n07:30 pm\n07:45 pm\n08:00 pm\n08:15 pm\n08:30 pm\n08:45 pm\n09:00 pm\n09:15 pm\n09:30 pm\n09:45 pm\n10:00 pm\n10:15 pm\n10:30 pm\n10:45 pm\n11:00 pm\n11:15 pm\n11:30 pm\n11:45 pm"
+   "options": "12:00 am\n12:30 am\n01:00 am\n01:30 am\n02:00 am\n02:30 am\n03:00 am\n03:30 am\n04:00 am\n04:30 am\n05:00 am\n05:30 am\n06:00 am\n06:30 am\n07:00 am\n07:30 am\n08:00 am\n08:30 am\n09:00 am\n09:30 am\n10:00 am\n10:30 am\n11:00 am\n11:30 am\n12:00 pm\n12:30 pm\n01:00 pm\n01:30 pm\n02:00 pm\n02:30 pm\n03:00 pm\n03:30 pm\n04:00 pm\n04:30 pm\n05:00 pm\n05:30 pm\n06:00 pm\n06:30 pm\n07:00 pm\n07:30 pm\n08:00 pm\n08:30 pm\n09:00 pm\n09:30 pm\n10:00 pm\n10:30 pm\n11:00 pm\n11:30 pm"
   },
   {
    "fieldname": "from_datetime",
@@ -170,7 +170,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-13 16:29:06.347450",
+ "modified": "2023-12-20 22:41:49.463571",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Equipment Booking",

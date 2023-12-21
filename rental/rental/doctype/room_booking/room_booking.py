@@ -31,7 +31,8 @@ class RoomBooking(Document):
 		doc.cancel()
 
 	def validate(self):
-		
+		if not frappe.db.get_value("Room" , self.select_room_type , "enable_booking"):
+			frappe.throw("The Room <b>{0}</b> is not allow to book".format(self.select_room_type))
 		time = self.from_time
 		time_list = time.split(" ")
 
@@ -46,7 +47,7 @@ class RoomBooking(Document):
 		date_obj = datetime.strptime(str(from_date), "%Y-%m-%d")
 
 		combined_datetime = datetime.combine(date_obj.date(), time_obj)
-		if time_list[1] == "pm":
+		if time_list[1] == "pm" and time_list[0] not in ["12:00" , "12:30"]:
 			combined_datetime = combined_datetime + timedelta(hours = 12)
 		self.from_datetime =  combined_datetime
 
@@ -205,13 +206,13 @@ def get_booking_data(start , end , filters = None):
 	conditions = ''
 	from frappe.desk.calendar import get_event_conditions
 	conditions = get_event_conditions("Room Booking", filters)
-	data = frappe.db.sql(f""" SELECT name, from_datetime, end_datetime, title_of_reservation ,select_room_type , status
+	data = frappe.db.sql(f""" SELECT name, from_datetime, end_datetime, title_of_reservation ,select_room_type , status , from_time , end_time
 							From `tabRoom Booking`  
 							where docstatus = 1 {conditions}
 							Order by end_datetime """, as_dict = 1)
 	
 	for row in data:
-		row.update({'title' : f"<br>{ frappe.format(row.get('from_datetime'), {'fieldtype': 'Datetime'}) } To { frappe.format(row.get('end_datetime'), {'fieldtype': 'Datetime'}) }"})
+		row.update({'title' : f"{row.select_room_type} { row.from_time } To { row.end_time }"})
 	return data
 
 #cron job function

@@ -19,7 +19,7 @@ class CreditRequest(Document):
 			"qty":self.credit,
 			"warehouse":"{0} - {1}".format(self.customer , frappe.db.get_value("Company" , self.company , "abbr"))
 		})
-		doc.save()
+		doc.save(ignore_permissions = True)
 		doc.submit()
 		self.db_set("material_request" , doc.name)
 		self.db_set("status" , "Pending")

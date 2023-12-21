@@ -1,13 +1,15 @@
 import frappe
 from frappe import _
 from erpnext.stock.stock_ledger import  get_previous_sle , NegativeStockError
-from frappe.utils import flt
+from frappe.utils import flt, getdate
+from frappe.model.mapper import get_mapped_doc
+
 
 def create_warehouse(self , method):
     if self.get("__islocal"):
         doc = frappe.new_doc("Warehouse")
         doc.warehouse_name = self.name
-        doc.save()
+        doc.save(ignore_permissions = True)
 
 
 
@@ -74,3 +76,42 @@ def get_current_credit():
         return { "value" : data[0].qty_after_transaction , "fieldtype":"Float"}
         
     return  { "value" : 0 , "fieldtype":"Float"}
+
+@frappe.whitelist()
+def create_subscription(source_name , target_doc = None):
+    doclist = get_mapped_doc(
+		"Customer",
+		source_name,
+		{
+			"Customer": {
+                "doctype": "Subscription",
+                "field_map": {
+					"doctype":"party_type",
+                    "name":"party"
+				},
+                },
+			
+		},
+		target_doc,
+	)
+    return doclist
+
+
+def check_subscription_period():
+    customer = []
+    doc_list = frappe.get_list("Subscription" , pluck = "name")
+    for row in doc_list:
+        doc = frappe.get_doc("Subscription" , row)
+        if getdate(doc.end_date) < getdate():
+            customer.append(doc.customer)
+    if customer:
+        for row in customer:
+            users = frappe.db.sql(f""" Select user
+                                    From `tabContact` as c
+                                    left join `tabDynamic Link` as dl On dl.parent = c.name
+                                    Where dl.link_doctype = "Customer" and dl.name = '{row}' """,as_dict = 1)
+            user = users[0].user
+            frappe.db.set_value("User" , user , "enable" , 0)
+        
+
+

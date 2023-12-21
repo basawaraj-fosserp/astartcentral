@@ -33,21 +33,28 @@ class EquipmentBooking(Document):
         date_obj = datetime.strptime(str(from_date), "%Y-%m-%d")
 
         combined_datetime = datetime.combine(date_obj.date(), time_obj)
-        if time_list[1] == "pm":
+        if time_list[1] == "pm" and time_list[0] not in ["12:00" , "12:30"]:
             combined_datetime = combined_datetime + timedelta(hours = 12)
         self.from_datetime =  combined_datetime
 
         time = self.to_time
         time_list = time.split(" ")
 
+        
+
         end_time = time_list[0]
         end_date = str(self.to_date)
+
+        if self.to_time == "12:00 am":
+            end_time = "00:00"
+        if self.to_time == "12:30 am":
+            end_time = "00:30"
 
         time_obj = datetime.strptime(str(end_time), "%H:%M").time()
         date_obj = datetime.strptime(str(end_date), "%Y-%m-%d")
 
         combined_datetime = datetime.combine(date_obj.date(), time_obj)
-        if time_list[1] == "pm":
+        if time_list[1] == "pm" and time_list[0] not in ["12:00" , "12:30"]:
             combined_datetime = combined_datetime + timedelta(hours = 12)
         self.to_datetime =  combined_datetime
 
@@ -99,7 +106,7 @@ class EquipmentBooking(Document):
                 "item_code":"Credit Points"
             })
 
-        doc.save()
+        doc.save(ignore_permissions = True)
         doc.submit()
         frappe.db.set_value("Equipment Booking" , self.name , "stock_entry" , doc.name)
 
@@ -120,6 +127,7 @@ class EquipmentBooking(Document):
 
         from_time = admin_from_time.split(' ')
         end_time = admin_to_time.split(' ')
+
         if from_time[1] == "pm":
             ad_from_datetime = ad_from_datetime + timedelta(hours = 12)
         if end_time[1] == "pm":
@@ -138,14 +146,14 @@ def get_booking_data(start , end , filters = None):
 
     conditions = get_event_conditions("Equipment Booking", filters)
 
-    data = frappe.db.sql(f""" SELECT eb.name, eb.from_datetime, eb.to_datetime, eb.title_of_reservation , eb.status , et.equipment
+    data = frappe.db.sql(f""" SELECT eb.name, eb.from_datetime, eb.to_datetime, eb.title_of_reservation , eb.status , et.equipment , eb.from_time , eb.to_time
                             From `tabEquipment Booking` as eb
                             left join `tabEquipment Items` as et ON et.parent = eb.name
                             where eb.docstatus = 1 {conditions}
                             Order by eb.to_datetime """, as_dict = 1)
     
     for row in data:
-        row.update({'title' : f"{row.get('equipment')}<br>{ frappe.format(row.get('from_datetime'), {'fieldtype': 'Datetime'}) } To { frappe.format(row.get('to_datetime'), {'fieldtype': 'Datetime'}) }"})
+        row.update({'title' : f"{row.get('equipment')} { row.from_time } To { row.to_time }"})
     return data
 
 

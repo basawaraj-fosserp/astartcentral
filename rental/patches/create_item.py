@@ -7,4 +7,4 @@ def execute():
         doc.item_group = "Products"
         doc.is_stock_item = 1
         doc.valuation_rate = 1
-        doc.save()
+        doc.save(ignore_permissions = True)
