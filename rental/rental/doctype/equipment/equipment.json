@@ -116,7 +116,7 @@
  ],
  "image_field": "image",
  "links": [],
- "modified": "2023-12-27 16:41:49.218457",
+ "modified": "2023-12-27 16:22:41.673161",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Equipment",
@@ -137,7 +137,6 @@
   }
  ],
  "quick_entry": 1,
- "restrict_to_domain": "Healthcare",
  "search_fields": "equipment_name",
  "show_name_in_global_search": 1,
  "sort_field": "modified",

@@ -120,32 +120,27 @@ def create_item_from_equipment(self , method):
         return
     doc = frappe.new_doc("Item")
     doc.item_code = self.name
+    doc.valuation_rate = 1
     doc.item_group = "All Item Groups"
     doc.stock_uom = "Nos"
     doc.is_stock_item = 1
     doc.save()
 
-def update_stock_of_equipment(self , method):
-    if self.stock_updated:
-        return
+@frappe.whitelist()
+def update_stock_of_equipment(item , qty , company):
     doc = frappe.new_doc("Stock Entry")
     datestring = datetime.strptime(str(now()), '%Y-%m-%d %H:%M:%S.%f')
     datestring = datetime.strptime(str(datestring.time()), '%H:%M:%S.%f')
     doc.posting_date = getdate()
     doc.posting_time = datestring
     doc.stock_entry_type = "Material Receipt"
-    abbr = frappe.db.get_value("Company" , "Kingstech Pvt Ltd" , 'abbr')
+    abbr = frappe.db.get_value("Company" , company , 'abbr')
 
     doc.append("items",{
         "t_warehouse" : "Stores" + " - {0}".format(abbr),
-        "qty":1,
-        "item_code":self.name
+        "qty":qty,
+        "item_code":item
     })
 
     doc.save(ignore_permissions = True)
     doc.submit()
-    self.stock_updated = 1
-
-@frappe.whitelist()
-def check_equipment_stock(item):
-    frappe.throw(str(item))

@@ -4,9 +4,17 @@
 frappe.ui.form.on('Equipment', {
 	refresh: function(frm) {
 		frm.add_custom_button(__("Update Equipment Qty"), function() {
+			console.log('remove')
 			var d = new frappe.ui.Dialog({
 				title: __('Update Equipment Qty'),
 				fields: [
+					{
+						"label" : "Company",
+						"fieldname": "company",
+						"fieldtype": "Link",
+						"options":"Company",
+						"default": frappe.defaults.get_default('Company')
+					},
 					{
 						"label" : "Equipment",
 						"fieldname": "equipment",
@@ -15,25 +23,28 @@ frappe.ui.form.on('Equipment', {
 						"default": frm.doc.name
 					},
 					{
-						"label" : "Available Quantity",
-						"fieldname": "available_qty",
+						"label" : "Quantity",
+						"fieldname": "qty",
 						"fieldtype": "Float",
-						"read_only":1,
-						onload: function () {
-							frappe.call({
-								method : "rental.api.check_equipment_stock",
-								args:{
-									item : frm.doc.name
-								}
-							}).then(r => {
-								field.df.default = r.message;
-								field.refresh();
-							})
-							
-						}
 					},
 				],
+				primary_action_label: 'Update',
+				primary_action() {
+					var data = d.get_values();
+					frappe.call({
+						method : "rental.api.update_stock_of_equipment",
+						args:{
+							item : data.equipment,
+							qty : data.qty,
+							company : data.company
+						}
+					})
+
+
+					d.hide();
+				}
 			});
+			d.show();			
 		});
 	}
 });
