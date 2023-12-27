@@ -32,11 +32,3 @@ frappe.ui.form.on('Room Booking', {
 		});
 	}
 });
-cur_frm.fields_dict.customer.get_query = function(doc) {
-	return {
-		filters: [
-			["user", "=", frappe.session.user],
-			
-		]
-	}
-}

@@ -21,7 +21,8 @@
   "office_phone",
   "column_break_17",
   "charges",
-  "rate_per_hour"
+  "rate_per_hour",
+  "stock_updated"
  ],
  "fields": [
   {
@@ -102,12 +103,20 @@
   {
    "fieldname": "rate_per_hour",
    "fieldtype": "Float",
-   "label": "Rate Per Hour"
+   "label": "Rate Per Hour",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "stock_updated",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Stock Updated"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2023-12-07 16:16:03.579142",
+ "modified": "2023-12-27 16:41:49.218457",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Equipment",

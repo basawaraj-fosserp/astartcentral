@@ -25,15 +25,15 @@ class EquipmentBooking(Document):
 
         from_time = time_list[0]
         from_date = str(self.from_date)
-        if self.from_time == "12:00 am":
+        if self.from_time == "12:00 AM":
             from_time = "00:00"
-        if self.from_time == "12:30 am":
+        if self.from_time == "12:30 AM":
             from_time = "00:30"
         time_obj = datetime.strptime(str(from_time), "%H:%M").time()
         date_obj = datetime.strptime(str(from_date), "%Y-%m-%d")
 
         combined_datetime = datetime.combine(date_obj.date(), time_obj)
-        if time_list[1] == "pm" and time_list[0] not in ["12:00" , "12:30"]:
+        if time_list[1] == "PM" and time_list[0] not in ["12:00" , "12:30"]:
             combined_datetime = combined_datetime + timedelta(hours = 12)
         self.from_datetime =  combined_datetime
 
@@ -45,16 +45,16 @@ class EquipmentBooking(Document):
         end_time = time_list[0]
         end_date = str(self.to_date)
 
-        if self.to_time == "12:00 am":
+        if self.to_time == "12:00 AM":
             end_time = "00:00"
-        if self.to_time == "12:30 am":
+        if self.to_time == "12:30 AM":
             end_time = "00:30"
 
         time_obj = datetime.strptime(str(end_time), "%H:%M").time()
         date_obj = datetime.strptime(str(end_date), "%Y-%m-%d")
 
         combined_datetime = datetime.combine(date_obj.date(), time_obj)
-        if time_list[1] == "pm" and time_list[0] not in ["12:00" , "12:30"]:
+        if time_list[1] == "PM" and time_list[0] not in ["12:00" , "12:30"]:
             combined_datetime = combined_datetime + timedelta(hours = 12)
         self.to_datetime =  combined_datetime
 
@@ -79,7 +79,7 @@ class EquipmentBooking(Document):
             booked_qty = 0
             if len(data):
                 for d in data:
-                    if d.get('from_datetime') <= (self.from_datetime) <= (d.get('to_datetime')) or d.get('from_datetime') <= (self.to_datetime) <= (d.get('to_datetime')):
+                    if d.get('from_datetime') < (self.from_datetime) < (d.get('to_datetime')) or d.get('from_datetime') < (self.to_datetime) < (d.get('to_datetime')):
                         booked_qty += d.quantity
             qty = frappe.db.get_value("Equipment" , row.equipment , "stock_qty")
             if booked_qty + row.quantity > qty:
@@ -128,13 +128,13 @@ class EquipmentBooking(Document):
         from_time = admin_from_time.split(' ')
         end_time = admin_to_time.split(' ')
 
-        if from_time[1] == "pm":
+        if from_time[1] == "PM":
             ad_from_datetime = ad_from_datetime + timedelta(hours = 12)
-        if end_time[1] == "pm":
+        if end_time[1] == "PM":
             ad_to_datetime = ad_to_datetime + timedelta(hours = 12)
 
-        if not ((ad_from_datetime <= self.from_datetime <= ad_to_datetime) and (ad_from_datetime <= self.to_datetime <= ad_to_datetime)):
-            frappe.throw(f"Booking is only allow from {admin_from_time} to {admin_to_time}")
+        if not ((ad_from_datetime < self.from_datetime < ad_to_datetime) and (ad_from_datetime < self.to_datetime < ad_to_datetime)):
+            frappe.throw(f"Booking is only allowed from {admin_from_time} to {admin_to_time}")
 
 @frappe.whitelist()
 def get_booking_data(start , end , filters = None):

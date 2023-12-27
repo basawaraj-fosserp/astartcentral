@@ -117,7 +117,11 @@ scheduler_events = {
 doc_events = {
 	"Customer": {
 		"validate": "rental.api.create_warehouse",
-		
+	},
+	"Equipment":{
+		"validate":[
+			"rental.api.create_item_from_equipment",
+		]
 	}
 }
 

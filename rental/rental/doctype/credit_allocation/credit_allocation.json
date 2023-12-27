@@ -83,13 +83,14 @@
    "fieldname": "credit_request",
    "fieldtype": "Link",
    "label": "Credit Request",
-   "options": "Credit Request"
+   "options": "Credit Request",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-14 12:47:22.007202",
+ "modified": "2023-12-27 14:07:28.472596",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Credit Allocation",

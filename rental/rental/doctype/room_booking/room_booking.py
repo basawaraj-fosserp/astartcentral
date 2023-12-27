@@ -38,16 +38,16 @@ class RoomBooking(Document):
 
 		from_time = time_list[0]
 		from_date = str(self.from_date)
-		if self.from_time == "12:00 am":
+		if self.from_time == "12:00 AM":
 			from_time = "00:00"
-		if self.from_time == "12:30 am":
+		if self.from_time == "12:30 AM":
 			from_time = "00:30"
 
 		time_obj = datetime.strptime(str(from_time), "%H:%M").time()
 		date_obj = datetime.strptime(str(from_date), "%Y-%m-%d")
 
 		combined_datetime = datetime.combine(date_obj.date(), time_obj)
-		if time_list[1] == "pm" and time_list[0] not in ["12:00" , "12:30"]:
+		if time_list[1] == "PM" and time_list[0] not in ["12:00" , "12:30"]:
 			combined_datetime = combined_datetime + timedelta(hours = 12)
 		self.from_datetime =  combined_datetime
 
@@ -61,7 +61,7 @@ class RoomBooking(Document):
 		date_obj = datetime.strptime(str(end_date), "%Y-%m-%d")
 
 		combined_datetime = datetime.combine(date_obj.date(), time_obj)
-		if time_list[1] == "pm" and self.end_time not in ["12:00 pm", "12:30 pm"]:
+		if time_list[1] == "PM" and self.end_time not in ["12:00 PM", "12:30 PM"]:
 			combined_datetime = combined_datetime + timedelta(hours = 12)
 		self.end_datetime =  combined_datetime
 		if self.end_datetime < self.from_datetime:
@@ -92,14 +92,15 @@ class RoomBooking(Document):
 
 		from_time = admin_from_time.split(' ')
 		end_time = admin_to_time.split(' ')
-		if from_time[1] == "pm":
+		if from_time[1] == "PM":
 			ad_from_datetime = ad_from_datetime + timedelta(hours = 12)
-		if end_time[1] == "pm":
+		if end_time[1] == "PM":
 			ad_to_datetime = ad_to_datetime + timedelta(hours = 12)
 		from_datetime = datetime.strptime(str(self.from_datetime) , "%Y-%m-%d %H:%M:%S")
 		end_datetime = datetime.strptime(str(self.end_datetime) , "%Y-%m-%d %H:%M:%S")
-		if not ((ad_from_datetime <= from_datetime <= ad_to_datetime) or (ad_from_datetime <= end_datetime <= ad_to_datetime)):
-			frappe.throw(f"Booking is only allow from {admin_from_time} to {admin_to_time}")
+		
+		if not ((ad_from_datetime <= from_datetime <= ad_to_datetime) and (ad_from_datetime <= end_datetime <= ad_to_datetime)):
+			frappe.throw(f"Booking is only allowed from {admin_from_time} to {admin_to_time}")
 
 
 	def after_insert(self):
@@ -230,6 +231,7 @@ def check_log_in_user(user):
 		customer = frappe.db.sql(f""" Select name,link_name 
 									From `tabDynamic Link` 
 									where parent = "{contact}" and link_doctype ="Customer" """,as_dict = 1)
+		
 		
 		return customer[0].link_name
 

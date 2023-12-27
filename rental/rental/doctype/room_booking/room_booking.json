@@ -111,7 +111,7 @@
    "fieldtype": "Link",
    "label": "Customer",
    "options": "Customer",
-   "read_only": 1,
+   "read_only_depends_on": "eval:doc.owner != \"Administrator\";",
    "reqd": 1
   },
   {
@@ -122,14 +122,14 @@
    "fieldname": "from_time",
    "fieldtype": "Select",
    "label": "From Time",
-   "options": "12:00 am\n12:30 am\n01:00 am\n01:30 am\n02:00 am\n02:30 am\n03:00 am\n03:30 am\n04:00 am\n04:30 am\n05:00 am\n05:30 am\n06:00 am\n06:30 am\n07:00 am\n07:30 am\n08:00 am\n08:30 am\n09:00 am\n09:30 am\n10:00 am\n10:30 am\n11:00 am\n11:30 am\n12:00 pm\n12:30 pm\n01:00 pm\n01:30 pm\n02:00 pm\n02:30 pm\n03:00 pm\n03:30 pm\n04:00 pm\n04:30 pm\n05:00 pm\n05:30 pm\n06:00 pm\n06:30 pm\n07:00 pm\n07:30 pm\n08:00 pm\n08:30 pm\n09:00 pm\n09:30 pm\n10:00 pm\n10:30 pm\n11:00 pm\n11:30 pm",
+   "options": "12:00 AM\n12:30 AM\n01:00 AM\n01:30 AM\n02:00 AM\n02:30 AM\n03:00 AM\n03:30 AM\n04:00 AM\n04:30 AM\n05:00 AM\n05:30 AM\n06:00 AM\n06:30 AM\n07:00 AM\n07:30 AM\n08:00 AM\n08:30 AM\n09:00 AM\n09:30 AM\n10:00 AM\n10:30 AM\n11:00 AM\n11:30 AM\n12:00 PM\n12:30 PM\n01:00 PM\n01:30 PM\n02:00 PM\n02:30 PM\n03:00 PM\n03:30 PM\n04:00 PM\n04:30 PM\n05:00 PM\n05:30 PM\n06:00 PM\n06:30 PM\n07:00 PM\n07:30 PM\n08:00 PM\n08:30 PM\n09:00 PM\n09:30 PM\n10:00 PM\n10:30 PM\n11:00 PM\n11:30 PM",
    "reqd": 1
   },
   {
    "fieldname": "end_time",
    "fieldtype": "Select",
    "label": "End time",
-   "options": "12:00 am\n12:30 am\n01:00 am\n01:30 am\n02:00 am\n02:30 am\n03:00 am\n03:30 am\n04:00 am\n04:30 am\n05:00 am\n05:30 am\n06:00 am\n06:30 am\n07:00 am\n07:30 am\n08:00 am\n08:30 am\n09:00 am\n09:30 am\n10:00 am\n10:30 am\n11:00 am\n11:30 am\n12:00 pm\n12:30 pm\n01:00 pm\n01:30 pm\n02:00 pm\n02:30 pm\n03:00 pm\n03:30 pm\n04:00 pm\n04:30 pm\n05:00 pm\n05:30 pm\n06:00 pm\n06:30 pm\n07:00 pm\n07:30 pm\n08:00 pm\n08:30 pm\n09:00 pm\n09:30 pm\n10:00 pm\n10:30 pm\n11:00 pm\n11:30 pm",
+   "options": "12:00 AM\n12:30 AM\n01:00 AM\n01:30 AM\n02:00 AM\n02:30 AM\n03:00 AM\n03:30 AM\n04:00 AM\n04:30 AM\n05:00 AM\n05:30 AM\n06:00 AM\n06:30 AM\n07:00 AM\n07:30 AM\n08:00 AM\n08:30 AM\n09:00 AM\n09:30 AM\n10:00 AM\n10:30 AM\n11:00 AM\n11:30 AM\n12:00 PM\n12:30 PM\n01:00 PM\n01:30 PM\n02:00 PM\n02:30 PM\n03:00 PM\n03:30 PM\n04:00 PM\n04:30 PM\n05:00 PM\n05:30 PM\n06:00 PM\n06:30 PM\n07:00 PM\n07:30 PM\n08:00 PM\n08:30 PM\n09:00 PM\n09:30 PM\n10:00 PM\n10:30 PM\n11:00 PM\n11:30 PM",
    "reqd": 1
   },
   {
@@ -174,7 +174,7 @@
  "is_calendar_and_gantt": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-18 14:18:07.894162",
+ "modified": "2023-12-27 14:23:15.938957",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Room Booking",

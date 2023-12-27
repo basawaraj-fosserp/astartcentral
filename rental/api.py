@@ -1,8 +1,9 @@
 import frappe
 from frappe import _
 from erpnext.stock.stock_ledger import  get_previous_sle , NegativeStockError
-from frappe.utils import flt, getdate
+from frappe.utils import flt, getdate, now  
 from frappe.model.mapper import get_mapped_doc
+from datetime import datetime, timedelta, time
 
 
 def create_warehouse(self , method):
@@ -114,4 +115,37 @@ def check_subscription_period():
             frappe.db.set_value("User" , user , "enable" , 0)
         
 
+def create_item_from_equipment(self , method):
+    if frappe.db.exists("Item" , self.name):
+        return
+    doc = frappe.new_doc("Item")
+    doc.item_code = self.name
+    doc.item_group = "All Item Groups"
+    doc.stock_uom = "Nos"
+    doc.is_stock_item = 1
+    doc.save()
 
+def update_stock_of_equipment(self , method):
+    if self.stock_updated:
+        return
+    doc = frappe.new_doc("Stock Entry")
+    datestring = datetime.strptime(str(now()), '%Y-%m-%d %H:%M:%S.%f')
+    datestring = datetime.strptime(str(datestring.time()), '%H:%M:%S.%f')
+    doc.posting_date = getdate()
+    doc.posting_time = datestring
+    doc.stock_entry_type = "Material Receipt"
+    abbr = frappe.db.get_value("Company" , "Kingstech Pvt Ltd" , 'abbr')
+
+    doc.append("items",{
+        "t_warehouse" : "Stores" + " - {0}".format(abbr),
+        "qty":1,
+        "item_code":self.name
+    })
+
+    doc.save(ignore_permissions = True)
+    doc.submit()
+    self.stock_updated = 1
+
+@frappe.whitelist()
+def check_equipment_stock(item):
+    frappe.throw(str(item))
