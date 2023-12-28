@@ -81,7 +81,19 @@ class EquipmentBooking(Document):
                 for d in data:
                     if d.get('from_datetime') < (self.from_datetime) < (d.get('to_datetime')) or d.get('from_datetime') < (self.to_datetime) < (d.get('to_datetime')):
                         booked_qty += d.quantity
-            qty = frappe.db.get_value("Equipment" , row.equipment , "stock_qty")
+            
+            store = "Stores - {0}".format(frappe.db.get_value("Company" , self.company , "abbr"))
+            
+            qty = frappe.db.sql(f""" Select qty_after_transaction
+                                    From `tabStock Ledger Entry` as sle
+                                    Where  voucher_type = 'Stock Entry' and warehouse = '{store}' and item_code = '{row.equipment}' """,as_dict = 1)
+
+            
+            qty = qty[0].qty_after_transaction
+
+            if not qty:
+                frappe.throw("Equipment {0} is Not available.<br>Please Contact to Admin")
+
             if booked_qty + row.quantity > qty:
                 frappe.throw("<b>{0}</b> out of stock. Please choose another.".format(row.equipment))
 
@@ -133,7 +145,7 @@ class EquipmentBooking(Document):
         if end_time[1] == "PM":
             ad_to_datetime = ad_to_datetime + timedelta(hours = 12)
 
-        if not ((ad_from_datetime < self.from_datetime < ad_to_datetime) and (ad_from_datetime < self.to_datetime < ad_to_datetime)):
+        if not ((ad_from_datetime <= self.from_datetime <= ad_to_datetime) and (ad_from_datetime <= self.to_datetime <= ad_to_datetime)):
             frappe.throw(f"Booking is only allowed from {admin_from_time} to {admin_to_time}")
 
 @frappe.whitelist()
