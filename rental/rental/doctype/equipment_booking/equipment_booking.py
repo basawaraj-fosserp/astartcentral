@@ -88,11 +88,11 @@ class EquipmentBooking(Document):
                                     From `tabStock Ledger Entry` as sle
                                     Where  voucher_type = 'Stock Entry' and warehouse = '{store}' and item_code = '{row.equipment}' """,as_dict = 1)
 
+            if not qty:
+                frappe.throw("Equipment <b>{0}</b> is Not available.<br>Please Contact to Admin".format(row.equipment))
             
             qty = qty[0].qty_after_transaction
 
-            if not qty:
-                frappe.throw("Equipment {0} is Not available.<br>Please Contact to Admin")
 
             if booked_qty + row.quantity > qty:
                 frappe.throw("<b>{0}</b> out of stock. Please choose another.".format(row.equipment))

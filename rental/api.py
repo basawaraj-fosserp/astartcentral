@@ -144,3 +144,5 @@ def update_stock_of_equipment(item , qty , company):
 
     doc.save(ignore_permissions = True)
     doc.submit()
+
+    frappe.msgprint("The equipment stock has been updated successfully.")

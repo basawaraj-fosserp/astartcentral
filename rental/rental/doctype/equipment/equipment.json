@@ -12,7 +12,6 @@
   "basic_details_section",
   "naming_series",
   "equipment_name",
-  "stock_qty",
   "image",
   "column_break_7",
   "status",
@@ -21,8 +20,7 @@
   "office_phone",
   "column_break_17",
   "charges",
-  "rate_per_hour",
-  "stock_updated"
+  "rate_per_hour"
  ],
  "fields": [
   {
@@ -96,27 +94,15 @@
    "label": "Charges"
   },
   {
-   "fieldname": "stock_qty",
-   "fieldtype": "Float",
-   "label": "Stock Qty"
-  },
-  {
    "fieldname": "rate_per_hour",
    "fieldtype": "Float",
    "label": "Rate Per Hour",
    "reqd": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "stock_updated",
-   "fieldtype": "Check",
-   "hidden": 1,
-   "label": "Stock Updated"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2023-12-27 16:22:41.673161",
+ "modified": "2023-12-28 12:24:38.752050",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Equipment",
