@@ -17,6 +17,12 @@ frappe.ui.form.on('Room Booking', {
 				}
 			}
 		})
+		frm.call({
+			method:"set_from_end_time",
+			args:{
+				self:frm.doc
+			}
+		})
 	},
 	from_date:function(frm){
 		frm.set_value("end_date" , frm.doc.from_date)
