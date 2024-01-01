@@ -1,7 +1,7 @@
 frappe.views.calendar["Equipment Booking"] = {
     field_map: {
 		"start": "from_datetime",
-		"end": "end_datetime",
+		"end": "to_datetime",
 		"id": "name",
 		"title": "title",
 		"allDay": "allDay",

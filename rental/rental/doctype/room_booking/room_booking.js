@@ -21,6 +21,9 @@ frappe.ui.form.on('Room Booking', {
 			method:"set_from_end_time",
 			args:{
 				self:frm.doc
+			},
+			callback:function(r){
+				console.log(r.message)
 			}
 		})
 	},
@@ -28,7 +31,9 @@ frappe.ui.form.on('Room Booking', {
 		frm.set_value("end_date" , frm.doc.from_date)
 	},
 	from_time:function(frm){
-		frm.set_value('end_time' , frm.doc.from_time)
+		if(!frm.doc.end_time){
+			frm.set_value('end_time' , frm.doc.from_time)
+		}
 	},
 	customer:function(frm){
 		frm.set_query("select_room_type", function(doc, cdt, cdn) {

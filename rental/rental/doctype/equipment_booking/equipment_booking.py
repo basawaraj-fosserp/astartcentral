@@ -43,7 +43,7 @@ class EquipmentBooking(Document):
         
 
         end_time = time_list[0]
-        end_date = str(self.to_date)
+        to_date = str(self.to_date)
 
         if self.to_time == "12:00 AM":
             end_time = "00:00"
@@ -196,3 +196,46 @@ def get_equipment(doctype, txt, searchfield, start, page_len, filters):
                             From `tabAgreement on Equipment`
                             Where parent = '{filters.get('customer')}' """)
     return data
+
+@frappe.whitelist()
+def set_from_end_time(self):
+	self = json.loads(self)
+	if self.get('from_datetime') and self.get('to_datetime') and not(self.get('from_time') and self.get('to_time')):
+
+		pm_start_time = str(getdate(self.get('from_datetime'))) +" "+"13:00:00"
+		pm_start_time = datetime.strptime(str(pm_start_time) , "%Y-%m-%d %H:%M:00")
+
+		from_datetime = datetime.strptime(str(self.get('from_datetime')) , "%Y-%m-%d %H:%M:%S")
+		to_datetime = datetime.strptime(str(self.get('to_datetime')) , "%Y-%m-%d %H:%M:%S")
+
+		row = {"from_date" : getdate(self.get('from_datetime')) , "to_date" : getdate(self.get('to_datetime'))}
+
+		if pm_start_time <= from_datetime:
+			from_datetime = from_datetime + timedelta(hours = -12)
+			from_datetime = str(from_datetime).split(' ')
+			from_datetime = from_datetime[1][0:-3]
+			from_datetime = from_datetime + " " + "PM"
+			row.update({"from_time":from_datetime})
+
+		if pm_start_time <= to_datetime:
+			to_datetime = to_datetime + timedelta(hours = -12)
+			to_datetime = str(to_datetime).split(' ')
+			to_datetime = to_datetime[1][0:-3]
+			to_datetime = to_datetime + " " + "PM"
+			row.update({"to_time":to_datetime})
+
+		from_datetime = datetime.strptime(str(self.get('from_datetime')) , "%Y-%m-%d %H:%M:%S")
+		to_datetime = datetime.strptime(str(self.get('to_datetime')) , "%Y-%m-%d %H:%M:%S")
+		
+		if pm_start_time > from_datetime:
+			from_datetime = str(self.get('from_datetime')).split(' ')
+			from_datetime = from_datetime[1][0:-3]
+			from_datetime = from_datetime + " " + "AM"
+			row.update({"from_time":from_datetime})
+		if pm_start_time > to_datetime:
+			to_datetime = str(self.get('to_datetime')).split(' ')
+			to_datetime = to_datetime[1][0:-3]
+			to_datetime = to_datetime + " " + "AM"
+			row.update({"to_time":to_datetime })
+
+		return row	
