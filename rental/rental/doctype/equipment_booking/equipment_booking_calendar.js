@@ -4,6 +4,8 @@ frappe.views.calendar["Equipment Booking"] = {
 		"end": "end_datetime",
 		"id": "name",
 		"title": "title",
+		"allDay": "allDay",
+		"color":"color"
 
 	},
     filters: [

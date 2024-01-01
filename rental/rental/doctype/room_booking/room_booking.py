@@ -115,7 +115,7 @@ class RoomBooking(Document):
 		flag = False
 		if data:
 			for row in data:
-				if row.get('from_datetime') <= (self.from_datetime) <= (row.get('end_datetime')) or row.get('from_datetime') <= (self.end_datetime) <= (row.get('end_datetime')):
+				if row.get('from_datetime') < (self.from_datetime) < (row.get('end_datetime')) or row.get('from_datetime') < (self.end_datetime) < (row.get('end_datetime')):
 					flag = True
 		if flag:
 			booked_slot = frappe.db.sql(f"""Select name , from_datetime ,end_datetime , from_time , end_time
@@ -207,13 +207,15 @@ def get_booking_data(start , end , filters = None):
 	conditions = ''
 	from frappe.desk.calendar import get_event_conditions
 	conditions = get_event_conditions("Room Booking", filters)
-	data = frappe.db.sql(f""" SELECT name, from_datetime, end_datetime, title_of_reservation ,select_room_type , status , from_time , end_time
-							From `tabRoom Booking`  
-							where docstatus = 1 {conditions}
-							Order by end_datetime """, as_dict = 1)
+	data = frappe.db.sql(f""" SELECT `tabRoom Booking`.name, `tabRoom Booking`.from_datetime, `tabRoom Booking`.end_datetime, `tabRoom Booking`.title_of_reservation, 
+							`tabRoom Booking`.select_room_type, `tabRoom Booking`.status, `tabRoom Booking`.from_time, `tabRoom Booking`.end_time, room.color
+							From `tabRoom Booking` 
+							left join `tabRoom` as room ON room.name = `tabRoom Booking`.select_room_type
+							where `tabRoom Booking`.docstatus = 1 {conditions}
+							Order by `tabRoom Booking`.end_datetime """, as_dict = 1)
 	
 	for row in data:
-		row.update({'title' : f"{row.select_room_type} { row.from_time } To { row.end_time }"})
+		row.update({'title' : f"{row.select_room_type}"})
 	return data
 
 #cron job function

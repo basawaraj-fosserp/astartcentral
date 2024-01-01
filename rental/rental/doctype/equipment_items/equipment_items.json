@@ -7,8 +7,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "equipment",
-  "quantity"
+  "equipment"
  ],
  "fields": [
   {
@@ -18,19 +17,12 @@
    "label": "Equipment",
    "options": "Equipment",
    "reqd": 1
-  },
-  {
-   "default": "1",
-   "fieldname": "quantity",
-   "fieldtype": "Float",
-   "in_list_view": 1,
-   "label": "Quantity"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-21 12:54:18.825406",
+ "modified": "2023-12-30 14:22:50.187829",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Equipment Items",

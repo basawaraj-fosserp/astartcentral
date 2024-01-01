@@ -70,33 +70,43 @@ class EquipmentBooking(Document):
                         
     def check_if_available(self):
         for row in self.equipment:
-            data = frappe.db.sql(f""" SELECT eb.name , eb.from_datetime , eb.to_datetime , ei.quantity
+            data = frappe.db.sql(f""" SELECT eb.name, eb.from_datetime, eb.to_datetime, ei.quantity, eb.from_date, eb.to_date, eb.from_time, eb.to_time
                                 From `tabEquipment Booking` as eb
                                 Left Join `tabEquipment Items` as ei ON ei.parent = eb.name
                                 Where
                                     eb.docstatus = 1 and eb.status="Active" and ei.equipment = "{row.equipment}" """,as_dict = 1)
-            
-            booked_qty = 0
+            flag = 0
+            error = "Equipment {0} is Booked for below schedule. Please choose another time".format(row.equipment)
+            error += """<br><br>
+                    <table width=100%>
+                        <tr>
+                            <td>
+                                <b>From Time</b>
+                            </td>
+                            <td>
+                                <b>To Time</b>
+                            </td>
+                        </tr>
+                    """
             if len(data):
                 for d in data:
-                    if d.get('from_datetime') < (self.from_datetime) < (d.get('to_datetime')) or d.get('from_datetime') < (self.to_datetime) < (d.get('to_datetime')):
-                        booked_qty += d.quantity
-            
-            store = "Stores - {0}".format(frappe.db.get_value("Company" , self.company , "abbr"))
-            
-            qty = frappe.db.sql(f""" Select qty_after_transaction
-                                    From `tabStock Ledger Entry` as sle
-                                    Where  voucher_type = 'Stock Entry' and warehouse = '{store}' and item_code = '{row.equipment}' """,as_dict = 1)
-
-            if not qty:
-                frappe.throw("Equipment <b>{0}</b> is Not available.<br>Please Contact to Admin".format(row.equipment))
-            
-            qty = qty[0].qty_after_transaction
-
-
-            if booked_qty + row.quantity > qty:
-                frappe.throw("<b>{0}</b> out of stock. Please choose another.".format(row.equipment))
-
+                    if d.get('from_datetime') < (self.from_datetime) < (d.get('to_datetime')) or d.get('from_datetime') < (self.to_datetime) <table (d.get('to_datetime')):
+                        flag = 1     
+                        error += """
+                                    <tr>
+                                        <td>
+                                            <p>{0} {1}</p>
+                                        </td>
+                                        <td>
+                                            <p>{2} {3}</p>
+                                        </td>
+                                    </tr>
+                                """.format(d.get('from_date'), d.get('from_time'), d.get('to_date'), d.get('to_time'))               
+                if flag:
+                    error += "</table>"
+                    frappe.throw(error)
+                
+    
     def credit_utilization(self):
         now = datetime.now()
         time_diff = self.to_datetime - self.from_datetime
@@ -158,14 +168,15 @@ def get_booking_data(start , end , filters = None):
 
     conditions = get_event_conditions("Equipment Booking", filters)
 
-    data = frappe.db.sql(f""" SELECT eb.name, eb.from_datetime, eb.to_datetime, eb.title_of_reservation , eb.status , et.equipment , eb.from_time , eb.to_time
+    data = frappe.db.sql(f""" SELECT eb.name, eb.from_datetime, eb.to_datetime, eb.title_of_reservation, 
+                            eb.status, et.equipment, eb.from_time , eb.to_time
                             From `tabEquipment Booking` as eb
                             left join `tabEquipment Items` as et ON et.parent = eb.name
                             where eb.docstatus = 1 {conditions}
                             Order by eb.to_datetime """, as_dict = 1)
     
     for row in data:
-        row.update({'title' : f"{row.get('equipment')} { row.from_time } To { row.to_time }"})
+        row.update({'title' : f"{row.get('equipment')}" , "allDay": 0,})
     return data
 
 
