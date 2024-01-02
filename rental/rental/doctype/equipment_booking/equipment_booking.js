@@ -4,7 +4,7 @@
 frappe.ui.form.on('Equipment Booking', {
 	refresh:function(frm){
 		frm.add_custom_button(__('Check Availablity'), function() {
-			window.open(`https://astartcentral.fameonu.com/app/room-booking/view/calendar/default`)
+			window.open(`https://astartcentral.fameonu.com/app/equipment-booking/view/calendar/default`)
 		})
 		frappe.call({
 			method:"rental.rental.doctype.room_booking.room_booking.check_log_in_user",
