@@ -122,8 +122,6 @@ def create_item_from_equipment(self , method):
     doc.item_code = self.name
     doc.valuation_rate = 1
     doc.item_group = "All Item Groups"
-    doc.is_stock_item = 0
-    doc.include_item_in_manufacturing = 0
     doc.stock_uom = "Nos"
     doc.is_stock_item = 1
     doc.save()
