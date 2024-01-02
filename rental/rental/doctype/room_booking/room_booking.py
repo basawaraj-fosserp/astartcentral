@@ -115,7 +115,7 @@ class RoomBooking(Document):
 		flag = False
 		if data:
 			for row in data:
-				if row.get('from_datetime') < (self.from_datetime) < (row.get('end_datetime')) or row.get('from_datetime') < (self.end_datetime) < (row.get('end_datetime')):
+				if row.get('from_datetime') <= (self.from_datetime) < (row.get('end_datetime')) or row.get('from_datetime') < (self.end_datetime) < (row.get('end_datetime')):
 					flag = True
 		if flag:
 			booked_slot = frappe.db.sql(f"""Select name , from_datetime ,end_datetime , from_time , end_time
@@ -198,7 +198,7 @@ class RoomBooking(Document):
 			frappe.throw(f"Per day booking hour limit is {per_day_booking_hours}")
 
 		if per_day_booking_hours < (flt(per_day_booking_hours) + flt(hours)) and (per_day_booking_hours-hours) < current_booking_hours:
-			frappe.throw(f"Per day booking limit is {per_day_booking_hours} <br>Now you can only book for {flt(per_day_booking_hours) - flt(hours)} ")
+			frappe.throw(f"Per day booking limit is {per_day_booking_hours} <br>Now you can only book for {flt(per_day_booking_hours) - flt(hours)} hour")
 
 @frappe.whitelist()
 def get_booking_data(start , end , filters = None):
