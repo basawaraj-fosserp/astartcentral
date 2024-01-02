@@ -43,7 +43,7 @@ class EquipmentBooking(Document):
         
 
         end_time = time_list[0]
-        to_date = str(self.to_date)
+        end_date = str(self.to_date)
 
         if self.to_time == "12:00 AM":
             end_time = "00:00"
@@ -90,7 +90,7 @@ class EquipmentBooking(Document):
                     """
             if len(data):
                 for d in data:
-                    if d.get('from_datetime') < (self.from_datetime) < (d.get('to_datetime')) or d.get('from_datetime') < (self.to_datetime) <table (d.get('to_datetime')):
+                    if d.get('from_datetime') < (self.from_datetime) < (d.get('to_datetime')) or d.get('from_datetime') < (self.to_datetime) < (d.get('to_datetime')):
                         flag = 1     
                         error += """
                                     <tr>
