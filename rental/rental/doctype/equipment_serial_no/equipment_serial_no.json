@@ -24,15 +24,16 @@
   {
    "allow_in_quick_entry": 1,
    "fieldname": "equipment",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Equipment",
+   "options": "Equipment",
    "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-02 16:11:28.498181",
+ "modified": "2024-01-03 12:28:44.397357",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Equipment Serial No",

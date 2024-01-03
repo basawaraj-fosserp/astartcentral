@@ -16,6 +16,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Equipment",
+   "no_copy": 1,
    "options": "Equipment",
    "reqd": 1
   },
@@ -24,6 +25,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Serial No",
+   "no_copy": 1,
    "options": "Equipment Serial No",
    "reqd": 1
   }
@@ -31,7 +33,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-01-02 16:28:44.426756",
+ "modified": "2024-01-03 12:34:34.741992",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Equipment Items",

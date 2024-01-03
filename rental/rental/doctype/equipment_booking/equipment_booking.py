@@ -169,9 +169,9 @@ def get_booking_data(start , end , filters = None):
     conditions = get_event_conditions("Equipment Booking", filters)
 
     data = frappe.db.sql(f""" SELECT eb.name, eb.from_datetime, eb.to_datetime, eb.title_of_reservation, 
-                            eb.status, et.equipment, eb.from_time , eb.to_time
+                            eb.status, `tabEquipment Items`.equipment, eb.from_time , eb.to_time
                             From `tabEquipment Booking` as eb
-                            left join `tabEquipment Items` as et ON et.parent = eb.name
+                            left join `tabEquipment Items`  ON `tabEquipment Items`.parent = eb.name
                             where eb.docstatus = 1 {conditions}
                             Order by eb.to_datetime """, as_dict = 1)
     
