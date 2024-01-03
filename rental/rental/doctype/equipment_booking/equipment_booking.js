@@ -23,7 +23,7 @@ frappe.ui.form.on('Equipment Booking', {
 				self:frm.doc
 			},
 			callback:function(r){
-				console.log(r.message)
+				
 			}
 		})
 		
@@ -47,3 +47,21 @@ frappe.ui.form.on('Equipment Booking', {
 		});
 	}
 });
+
+cur_frm.fields_dict['equipment'].grid.get_field("serial_no").get_query = function(doc, cdt, cdn) {
+	if(!doc.from_date || !doc.to_date || !doc.from_time || !doc.to_time){
+		frappe.throw("Please select date and time")
+	}
+
+	const d = locals[cdt][cdn]
+	return {
+		query: "rental.rental.doctype.equipment_booking.equipment_booking.get_available_serial_no",
+		filters: {
+					'item': d.equipment, 
+					"from_date":doc.from_date, 
+					"to_date":doc.to_date, 
+					"from_time":doc.from_time,
+					"to_time":doc.to_time
+				}
+	}
+}

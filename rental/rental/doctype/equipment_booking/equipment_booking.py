@@ -70,7 +70,7 @@ class EquipmentBooking(Document):
                         
     def check_if_available(self):
         for row in self.equipment:
-            data = frappe.db.sql(f""" SELECT eb.name, eb.from_datetime, eb.to_datetime, ei.quantity, eb.from_date, eb.to_date, eb.from_time, eb.to_time
+            data = frappe.db.sql(f""" SELECT eb.name, eb.from_datetime, eb.to_datetime, eb.from_date, eb.to_date, eb.from_time, eb.to_time
                                 From `tabEquipment Booking` as eb
                                 Left Join `tabEquipment Items` as ei ON ei.parent = eb.name
                                 Where
@@ -90,7 +90,7 @@ class EquipmentBooking(Document):
                     """
             if len(data):
                 for d in data:
-                    if d.get('from_datetime') < (self.from_datetime) < (d.get('to_datetime')) or d.get('from_datetime') < (self.to_datetime) < (d.get('to_datetime')):
+                    if d.get('from_datetime') <= (self.from_datetime) < (d.get('to_datetime')) or d.get('from_datetime') < (self.to_datetime) <= (d.get('to_datetime')):
                         flag = 1     
                         error += """
                                     <tr>
@@ -104,7 +104,7 @@ class EquipmentBooking(Document):
                                 """.format(d.get('from_date'), d.get('from_time'), d.get('to_date'), d.get('to_time'))               
                 if flag:
                     error += "</table>"
-                    frappe.throw(error)
+                    # frappe.throw(error)
                 
     
     def credit_utilization(self):
@@ -237,5 +237,72 @@ def set_from_end_time(self):
 			to_datetime = to_datetime[1][0:-3]
 			to_datetime = to_datetime + " " + "AM"
 			row.update({"to_time":to_datetime })
+            
+		return row
 
-		return row	
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_available_serial_no(doctype, txt, searchfield, start, page_len, filters):
+    serial_no = frappe.get_list("Equipment Serial No", {"equipment" : filters.get('item')}, pluck = "name")
+    time = filters.get('from_time')
+    time_list = time.split(" ")
+
+    from_time = time_list[0]
+    from_date = str(filters.get('from_date'))
+    if filters.get('from_time') == "12:00 AM":
+        from_time = "00:00"
+    if filters.get('from_time') == "12:30 AM":
+        from_time = "00:30"
+    time_obj = datetime.strptime(str(from_time), "%H:%M").time()
+    date_obj = datetime.strptime(str(from_date), "%Y-%m-%d")
+
+    combined_datetime = datetime.combine(date_obj.date(), time_obj)
+    if time_list[1] == "PM" and time_list[0] not in ["12:00" , "12:30"]:
+        combined_datetime = combined_datetime + timedelta(hours = 12)
+    from_datetime =  combined_datetime
+
+    time = filters.get("to_time")
+    time_list = time.split(" ")
+
+    end_time = time_list[0]
+    end_date = str(filters.get("to_date"))
+
+    if filters.get("to_time") == "12:00 AM":
+        end_time = "00:00"
+    if filters.get("to_time") == "12:30 AM":
+        end_time = "00:30"
+
+    time_obj = datetime.strptime(str(end_time), "%H:%M").time()
+    date_obj = datetime.strptime(str(end_date), "%Y-%m-%d")
+
+    combined_datetime = datetime.combine(date_obj.date(), time_obj)
+    if time_list[1] == "PM" and time_list[0] not in ["12:00" , "12:30"]:
+        combined_datetime = combined_datetime + timedelta(hours = 12)
+    to_datetime =  combined_datetime
+
+    data = frappe.db.sql(f"""Select eq.name, eq.from_datetime, eq.to_datetime, ei.serial_no 
+                            From `tabEquipment Booking` as eq
+                            Left Join `tabEquipment Items` as ei On eq.name = ei.parent
+                            Where eq.docstatus = 1 and ei.equipment = '{filters.get('item')}' and 
+                            eq.status = "Active"
+                            """,as_dict = 1)
+    sr_list = []          
+    if not data:
+        for row in serial_no:
+            sr_list.append((row , ""))
+        return tuple(sr_list)
+    
+    under_use = []
+    if data:
+        for row in data:
+            if from_datetime <= (row.from_datetime) < to_datetime or from_datetime < (row.to_datetime) <= to_datetime:
+                under_use.append(row.serial_no)
+    
+        for row in serial_no:
+            if row not in under_use:
+                sr_list.append((row , ""))
+        
+        if not sr_list:
+            return ()
+        
+        return tuple(sr_list)
