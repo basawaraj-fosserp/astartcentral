@@ -22,6 +22,7 @@
   "charges",
   "rate_per_hour",
   "section_break_fwzak",
+  "create_serial_no",
   "serial_no"
  ],
  "fields": [
@@ -102,7 +103,6 @@
    "reqd": 1
   },
   {
-   "collapsible": 1,
    "fieldname": "section_break_fwzak",
    "fieldtype": "Section Break",
    "label": "Serial No"
@@ -112,11 +112,16 @@
    "fieldtype": "Table",
    "label": "Serial No",
    "options": "Serial No List"
+  },
+  {
+   "fieldname": "create_serial_no",
+   "fieldtype": "Button",
+   "label": "Create Serial No"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2024-01-02 16:11:37.774758",
+ "modified": "2024-01-03 14:20:56.966784",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Equipment",
