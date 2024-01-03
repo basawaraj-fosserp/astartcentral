@@ -20,7 +20,9 @@
   "office_phone",
   "column_break_17",
   "charges",
-  "rate_per_hour"
+  "rate_per_hour",
+  "section_break_fwzak",
+  "serial_no"
  ],
  "fields": [
   {
@@ -98,11 +100,23 @@
    "fieldtype": "Float",
    "label": "Rate Per Hour",
    "reqd": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_fwzak",
+   "fieldtype": "Section Break",
+   "label": "Serial No"
+  },
+  {
+   "fieldname": "serial_no",
+   "fieldtype": "Table",
+   "label": "Serial No",
+   "options": "Serial No List"
   }
  ],
  "image_field": "image",
  "links": [],
- "modified": "2023-12-28 13:29:37.672201",
+ "modified": "2024-01-02 16:11:37.774758",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Equipment",
