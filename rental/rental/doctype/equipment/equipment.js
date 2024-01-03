@@ -31,11 +31,7 @@ frappe.ui.form.on("Equipment" ,{
 						serial_no:data.serial_no
 					},
 					callback: function(r) {
-						let row = frm.add_child("serial_no");
-						row.serial_no = r.message
-						row.equipment = data.equipment
-						frm.refresh_field("dimensions");
-
+					cur_frm.refresh_fields('serial_no')
 					d.hide()
 					}
 				});

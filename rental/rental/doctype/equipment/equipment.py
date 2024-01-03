@@ -5,7 +5,9 @@ import frappe
 from frappe.model.document import Document
 
 class Equipment(Document):
-	pass
+	def validate(self):
+		if not self.rate_per_hour:
+			frappe.throw("Input mandatory field <b>Rate Per Hour</b>")
 
 @frappe.whitelist()
 def create_serial_no(equipment , serial_no):
@@ -13,4 +15,11 @@ def create_serial_no(equipment , serial_no):
 	doc.serial_no = serial_no
 	doc.equipment = equipment
 	doc.save(ignore_permissions = 1)
-	return doc.name
+
+	doc= frappe.get_doc("Equipment" , equipment)
+	doc.append('serial_no',{
+		"equipment":equipment,
+		'serial_no':serial_no
+	})
+	doc.save()
+	doc.reload()

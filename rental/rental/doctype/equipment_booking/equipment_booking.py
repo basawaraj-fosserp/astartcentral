@@ -66,8 +66,17 @@ class EquipmentBooking(Document):
             frappe.throw("Only Future bookings are allow<br>Please select correct date and time")
         self.validate_admin_setting()
         self.check_if_available()
+        self.validate_for_multiple_serial_no()
         
-                        
+    def validate_for_multiple_serial_no(self):
+        unic_dict = {}
+        for row in self.equipment:
+            if not (unic_dict.get(row.equipment) == row.serial_no):
+                unic_dict.update({row.equipment : row.serial_no})
+            else:
+                frappe.throw("""Serian No <b>{0}</b> not allow to select in multiple row.
+                                <br><br>
+                                <b>#{1} Row:</b> Please select another serial no""".format(row.serial_no , row.idx))
     def check_if_available(self):
         for row in self.equipment:
             data = frappe.db.sql(f""" SELECT eb.name, eb.from_datetime, eb.to_datetime, eb.from_date, eb.to_date, eb.from_time, eb.to_time
@@ -243,7 +252,10 @@ def set_from_end_time(self):
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def get_available_serial_no(doctype, txt, searchfield, start, page_len, filters):
-    serial_no = frappe.get_list("Equipment Serial No", {"equipment" : filters.get('item')}, pluck = "name")
+    serial_no = frappe.get_list("Serial No List", {"equipment" : filters.get('item')}, pluck = "serial_no")
+
+    if not serial_no:
+        return ()
     time = filters.get('from_time')
     time_list = time.split(" ")
 

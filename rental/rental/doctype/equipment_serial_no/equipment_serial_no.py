@@ -6,6 +6,7 @@ from frappe.model.document import Document
 
 class EquipmentSerialNo(Document):
 	def on_trash(self):
-		data = frappe.db.sql(f"Select name From `tabSerial No List` Where serial_no = '{self.name}' , 'equipment':'{self.equipment}'  " , as_dict = 1)
-		for row in data:
-			frappe.db.delete("Serial No List" , row.name)
+		data = frappe.db.sql(f"Select name From `tabSerial No List` Where serial_no = '{self.name}' and 'equipment' ='{self.equipment}'  " , as_dict = 1)
+		if data:
+			for row in data:
+				frappe.db.delete("Serial No List" , row.name)
