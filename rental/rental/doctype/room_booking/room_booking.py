@@ -66,9 +66,10 @@ class RoomBooking(Document):
 		self.end_datetime =  combined_datetime
 		if self.end_datetime < self.from_datetime:
 			frappe.throw("Please Select Correct Date<br>End Date can not be less than From Date")
-		if getdate(self.from_datetime) > getdate(now()):
+		current_time = datetime.strptime(str(now()) , "%Y-%m-%d %H:%M:%S.%f")
+		if self.from_datetime > current_time:
 			self.status = "Active"
-		if getdate(self.from_datetime) < getdate(now()):
+		if self.from_datetime < current_time:
 			frappe.throw("Only Future bookings are allow<br>Please select correct date and time")
 		
 		self.validate_admin_setting()
