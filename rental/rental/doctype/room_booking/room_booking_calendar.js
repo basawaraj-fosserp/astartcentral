@@ -18,6 +18,10 @@ frappe.views.calendar["Room Booking"] = {
     ],
     get_events_method: "rental.rental.doctype.room_booking.room_booking.get_booking_data",
 	get_css_class: function(data) {
+		console.log(data)
+		if(data.status == "Active"){
+			return 'success'
+		}
 		if(data.status == "Inactive"){
 			return 'warning'
 		}
