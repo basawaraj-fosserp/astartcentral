@@ -83,6 +83,9 @@ scheduler_events = {
 	"daily": [
 		"rental.api.check_subscription_period"
 	],
+	"monthly": [
+		"rental.api.monthly_credit_allocation"
+	],
 }
 # Desk Notifications
 # ------------------
@@ -122,7 +125,12 @@ doc_events = {
 		"validate":[
 			"rental.api.create_item_from_equipment",
 		]
-	}
+	},
+	# "Payment Entry":{
+	# 	"on_submit":[
+	# 		"rental.api.allocation_of_credit_bases_payment"
+	# 	]
+	# }
 }
 
 # Scheduled Tasks

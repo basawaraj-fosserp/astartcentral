@@ -252,7 +252,7 @@ def set_from_end_time(self):
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def get_available_serial_no(doctype, txt, searchfield, start, page_len, filters):
-    serial_no = frappe.get_list("Serial No List", {"equipment" : filters.get('item')}, pluck = "serial_no")
+    serial_no = frappe.get_list("Serial No List", {"equipment" : filters.get('item')}, pluck = "serial_no" , ignore_permissions = "True")
 
     if not serial_no:
         return ()

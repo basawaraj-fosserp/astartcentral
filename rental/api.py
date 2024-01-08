@@ -126,3 +126,37 @@ def create_item_from_equipment(self , method):
     doc.stock_uom = "Nos"
     doc.is_stock_item = 1
     doc.save()
+
+# on submit of subscription allocate a credit point
+# def allocation_of_credit_bases_payment(self ,method):
+#     paid_amount = self.paid_amount
+#     data = []
+#     for row in self.references:
+#         if row.reference_doctype == "Sales Invoice" and self.payment_type == "Receive":
+#             data = frappe.db.sql(f""" Select spd.plan , spd.qty
+#                                     From `tabSubscription Invoice` as si
+#                                     left join `tabSubscription` as su On su.name = si.parent
+#                                     left join `tabSubscription Plan Detail` as spd on spd.parent = su.name
+#                                     Where document_type = "Sales Invoice" and invoice = '{row.reference_name}'
+#                                     """,as_dict = 1)
+
+#             for d in data:
+#                 doc = frappe.get_doc('Subscription Plan', d.plan)
+#                 credit_score = frappe.db.get_value("Customer", self.party, 'custom_credit_assigned_monthly')
+#                 credit_allocation(self.party, self.company, credit_score , self.name , row.total_amount)
+                
+
+
+
+# def credit_allocation(customer, company, credit_score, payment_reference , paid_amount):
+    
+#cron monthly credit allocation
+def monthly_credit_allocation():
+    cu_list = frappe.db.get_list("Customer" , pluck="name")
+    for row in cu_list:
+        customer = frappe.get_doc("Customer", row)
+        doc = frappe.new_doc("Credit Allocation")
+        doc.customer = row
+        doc.credit_score = customer.custom_credit_assigned_monthly
+        doc.save(ignore_permissions = True)
+        doc.submit()
