@@ -20,11 +20,11 @@ class RoomBooking(Document):
 		
 		restricted_min = frappe.db.get_single_value("Admin Setting" , "minutes_before_cancellation")
 		
-		time_before_refund = self.from_datetime - timedelta(minutes=30)
+		time_before_refund = self.from_datetime - timedelta(minutes=restricted_min)
 		current_time = now()
 		now = datetime.strptime(str( current_time ), "%Y-%m-%d %H:%M:%S.%f")
-		
-		if time_before_refund < now:
+
+		if time_before_refund < now < self.from_datetime:
 			frappe.throw(f"Cancellation is only allow before {restricted_min} minutes from booking time")
 		
 		doc = frappe.get_doc("Stock Entry" , self.stock_entry)
@@ -100,7 +100,7 @@ class RoomBooking(Document):
 		from_datetime = datetime.strptime(str(self.from_datetime) , "%Y-%m-%d %H:%M:%S")
 		end_datetime = datetime.strptime(str(self.end_datetime) , "%Y-%m-%d %H:%M:%S")
 		
-		if not ((ad_from_datetime <= from_datetime <= ad_to_datetime) and (ad_from_datetime <= end_datetime <= ad_to_datetime)):
+		if not ((ad_from_datetime <= from_datetime < ad_to_datetime) and (ad_from_datetime < end_datetime <= ad_to_datetime)):
 			frappe.throw(f"Booking is only allowed from {admin_from_time} to {admin_to_time}")
 
 
