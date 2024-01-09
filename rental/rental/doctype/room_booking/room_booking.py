@@ -123,19 +123,19 @@ class RoomBooking(Document):
 								where docstatus = 1 and select_room_type = '{self.select_room_type}' and status = 'Active' """,as_dict="true")
 			error = """<br><table border=1 width="100%">
 							<tr>
-								<td width="10%">
+								<td width="10%" align="center">
 									<b>SR No</b>
 								</td>
-								<td>
+								<td align="center">
 									<b>From Time</b>
 								</td>
-								<td>
+								<td align="center">
 									<b>To Time</b>
 								</td>
 							</tr>
 					"""
 			for i ,row in enumerate(booked_slot):
-				error += f"<tr><td>{i+1}</td><td>{ frappe.format(row.from_datetime, {'fieldtype': 'Date'}) }, {row.from_time}</td><td>{ frappe.format(row.end_datetime, {'fieldtype': 'Date'})}, {row.end_time}</td></tr>"
+				error += f"<tr><td align='center'>{i+1}</td><td align='center'>{ frappe.format(row.from_datetime, {'fieldtype': 'Date'}) }, {row.from_time}</td><td align='center'>{ frappe.format(row.end_datetime, {'fieldtype': 'Date'})}, {row.end_time}</td></tr>"
 			error += "</table>"
 			error += "<br><p> Please select another time or check the calendar.</p>"
 			frappe.throw(f"{self.select_room_type} is booked for the schedule below." + error)
@@ -195,7 +195,7 @@ class RoomBooking(Document):
 		current_booking_hours = difference.total_seconds()/3600
 
 		if per_day_booking_hours <= hours:
-			frappe.throw(f"Per day booking hour limit is {per_day_booking_hours}")
+			frappe.throw(f"The Per-day booking hour limit is {per_day_booking_hours}")
 
 		if per_day_booking_hours < (flt(per_day_booking_hours) + flt(hours)) and (per_day_booking_hours-hours) < current_booking_hours:
 			frappe.throw(f"The per-day booking limit is {per_day_booking_hours} hours.<br>Bookings are now limited to {flt(per_day_booking_hours) - flt(hours)} hour.")
