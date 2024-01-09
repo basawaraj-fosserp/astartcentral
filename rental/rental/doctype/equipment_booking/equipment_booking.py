@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 class EquipmentBooking(Document):
     def on_submit(self):
         if self.to_datetime < self.from_datetime:
-            frappe.throw("Please Select Correct Date<br>End Date can not be less than From Date")
+            frappe.throw("Please select correct date.<br>End date can not be less than from date")
         if getdate(self.from_datetime) > getdate(now()):
             self.status = "Active"
         self.credit_utilization()
@@ -59,11 +59,11 @@ class EquipmentBooking(Document):
         self.to_datetime =  combined_datetime
 
         if getdate(self.to_datetime) < getdate(self.from_datetime):
-            frappe.throw("Please Select Correct Date<br>End Date can not be less than From Date")
+            frappe.throw("Please select correct date<br>End date can not be less than from date")
         if getdate(self.from_datetime) > getdate(now()):
             self.status = "Active"
         if getdate(self.from_datetime) < getdate(now()):
-            frappe.throw("Only Future bookings are allow<br>Please select correct date and time")
+            frappe.throw("Only future bookings are allowed.<br>Kindly choose the accurate time and date.")
         self.validate_admin_setting()
         self.check_if_available()
         self.validate_for_multiple_serial_no()
@@ -85,7 +85,7 @@ class EquipmentBooking(Document):
                                 Where
                                     eb.docstatus = 1 and eb.status="Active" and ei.equipment = "{row.equipment}" """,as_dict = 1)
             flag = 0
-            error = "Equipment {0} is Booked for below schedule. Please choose another time".format(row.equipment)
+            error = "Equipment {0} is booked for below schedule. Please choose another time".format(row.equipment)
             error += """<br><br>
                     <table width=100%>
                         <tr>

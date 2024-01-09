@@ -10,7 +10,7 @@ from datetime import datetime, timedelta, time
 class RoomBooking(Document):
 	def on_submit(self):
 		if getdate(self.end_datetime) < getdate(self.from_datetime):
-			frappe.throw("Please Select Correct Date<br>End Date can not be less than From Date")
+			frappe.throw("Please select correct date.<br>End date can not be less than from date.")
 		self.db_set('booking_time' , now())
 		if self.from_date > now():
 			self.status = "Active"
@@ -64,7 +64,7 @@ class RoomBooking(Document):
 			combined_datetime = combined_datetime + timedelta(hours = 12)
 		self.end_datetime =  combined_datetime
 		if self.end_datetime < self.from_datetime:
-			frappe.throw("Please Select Correct Date<br>End Date can not be less than From Date")
+			frappe.throw("Please select correct date.<br>End date can not be less than from date")
 		current_time = datetime.strptime(str(now()) , "%Y-%m-%d %H:%M:%S.%f")
 		if self.from_datetime > current_time:
 			self.status = "Active"
