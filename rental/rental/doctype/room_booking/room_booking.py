@@ -24,7 +24,7 @@ class RoomBooking(Document):
 		current_time = now()
 		now = datetime.strptime(str( current_time ), "%Y-%m-%d %H:%M:%S.%f")
 		if not (time_before_refund > now > self.booking_time):
-			frappe.throw(f"Cancellation is only allow before {restricted_min} minutes from booking time")
+			frappe.throw(f"Cancellation is only allow to the {restricted_min} minutes from booking time")
 		
 		doc = frappe.get_doc("Stock Entry" , self.stock_entry)
 		doc.cancel()
@@ -69,7 +69,7 @@ class RoomBooking(Document):
 		if self.from_datetime > current_time:
 			self.status = "Active"
 		if self.from_datetime < current_time:
-			frappe.throw("Only Future bookings are allow<br>Please select correct date and time")
+			frappe.throw("Only future bookings are allowed.<br>Kindly choose the accurate time and date.")
 		
 		self.validate_admin_setting()
 		self.check_if_available()
@@ -135,9 +135,9 @@ class RoomBooking(Document):
 							</tr>
 					"""
 			for i ,row in enumerate(booked_slot):
-				error += f"<tr><td>{i+1}</td><td>{ frappe.format(row.from_datetime, {'fieldtype': 'Date'}) } {row.from_time}</td><td>{ frappe.format(row.end_datetime, {'fieldtype': 'Date'})} {row.end_time}</td></tr>"
+				error += f"<tr><td>{i+1}</td><td>{ frappe.format(row.from_datetime, {'fieldtype': 'Date'}) }, {row.from_time}</td><td>{ frappe.format(row.end_datetime, {'fieldtype': 'Date'})}, {row.end_time}</td></tr>"
 			error += "</table>"
-			error += "<br><p> Please Select another time or check with calendar </p>"
+			error += "<br><p> Please select another time or check the calendar.</p>"
 			frappe.throw(f"{self.select_room_type} is booked for the schedule below." + error)
 	
 	def credit_utilization(self):
@@ -198,7 +198,7 @@ class RoomBooking(Document):
 			frappe.throw(f"Per day booking hour limit is {per_day_booking_hours}")
 
 		if per_day_booking_hours < (flt(per_day_booking_hours) + flt(hours)) and (per_day_booking_hours-hours) < current_booking_hours:
-			frappe.throw(f"Per day booking limit is {per_day_booking_hours} <br>Now you can only book for {flt(per_day_booking_hours) - flt(hours)} hour")
+			frappe.throw(f"The per-day booking limit is {per_day_booking_hours} hours.<br>Bookings are now limited to {flt(per_day_booking_hours) - flt(hours)} hour.")
 
 @frappe.whitelist()
 def get_booking_data(start , end , filters = None):
