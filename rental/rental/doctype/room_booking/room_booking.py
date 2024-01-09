@@ -24,7 +24,7 @@ class RoomBooking(Document):
 		current_time = now()
 		now = datetime.strptime(str( current_time ), "%Y-%m-%d %H:%M:%S.%f")
 		if not (time_before_refund > now > self.booking_time):
-			frappe.throw(f"Cancellation is only allow within {restricted_min} minutes from booking time")
+			frappe.throw(f"Cancellation is only allowed within {restricted_min} minutes from booking time")
 		
 		doc = frappe.get_doc("Stock Entry" , self.stock_entry)
 		doc.cancel()
