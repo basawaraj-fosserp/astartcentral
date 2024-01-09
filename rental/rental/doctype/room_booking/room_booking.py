@@ -11,6 +11,7 @@ class RoomBooking(Document):
 	def on_submit(self):
 		if getdate(self.end_datetime) < getdate(self.from_datetime):
 			frappe.throw("Please Select Correct Date<br>End Date can not be less than From Date")
+		self.db_set('booking_time' , now())
 		if self.from_date > now():
 			self.status = "Active"
 		self.credit_utilization()
@@ -19,12 +20,10 @@ class RoomBooking(Document):
 		from frappe.utils import now
 		
 		restricted_min = frappe.db.get_single_value("Admin Setting" , "minutes_before_cancellation")
-		
-		time_before_refund = self.from_datetime - timedelta(minutes=restricted_min)
+		time_before_refund = self.booking_time + timedelta(minutes= restricted_min)
 		current_time = now()
 		now = datetime.strptime(str( current_time ), "%Y-%m-%d %H:%M:%S.%f")
-
-		if time_before_refund < now < self.from_datetime:
+		if not (time_before_refund > now > self.booking_time):
 			frappe.throw(f"Cancellation is only allow before {restricted_min} minutes from booking time")
 		
 		doc = frappe.get_doc("Stock Entry" , self.stock_entry)

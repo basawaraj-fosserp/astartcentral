@@ -29,7 +29,8 @@
   "amended_from",
   "status",
   "from_web_form",
-  "stock_entry"
+  "stock_entry",
+  "booking_time"
  ],
  "fields": [
   {
@@ -170,12 +171,18 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Stock Entry"
+  },
+  {
+   "fieldname": "booking_time",
+   "fieldtype": "Datetime",
+   "hidden": 1,
+   "label": "Booking Time"
   }
  ],
  "is_calendar_and_gantt": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-01-02 16:21:26.999451",
+ "modified": "2024-01-09 13:37:23.008354",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Room Booking",
