@@ -12,7 +12,14 @@ def create_warehouse(self , method):
         doc.warehouse_name = self.name
         doc.save(ignore_permissions = True)
 
-
+    data = frappe.db.get_list("Credit Allocation" , filters ={'customer':self.name , "docstatus":1})
+    if self.custom_credit_assigned_monthly and not len(data):
+        doc_ = frappe.new_doc("Credit Allocation")
+        doc_.customer = self.name
+        doc_.posting_date = getdate()
+        doc_.credit_score = self.custom_credit_assigned_monthly
+        doc_.save(ignore_permissions = True)
+        doc_.submit()
 
 def set_actual_qty(self):
     from erpnext.stock.stock_ledger import is_negative_stock_allowed
