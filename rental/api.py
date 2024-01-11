@@ -11,11 +11,13 @@ def create_warehouse(self , method):
         doc = frappe.new_doc("Warehouse")
         doc.warehouse_name = self.name
         doc.save(ignore_permissions = True)
-
+        
+def on_update(self , method):
     data = frappe.db.get_list("Credit Allocation" , filters ={'customer':self.name , "docstatus":1})
     if self.custom_credit_assigned_monthly and not len(data):
         doc_ = frappe.new_doc("Credit Allocation")
         doc_.customer = self.name
+        doc_.ignore_linked_doctypes= ['Customer']
         doc_.posting_date = getdate()
         doc_.credit_score = self.custom_credit_assigned_monthly
         doc_.save(ignore_permissions = True)
