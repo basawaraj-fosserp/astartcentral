@@ -34,6 +34,7 @@
   {
    "fieldname": "description",
    "fieldtype": "Small Text",
+   "in_list_view": 1,
    "label": "Description"
   },
   {
@@ -46,7 +47,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-18 14:33:31.417758",
+ "modified": "2024-01-11 17:07:35.297064",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Room",
