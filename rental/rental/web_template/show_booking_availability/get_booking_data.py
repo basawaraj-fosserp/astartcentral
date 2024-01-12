@@ -25,6 +25,7 @@ def current_room_booking_data(room):
     current_date = datetime.now()
     formatted_date = current_date.strftime("%a,%d %B, %Y")
     display = {}
+    event = None
     if display_data and not current_booking:
         event = str(display_data[0].get('from_time'))+" - "+str(display_data[0].get('end_time'))
         display.update({
@@ -42,11 +43,12 @@ def current_room_booking_data(room):
             'today': formatted_date
         })
 
-    
+
     display.update({
         'availability':"AVAILABLE",
         })
     if display_data:
         return display
     else:
-        return
+        return {'event':event if event else "No Upcomming Event",'today': formatted_date ,
+                 'availability':"AVAILABLE" , 'title' :'' , 'current_time' : str(datetime.now().time())[0:5],}
