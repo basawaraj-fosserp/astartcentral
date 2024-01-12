@@ -10,44 +10,63 @@
  "field_order": [
   "room_name",
   "max_capacity",
+  "location",
   "color",
   "description",
+  "enable_booking",
   "utilize_point"
  ],
  "fields": [
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "room_name",
    "fieldtype": "Data",
    "label": "Room Name",
    "unique": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "max_capacity",
    "fieldtype": "Data",
    "label": "Max Capacity"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "color",
    "fieldtype": "Color",
    "label": "Color"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "description",
    "fieldtype": "Small Text",
    "in_list_view": 1,
    "label": "Description"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "utilize_point",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Rate Per Hour",
    "reqd": 1
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_booking",
+   "fieldtype": "Check",
+   "label": "Enable booking"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-11 17:07:35.297064",
+ "modified": "2024-01-12 17:46:55.414620",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Room",

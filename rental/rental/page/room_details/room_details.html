@@ -1,0 +1,89 @@
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<style>
+    td,th{
+        padding:2px;
+        border-bottom:1px solid black;
+    }
+    .zoom-effect-button {
+        padding: 5px;
+        background-color: #deefdf;
+        color: rgb(7, 5, 5);
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: transform 0.3s; /* Add transition for a smooth effect */
+    }
+   
+    /* Define the hover effect */
+    .zoom-effect-button:hover {
+        transform: scale(1.1); /* Zoom in on hover */
+    }
+
+    /* Define the click effect */
+    .zoom-effect-button:active {
+        transform: scale(0.9); /* Zoom out on click */
+    }
+    .space{
+        height: 20px;
+    }
+    .content{
+        background-color: rgb(250, 250, 250);
+    }
+</style>
+<div class="space">
+
+</div>
+<div class="content">
+<table  class="tbspace content" width ="100%" id = "room">
+    <tr>
+        <th>
+            SR 
+        </th>
+        <th>
+            Title
+        </th>
+        <th>
+            Description
+        </th>
+        <th>
+            Bookable
+        </th>
+        <th colspan="3">
+            Action
+        </th>
+    </tr>
+    {% for row in data %}
+    <tr data-id = {{row.idx}}>
+        <td>
+          <center>{{ row.idx }}</center>
+        </td>
+        <td>
+            <a href="http://erp.viral.com/app/room/{{ row.name }}">{{ row.name }}</a>
+        </td>
+        <td>
+            {{ row.description }}
+        </td>
+        <td>
+            {{ row.bookable }}
+        </td>
+        <td width="10%">
+          
+            <a href="http://erp.viral.com/{{ row.link }}">
+            <button class="zoom-effect-button">
+                <i  style="font-size:24px" class="fa">&#xf073;</i>
+            </button>
+            </a>
+        </td>
+        <td width="10%">
+            <button class="zoom-effect-button deleteBtn" onclick="delete_row()">
+                <i class="material-icons" style="font-size:24px">&#xe872;</i>
+            </button>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>

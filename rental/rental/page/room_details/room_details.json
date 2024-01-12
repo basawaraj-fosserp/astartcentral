@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2024-01-12 11:37:31.521398",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2024-01-12 11:37:31.521398",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "room-details",
+ "owner": "Administrator",
+ "page_name": "room-details",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 1,
+ "title": "Room"
+}
