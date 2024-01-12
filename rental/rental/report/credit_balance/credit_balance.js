@@ -46,6 +46,13 @@ frappe.query_reports["Credit Balance"] = {
 				}
 			}
 		},
+		{
+			"fieldname": 'ignore_closing_balance',
+			"label": __('Ignore Closing Balance'),
+			"fieldtype": 'Check',
+			"default": 1,
+			"hidden":1
+		},
 	],
 	"formatter": function (value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
