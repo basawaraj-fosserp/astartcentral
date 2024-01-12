@@ -1,0 +1,22 @@
+{
+ "content": null,
+ "creation": "2024-01-11 18:53:11.947463",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2024-01-11 18:53:32.331651",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "show-availabity",
+ "owner": "Administrator",
+ "page_name": "show-availabity",
+ "roles": [
+  {
+   "role": "Customer"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 1
+}

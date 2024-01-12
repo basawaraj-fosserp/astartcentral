@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .container{
+        padding-left:0rem;
+        padding-right: 0rem;
+    }
+    .main-bg-screen {
+      display: flex;
+      background-color: aqua;
+      background-image: url('{{ image }}');
+      padding-left:0rem;
+      padding-right: 0rem;
+      width: 100vw;
+      height: 100vh;
+    }
+    .web-footer{
+        display: none;
+    }
+    .navbar{
+        display: none;
+    }
+    .section{
+        height: fit-content;
+    }
+    .section-padding-top{
+        padding-top: 0rem;
+    } 
+    .section-padding-bottom{
+        padding-bottom: 0rem;
+    }
+    .box {
+      width: 25%; /* Adjust the width as needed */
+      box-sizing: border-box;
+    }
+    .innerbox{
+        height: 50%;
+    }
+    .inner-box1{
+        background-color: rgba(0, 188, 141, 0.5);
+    }
+    .inner-box2{
+        background-color: rgba(0, 255, 0, 0.5);
+    }
+    .inner-box3{
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    .center-div{
+        background-color: rgba(192, 192, 192, 0.5);
+        width: 50%;
+    }
+    h1,h2,h4{
+      padding-top: 25%;
+      text-align:center;
+      margin-top:0rem;
+      margin-bottom: 0rem;
+    }
+    h3{
+      text-align: center;
+      margin-top:0rem;
+    }
+    .upcomming{
+      font-weight: 900;
+      text-align:left;
+      margin-left: 20px;
+      color: #1D9861;
+     
+      
+    }
+    body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+    .current_time,.available{
+      color: white;
+    }
+    hr{
+      margin-left: 20px;
+      margin-top: 0.3rem;
+      margin-bottom: 0.3rem;
+      border: 0;
+      width :30%;
+      border-top: 5px solid #c4bdbd;
+    }
+  </style>
+</head>
+<body>
+<div class="main-bg-screen">
+  <div class="box">
+    <div class="inner-box1 innerbox">
+        <center class="current_time" style="font-size:90px"></center>
+        <h3 class="current_date"></h3>
+    </div>
+    <div class="inner-box2 innerbox">
+        <h1 class= "available"></h1>
+    </div>
+  </div>
+  <div class="box center-div">
+    <h1>{{ document_name }}</h1>
+    </div>
+
+  <div class="box">
+    <div class="inner-box3 innerbox">
+        <h2 class="upcomming">UPCOMING</h2>
+        <hr>
+        <h3 class="title_reservation"></h3>
+        <h3 class="uptiming"></h3>
+    </div>
+  </div>
+</div>
+</body>
+<script>
+    {% include "rental/web_template/show_booking_availability/show_booking_availability.js" %}
+  </script>
+</html>
+
