@@ -41,6 +41,18 @@ def execute(filters: Optional[StockBalanceFilter] = None):
 
 class StockBalanceReport(object):
 	def __init__(self, filters: Optional[StockBalanceFilter]) -> None:
+		if contact := frappe.db.exists("Contact" , {"user":frappe.session.user}):
+			customer = frappe.db.sql(f""" Select name,link_name 
+										From `tabDynamic Link` 
+										where parent = "{contact}" and link_doctype ="Customer" """,as_dict = 1)
+			
+			warehouse = customer[0].link_name + " - " + frappe.db.get_value('Company' , filters.get('company') , 'abbr')
+
+			try:
+				filters.update({'warehouse': warehouse})
+			except Exception:
+				frappe.throw("User is not link with any customer")
+
 		self.filters = filters
 		self.from_date = getdate(filters.get("from_date"))
 		self.to_date = getdate(filters.get("to_date"))

@@ -18,6 +18,17 @@ from erpnext.stock.utils import (
 
 
 def execute(filters=None):
+	if contact := frappe.db.exists("Contact" , {"user":frappe.session.user}):
+		customer = frappe.db.sql(f""" Select name,link_name 
+									From `tabDynamic Link` 
+									where parent = "{contact}" and link_doctype ="Customer" """,as_dict = 1)
+		
+		warehouse = customer[0].link_name + " - " + frappe.db.get_value('Company' , filters.get('company') , 'abbr')
+
+		try:
+			filters.update({'warehouse': warehouse})
+		except Exception:
+			frappe.throw("User is not link with any customer")
 	is_reposting_item_valuation_in_progress()
 	include_uom = filters.get("include_uom")
 	columns = get_columns(filters)
@@ -333,7 +344,7 @@ def get_opening_balance(filters, columns, sl_entries):
 
 
 def get_warehouse_condition(warehouse):
-	warehouse_details = frappe.db.get_value("Warehouse", warehouse, ["lft", "rgt"], as_dict=1)
+	warehouse_details = frappe.db.get_value("Warehouse", warehouse, ["lft", "rgt"], as_dict=1 , ignore_permissions = True)
 	if warehouse_details:
 		return (
 			" exists (select name from `tabWarehouse` wh \
@@ -373,4 +384,10 @@ def check_inventory_dimension_filters_applied(filters) -> bool:
 		if dimension.fieldname in filters and filters.get(dimension.fieldname):
 			return True
 
+	return False
+
+@frappe.whitelist()
+def get_user_roll():
+	if 'System Manager' not in frappe.get_roles(frappe.session.user):
+		return True
 	return False

@@ -65,5 +65,19 @@ frappe.query_reports["Credit Balance"] = {
 		}
 
 		return value;
+	},
+	onload:function(){
+		frappe.call({
+			method:"rental.rental.report.credit_ledger.credit_ledger.get_user_roll",
+			args:{
+				user : frappe.session.user
+			},
+			callback:function(r){
+				if (r.message){
+					var element = document.querySelector('div[data-fieldname="warehouse"]')
+					element.style.display ="none";
+				}
+			}
+		})
 	}
 };
