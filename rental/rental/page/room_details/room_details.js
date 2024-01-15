@@ -9,9 +9,9 @@ frappe.pages['room-details'].on_page_load = function(wrapper) {
 		label: __('Title'),
 		fieldtype:'Link',
 		options:'Room',
-		onchange:function(){
-			frappe.room_details.make(page);
-		}
+		onchange: () => {
+            frappe.room_details.make(page);
+        }
 	});
 	frappe.room_details.make(page);
 }
@@ -22,7 +22,6 @@ frappe.room_details = {
 		var me = frappe.room_details;
 		me.page = page;
 		me.body = $('<div></div>').appendTo(me.page.main);
-		console.log(page.title_field.get_value())
 		frappe.call({
 			method: "rental.rental.page.room_details.room_details.get_room_data",
 			args:{
@@ -106,6 +105,6 @@ function delete_row(){
 				},
 			)
 			
-		  });		
+	});		
 }
 
