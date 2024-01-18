@@ -10,6 +10,7 @@ frappe.pages['room-details'].on_page_load = function(wrapper) {
 		fieldtype:'Link',
 		options:'Room',
 		onchange: () => {
+			console.log("gell")
             frappe.room_details.make(page);
         }
 	});
@@ -29,6 +30,7 @@ frappe.room_details = {
 			},
 			callback:function(r){
 				var data = {'data':r.message};
+				var parent = page.main.find(".content").empty();
 				$(frappe.render_template('room_details', data)).appendTo(me.body);
 			}
 		})
