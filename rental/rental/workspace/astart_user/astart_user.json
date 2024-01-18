@@ -60,7 +60,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-01-16 10:49:59.165408",
+ "modified": "2024-01-18 13:27:10.646269",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Astart User",
@@ -80,6 +80,9 @@
   },
   {
    "role": "Client User"
+  },
+  {
+   "role": "Astart Admin"
   }
  ],
  "sequence_id": 2.0,

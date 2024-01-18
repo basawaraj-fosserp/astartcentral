@@ -33,6 +33,7 @@ class RoomBooking(Document):
         doc.cancel()
 
     def validate(self):
+        from frappe.utils import now , getdate
         if not frappe.db.get_value("Room" , self.select_room_type , "enable_booking"):
             frappe.throw("The Room <b>{0}</b> is not allow to book".format(self.select_room_type))
         time = self.from_time
@@ -144,16 +145,19 @@ class RoomBooking(Document):
             frappe.throw(f"{self.select_room_type} is booked for the schedule below." + error)
     
     def credit_utilization(self):
-        now = now()
         time_diff = self.end_datetime - self.from_datetime
         time_diff_hour = time_diff.total_seconds()/3600
         qty = time_diff_hour * frappe.db.get_value("Room" , self.select_room_type , "utilize_point")
-        current_time = now.strftime("%H:%M:%S")
+        
+        from frappe.utils import now , getdate
+        now = now()
+        
+        current_time = now.split(" ")
 
         doc = frappe.new_doc("Stock Entry")
         doc.company = self.company
         doc.posting_date = getdate()
-        doc.posting_time = current_time
+        doc.posting_time = current_time[1]
         doc.stock_entry_type = "Material Issue"
         abbr = frappe.db.get_value("Company" , self.company , 'abbr')
         doc.append("items",{

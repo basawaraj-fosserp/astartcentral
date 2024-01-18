@@ -12,6 +12,7 @@ class EquipmentBooking(Document):
         if self.to_datetime < self.from_datetime:
             frappe.throw("Please select correct date.<br>End date can not be less than from date")
         from_datetime = datetime.strptime(str(self.from_datetime) , "%Y-%m-%d %H:%M:%S")
+        from frappe.utils import now
         now = datetime.strptime(str(now()) , "%Y-%m-%d %H:%M:%S.%f")
         if from_datetime > now:
             self.status = "Active"
@@ -123,15 +124,17 @@ class EquipmentBooking(Document):
                 
     
     def credit_utilization(self):
-        now = now()
         time_diff = self.to_datetime - self.from_datetime
         time_diff_hour = time_diff.total_seconds()/3600
-        current_time = now.strftime("%H:%M:%S")
+        from frappe.utils import now , getdate
+        
+        now = now()
+        current_time = now.split(" ")
 
         doc = frappe.new_doc("Stock Entry")
         doc.company = self.company
         doc.posting_date = getdate()
-        doc.posting_time = current_time
+        doc.posting_time = current_time[1]
         doc.stock_entry_type = "Material Issue"
 
         abbr = frappe.db.get_value("Company" , self.company , 'abbr')
