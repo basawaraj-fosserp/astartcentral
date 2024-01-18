@@ -11,7 +11,9 @@ class EquipmentBooking(Document):
     def on_submit(self):
         if self.to_datetime < self.from_datetime:
             frappe.throw("Please select correct date.<br>End date can not be less than from date")
-        if getdate(self.from_datetime) > getdate(now()):
+        from_datetime = datetime.strptime(str(self.from_datetime) , "%Y-%m-%d %H:%M:%S")
+        now = datetime.strptime(str(now()) , "%Y-%m-%d %H:%M:%S.%f")
+        if from_datetime > now:
             self.status = "Active"
         self.credit_utilization()
 
@@ -58,11 +60,15 @@ class EquipmentBooking(Document):
             combined_datetime = combined_datetime + timedelta(hours = 12)
         self.to_datetime =  combined_datetime
 
-        if getdate(self.to_datetime) < getdate(self.from_datetime):
+        from_datetime = datetime.strptime(str(self.from_datetime) , "%Y-%m-%d %H:%M:%S")
+        to_datetime = datetime.strptime(str(self.to_datetime) , "%Y-%m-%d %H:%M:%S")
+        if to_datetime < self.from_datetime:
             frappe.throw("Please select correct date<br>End date can not be less than from date")
-        if getdate(self.from_datetime) > getdate(now()):
-            self.status = "Active"
-        if getdate(self.from_datetime) < getdate(now()):
+        
+        from frappe.utils import now
+
+        now = datetime.strptime(now() , "%Y-%m-%d %H:%M:%S.%f")
+        if from_datetime < now:
             frappe.throw("Only future bookings are allowed.<br>Kindly choose the accurate time and date.")
         self.validate_admin_setting()
         self.check_if_available()
@@ -117,7 +123,7 @@ class EquipmentBooking(Document):
                 
     
     def credit_utilization(self):
-        now = datetime.now()
+        now = now()
         time_diff = self.to_datetime - self.from_datetime
         time_diff_hour = time_diff.total_seconds()/3600
         current_time = now.strftime("%H:%M:%S")

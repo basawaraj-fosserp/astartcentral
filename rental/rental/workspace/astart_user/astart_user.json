@@ -1,6 +1,7 @@
 {
+ "_liked_by": "[\"Administrator\"]",
  "charts": [],
- "content": "[{\"id\":\"LlLmUhKanp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Astrat Central Home</span>\",\"col\":12}},{\"id\":\"Wg2YxcnSuq\",\"type\":\"card\",\"data\":{\"card_name\":\"Booking\",\"col\":4}},{\"id\":\"PXBPqYv_HQ\",\"type\":\"card\",\"data\":{\"card_name\":\"Request\",\"col\":4}},{\"id\":\"FQ3Hi6DhDS\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Dashboard</b></span>\",\"col\":12}},{\"id\":\"eZLcxJq0F9\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Available Credits\",\"col\":4}},{\"id\":\"u-7wFSrEfO\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Equipment Booking Schedule\",\"col\":3}},{\"id\":\"WJ4aOTNwh-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Room Booking Schedule\",\"col\":3}}]",
+ "content": "[{\"id\":\"LlLmUhKanp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Astrat Central Home</span>\",\"col\":12}},{\"id\":\"Wg2YxcnSuq\",\"type\":\"card\",\"data\":{\"card_name\":\"Booking\",\"col\":4}},{\"id\":\"PXBPqYv_HQ\",\"type\":\"card\",\"data\":{\"card_name\":\"Request\",\"col\":4}},{\"id\":\"FQ3Hi6DhDS\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Dashboard</b></span>\",\"col\":12}},{\"id\":\"eZLcxJq0F9\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Available Credits\",\"col\":4}},{\"id\":\"u-7wFSrEfO\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Equipment Booking Schedule\",\"col\":3}},{\"id\":\"WJ4aOTNwh-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Room Booking Schedule\",\"col\":3}},{\"id\":\"Z_XRHl1rKn\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"2kGjeCeZa-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Credit Ledger\",\"col\":3}},{\"id\":\"eM7w1hWhP0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Credit Balance\",\"col\":3}}]",
  "creation": "2023-12-11 18:21:30.967048",
  "custom_blocks": [],
  "docstatus": 0,
@@ -59,7 +60,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-12-27 18:35:02.926111",
+ "modified": "2024-01-16 10:49:59.165408",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Astart User",
@@ -86,6 +87,13 @@
   {
    "color": "Grey",
    "doc_view": "List",
+   "label": "Credit Ledger",
+   "link_to": "Credit Ledger",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
    "label": "Equipment Booking Schedule",
    "type": "URL",
    "url": "https://astartcentral.fameonu.com/app/equipment-booking/view/calendar/default"
@@ -96,6 +104,13 @@
    "label": "Room Booking Schedule",
    "type": "URL",
    "url": "https://astartcentral.fameonu.com/app/room-booking/view/calendar/default"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Credit Balance",
+   "link_to": "Credit Balance",
+   "type": "Report"
   }
  ],
  "title": "Astart User"

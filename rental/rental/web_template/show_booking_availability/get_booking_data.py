@@ -22,7 +22,7 @@ def current_room_booking_data(room):
             display_data.append(row)
         if row.from_datetime <= now_time <= row.end_datetime:
             current_booking = row
-    current_date = datetime.now()
+    current_date = getdate(now())
     formatted_date = current_date.strftime("%a,%d %B, %Y")
     display = {}
     event = None
@@ -31,7 +31,7 @@ def current_room_booking_data(room):
         display.update({
             'title': display_data[0].get('title_of_reservation'),
             'event':event if event else "No Upcomming Event",
-            'current_time' : str(datetime.now().time())[0:5] ,
+            'current_time' : str(now_time.time())[0:5] ,
             'today': formatted_date
         })
     elif display_data and current_booking:
@@ -39,7 +39,7 @@ def current_room_booking_data(room):
         display.update({
             'title': display_data[1].get('title_of_reservation'),
             'event' : event if event else "No Upcomming Event",
-            'current_time' : str(datetime.now().time())[0:5],
+            'current_time' : str(now_time.time())[0:5],
             'today': formatted_date
         })
 
@@ -51,4 +51,4 @@ def current_room_booking_data(room):
         return display
     else:
         return {'event':event if event else "No Upcomming Event",'today': formatted_date ,
-                 'availability':"AVAILABLE" , 'title' :'' , 'current_time' : str(datetime.now().time())[0:5],}
+                 'availability':"AVAILABLE" , 'title' :'' , 'current_time' : str(now_time.time())[0:5],}
