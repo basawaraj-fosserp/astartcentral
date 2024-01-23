@@ -316,7 +316,10 @@ def get_available_serial_no(doctype, txt, searchfield, start, page_len, filters)
     under_use = []
     if data:
         for row in data:
-            if from_datetime <= (row.from_datetime) < to_datetime or from_datetime < (row.to_datetime) <= to_datetime:
+            if (from_datetime <= (row.from_datetime) < to_datetime or 
+                from_datetime < (row.to_datetime) <= to_datetime or 
+                row.from_datetime <= (from_datetime) < row.to_datetime or 
+                row.from_datetime < (to_datetime) <= row.to_datetime):
                 under_use.append(row.serial_no)
     
         for row in serial_no:
