@@ -9,7 +9,7 @@
  "filters": [],
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2024-01-12 11:15:03.009986",
+ "modified": "2024-01-23 16:29:46.002959",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Credit Balance",
@@ -30,6 +30,9 @@
   },
   {
    "role": "Stock Manager"
+  },
+  {
+   "role": "Astart Admin"
   }
  ]
 }

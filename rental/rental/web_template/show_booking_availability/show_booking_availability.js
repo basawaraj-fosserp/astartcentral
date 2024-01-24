@@ -29,7 +29,7 @@ frappe.ready(function() {
                     innerbox2.classList.add('inner-box2not-available')
                 }
                 else{
-                    innerbox2.style.backgroundColor = rgba(0, 255, 0, 0.5);
+                    var innerbox2 = document.querySelector('.inner-box2')
                     innerbox2.classList.add('inner-box2available')
                 }
                 console.log(data)
