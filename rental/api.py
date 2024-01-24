@@ -97,13 +97,15 @@ def create_subscription(source_name , target_doc = None):
                 "doctype": "Subscription",
                 "field_map": {
 					"doctype":"party_type",
-                    "name":"party"
+                    "name":"party",
+                    "custom_agreement_start_date":"start_date",
+                    "custom_agreement_end_date":"end_date"
 				},
                 },
-			
 		},
 		target_doc,
 	)
+    doclist.update({'generate_invoice_at_period_start':1, "generate_new_invoices_past_due_date":1})
     return doclist
 
 
