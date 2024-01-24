@@ -7,7 +7,7 @@ from frappe.model.document import Document
 
 class Room(Document):
 	def on_update(self):
-		data = frappe.db.exists("Web Page" , self.name)
+		data = frappe.db.exists("Web Page" , {'title':self.name})
 
 		web_template_values = {'image':'/files/Your Office Makes Your Staff More Productive, 8 Ways How.webp','document_type':'Room','document_name':self.name}
 		web_template_values = json.dumps(web_template_values)

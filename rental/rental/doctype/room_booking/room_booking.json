@@ -48,23 +48,27 @@
   {
    "fieldname": "title_of_reservation",
    "fieldtype": "Data",
-   "label": "Title of reservation"
+   "label": "Title of reservation",
+   "reqd": 1
   },
   {
    "fieldname": "description_of_reservation",
    "fieldtype": "Small Text",
-   "label": "Description of reservation"
+   "label": "Description of reservation",
+   "reqd": 1
   },
   {
    "fieldname": "contact_name",
    "fieldtype": "Data",
-   "label": "Contact Name"
+   "label": "Contact Name",
+   "reqd": 1
   },
   {
    "fieldname": "contact_number",
    "fieldtype": "Data",
    "label": "Contact Number",
-   "options": "Phone"
+   "options": "Phone",
+   "reqd": 1
   },
   {
    "fieldname": "select_room_type",
@@ -182,7 +186,7 @@
  "is_calendar_and_gantt": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-01-09 13:37:23.008354",
+ "modified": "2024-01-24 13:02:55.350996",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Room Booking",
