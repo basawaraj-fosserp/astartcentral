@@ -32,7 +32,6 @@ frappe.ready(function() {
                     var innerbox2 = document.querySelector('.inner-box2')
                     innerbox2.classList.add('inner-box2available')
                 }
-                console.log(data)
                 if (data.current_booking){
                     var center_main_element = document.querySelector('.center-div')
                     var title_of_current = document.createElement('p');
