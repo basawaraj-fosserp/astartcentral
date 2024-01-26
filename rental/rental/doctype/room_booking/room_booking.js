@@ -26,6 +26,14 @@ frappe.ui.form.on('Room Booking', {
 				console.log(r.message)
 			}
 		})
+		frappe.call({
+			method:"rental.api.check_roles",
+			callback:function(r){
+				if(!r.message){
+					frm.set_df_property('customer', 'read_only', 1);
+				}
+			}
+		})
 	},
 	from_date:function(frm){
 		frm.set_value("end_date" , frm.doc.from_date)
