@@ -11,6 +11,7 @@ frappe.ui.form.on('Credit Request', {
 			callback:function(r){
 				if (!frm.doc.customer){
 					frm.set_value('customer' , r.message)
+					frm.set_df_property('customer', 'read_only', 1);
 				}
 			}
 		})

@@ -235,16 +235,16 @@ def convert_inactive_booking():
 
 @frappe.whitelist(allow_guest = True)
 def check_log_in_user(user):
-    if contact := frappe.db.exists("Contact" , {"user":user}) and "Astart Admin" not in frappe.get_roles():
-        customer = frappe.db.sql(f""" Select name,link_name 
-                                    From `tabDynamic Link` 
-                                    where parent = "{contact}" and link_doctype ="Customer" """,as_dict = 1)
-        
-        
-        if not len(customer):
-            frappe.throw("Please Contact to Admin, your contact document is not link with your user")
-        
-        return customer[0].link_name
+    if "Astart Admin" not in frappe.get_roles():
+        if contact := frappe.db.exists("Contact" , {"user":user}):
+            customer = frappe.db.sql(f""" Select name,link_name 
+                                        From `tabDynamic Link` 
+                                        where parent = "{contact}" and link_doctype ="Customer" """,as_dict = 1)
+            
+            if not len(customer):
+                frappe.throw("Please Contact to Admin, your contact document is not link with your user")
+            
+            return customer[0].link_name
 
 
 
