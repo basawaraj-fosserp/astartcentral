@@ -127,6 +127,9 @@ doc_events = {
 			"rental.api.create_item_from_equipment",
 		]
 	},
+	"Contact":{
+		"validate": "rental.api.create_user_permission",
+	}
 	# "Payment Entry":{
 	# 	"on_submit":[
 	# 		"rental.api.allocation_of_credit_bases_payment"
