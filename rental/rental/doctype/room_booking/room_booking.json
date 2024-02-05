@@ -117,7 +117,6 @@
    "in_list_view": 1,
    "label": "Customer",
    "options": "Customer",
-   "read_only_depends_on": "eval:doc.owner != \"Administrator\";",
    "reqd": 1
   },
   {
@@ -186,7 +185,7 @@
  "is_calendar_and_gantt": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-01-24 13:02:55.350996",
+ "modified": "2024-01-26 11:48:48.870294",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Room Booking",

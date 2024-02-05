@@ -63,7 +63,7 @@ def set_actual_qty(self):
 
 @frappe.whitelist()
 def check_roles():
-    if "System Manager" in frappe.get_roles():
+    if "System Manager" in frappe.get_roles() or "Astart Admin" in frappe.get_roles():
         return True
     return False
 
@@ -106,6 +106,12 @@ def create_subscription(source_name , target_doc = None):
 		target_doc,
 	)
     doclist.update({'generate_invoice_at_period_start':1, "generate_new_invoices_past_due_date":1})
+    
+    doclist.append('plans',{
+        "plan" : frappe.db.get_value('Customer', source_name, 'custom_subscription_plan'),
+        'qty':1
+    })
+
     return doclist
 
 

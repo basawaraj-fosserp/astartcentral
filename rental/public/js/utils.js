@@ -30,8 +30,9 @@ frappe.views.Workspace = class Workspace extends frappe.views.Workspace {
                         this.make_blocks_sortable();
                     });
                 });
-        
-                this.page.add_inner_button(__("Create Workspace"))
+                this.page.add_inner_button(__("Create Workspace"), () => {
+                    this.initialize_new_page();
+                });
             }
         })
 	}

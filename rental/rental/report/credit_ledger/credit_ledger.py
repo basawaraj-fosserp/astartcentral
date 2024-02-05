@@ -388,6 +388,6 @@ def check_inventory_dimension_filters_applied(filters) -> bool:
 
 @frappe.whitelist()
 def get_user_roll():
-	if 'System Manager' not in frappe.get_roles(frappe.session.user):
+	if 'Astart Admin' not in frappe.get_roles(frappe.session.user):
 		return True
 	return False

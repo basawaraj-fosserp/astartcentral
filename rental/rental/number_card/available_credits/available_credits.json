@@ -1,5 +1,6 @@
 {
  "aggregate_function_based_on": "",
+ "color": "#0d32d9",
  "creation": "2023-12-13 23:04:22.439591",
  "docstatus": 0,
  "doctype": "Number Card",
@@ -13,7 +14,7 @@
  "is_standard": 1,
  "label": "Available Credits",
  "method": "rental.api.get_current_credit",
- "modified": "2023-12-27 18:34:13.942441",
+ "modified": "2024-01-25 23:42:26.206209",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Available Credits",
