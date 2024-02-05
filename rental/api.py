@@ -171,3 +171,14 @@ def monthly_credit_allocation():
         doc.credit_score = customer.custom_credit_assigned_monthly
         doc.save(ignore_permissions = True)
         doc.submit()
+
+
+def create_user_permission(self , method):
+    if self.user and len(self.links) > 0:
+        if not frappe.db.exists("User Permission", {'user':self.user, 'allow':'Customer', 'for_value':self.links[0].link_name}):
+            doc = frappe.new_doc("User Permission")
+            doc.user = self.user
+            doc.allow = "Customer"
+            doc.for_value = self.links[0].link_name
+            doc.apply_to_all_doctypes = 1
+            doc.save(ignore_permissions = True)
