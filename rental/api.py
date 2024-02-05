@@ -78,7 +78,7 @@ def get_current_credit():
     if not len(customer):
         return  { "value" : 0 , "fieldtype":"Float"}
 
-    warehouse = "{0} - {1}".format(customer[0].link_name , frappe.db.get_value("Company","Kingstech Pvt Ltd","abbr"))
+    warehouse = "{0} - {1}".format(customer[0].link_name , frappe.db.get_value("Company","Astartcentral","abbr"))
     data = frappe.db.sql(f""" Select qty_after_transaction From `tabStock Ledger Entry`
                             where is_cancelled = 0 and warehouse = "{warehouse}" and item_code ="Credit Points" 
                             Order By creation Desc """,as_dict = 1)
