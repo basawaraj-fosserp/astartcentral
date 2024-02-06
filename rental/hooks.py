@@ -122,11 +122,6 @@ doc_events = {
 		"validate": "rental.api.create_warehouse",
 		'on_update':"rental.api.on_update"
 	},
-	"Equipment":{
-		"validate":[
-			"rental.api.create_item_from_equipment",
-		]
-	},
 	"Contact":{
 		"validate": "rental.api.create_user_permission",
 	}
@@ -166,9 +161,9 @@ doc_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-#	"frappe.desk.doctype.event.event.get_events": "rental.event.get_events"
-# }
+override_whitelisted_methods = {
+	"frappe.contacts.doctype.contact.contact.invite_user": "rental.api.invite_user"
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,

@@ -21,5 +21,5 @@ def create_serial_no(equipment , serial_no):
 		"equipment":equipment,
 		'serial_no':serial_no
 	})
-	doc.save()
+	doc.save(ignore_permissions= True)
 	doc.reload()

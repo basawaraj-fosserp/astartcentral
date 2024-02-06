@@ -11,7 +11,7 @@ from frappe.query_builder import Order
 from frappe.query_builder.functions import Coalesce, CombineDatetime
 from frappe.utils import add_days, cint, date_diff, flt, getdate
 from frappe.utils.nestedset import get_descendants_of
-
+from rental.rental.report.credit_ledger.credit_ledger import get_user_roll
 import erpnext
 from erpnext.stock.doctype.inventory_dimension.inventory_dimension import get_inventory_dimensions
 from erpnext.stock.doctype.warehouse.warehouse import apply_warehouse_filter
@@ -41,7 +41,7 @@ def execute(filters: Optional[StockBalanceFilter] = None):
 
 class StockBalanceReport(object):
 	def __init__(self, filters: Optional[StockBalanceFilter]) -> None:
-		if contact := frappe.db.exists("Contact" , {"user":frappe.session.user}):
+		if contact := frappe.db.exists("Contact" , {"user":frappe.session.user}) and get_user_roll():
 			customer = frappe.db.sql(f""" Select name,link_name 
 										From `tabDynamic Link` 
 										where parent = "{contact}" and link_doctype ="Customer" """,as_dict = 1)

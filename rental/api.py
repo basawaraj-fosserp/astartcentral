@@ -90,21 +90,21 @@ def get_current_credit():
 @frappe.whitelist()
 def create_subscription(source_name , target_doc = None):
     doclist = get_mapped_doc(
-		"Customer",
-		source_name,
-		{
-			"Customer": {
+        "Customer",
+        source_name,
+        {
+            "Customer": {
                 "doctype": "Subscription",
                 "field_map": {
-					"doctype":"party_type",
+                    "doctype":"party_type",
                     "name":"party",
                     "custom_agreement_start_date":"start_date",
                     "custom_agreement_end_date":"end_date"
-				},
                 },
-		},
-		target_doc,
-	)
+                },
+        },
+        target_doc,
+    )
     doclist.update({'generate_invoice_at_period_start':1, "generate_new_invoices_past_due_date":1})
     
     doclist.append('plans',{
@@ -132,17 +132,6 @@ def check_subscription_period():
             frappe.db.set_value("User" , user , "enable" , 0)
         
 
-def create_item_from_equipment(self , method):
-    if frappe.db.exists("Item" , self.name):
-        return
-    doc = frappe.new_doc("Item")
-    doc.item_code = self.name
-    doc.valuation_rate = 1
-    doc.has_serial_no = 1
-    doc.item_group = "All Item Groups"
-    doc.stock_uom = "Nos"
-    doc.is_stock_item = 1
-    doc.save()
 
 # on submit of subscription allocate a credit point
 # def allocation_of_credit_bases_payment(self ,method):
@@ -188,3 +177,25 @@ def create_user_permission(self , method):
             doc.for_value = self.links[0].link_name
             doc.apply_to_all_doctypes = 1
             doc.save(ignore_permissions = True)
+
+@frappe.whitelist()
+def invite_user(contact):
+    contact = frappe.get_doc("Contact", contact)
+
+    if not contact.email_id:
+        frappe.throw(_("Please set Email Address"))
+
+    if contact.has_permission("write"):
+        user = frappe.get_doc(
+            {
+                "doctype": "User",
+                "first_name": contact.first_name,
+                "last_name": contact.last_name,
+                "email": contact.email_id,
+                "user_type": "Website User",
+                "send_welcome_email": 1,
+            }
+        )
+        user.insert(ignore_permissions=True)
+        user.add_roles('Customer Rental Booking' , 'Astart Customer')
+        return user.name

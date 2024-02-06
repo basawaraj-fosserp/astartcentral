@@ -2,6 +2,7 @@
 function refreshPage() {
     
     location.reload(true); // Passing true forces a reload from the server, not from the cache
+    
 }
 setInterval(refreshPage, 30000);
 
@@ -9,11 +10,11 @@ setInterval(refreshPage, 30000);
 frappe.ready(function() {
     var element = document.querySelector('.main-bg-screen')
     var main_ele = element.querySelector('.center-div')
-    var h1element = main_ele.querySelector('h1')
+    var h2element = main_ele.querySelector('.room_title')
     frappe.call({
         method:"rental.rental.web_template.show_booking_availability.get_booking_data.current_room_booking_data",
         args:{
-            room:h1element.innerHTML
+            room:h2element.innerHTML
         },
         callback:function(r){
             if(r.message){
@@ -36,7 +37,9 @@ frappe.ready(function() {
                     var center_main_element = document.querySelector('.center-div')
                     var title_of_current = document.createElement('p');
                     title_of_current.innerHTML = data.current_booking.title_of_reservation
+                    title_of_current.className = "current_resevation" 
                     var current_log = document.createElement('b');
+                    current_log.className = 'current_timelog'
                     current_log.innerHTML = data.current_booking.from_time + " "+ data.current_booking.end_time
                     var contact_title = document.createElement('p');
                     var contact_name = document.createElement('b');
@@ -69,6 +72,41 @@ frappe.ready(function() {
                     main_element.appendChild(titleReservation)
                 }
             }
+        }
+    })
+    frappe.call({
+        method:"rental.rental.web_template.show_booking_availability.get_booking_data.get_color_code",
+        callback:function(r){
+            var room_title = document.querySelector('.room_title')
+            room_title.style.color = r.message.room_title
+
+            var current_time = document.querySelector('.current_time')
+            current_time.style.color = r.message.current_time
+
+            var current_day_and_date = document.querySelector('.current_date')
+            current_day_and_date.style.color = r.message.current_day_and_date
+
+            var available = document.querySelector('.available')
+            if(available.innerHTML == "NOT AVAILABLE"){
+                available.style.color = r.message.not_available
+            }else{
+                available.style.color = r.message.available
+            }
+            
+            var upcoming = document.querySelector('.upcomming')
+            upcoming.style.color = r.message.label_upcoming
+
+            var title_of_reservation = document.querySelector('.title_reservation')
+            title_of_reservation.style.color = r.message.title_booking
+
+            var uptiming = document.querySelector('.uptiming')
+            uptiming.style.color = r.message.upcomming_time
+            
+            var current_reservation_title = document.querySelector('.current_resevation')
+            current_reservation_title.style.color = r.message.current_resevation
+
+            var current_reservation_time_log = document.querySelector('.current_timelog')
+            current_reservation_time_log.style.color = r.message.current_reservation_time_log
         }
     })
 })

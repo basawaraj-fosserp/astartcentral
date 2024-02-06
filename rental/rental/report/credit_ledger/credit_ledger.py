@@ -18,7 +18,7 @@ from erpnext.stock.utils import (
 
 
 def execute(filters=None):
-	if contact := frappe.db.exists("Contact" , {"user":frappe.session.user}):
+	if contact := frappe.db.exists("Contact" , {"user":frappe.session.user}) and get_user_roll():
 		customer = frappe.db.sql(f""" Select name,link_name 
 									From `tabDynamic Link` 
 									where parent = "{contact}" and link_doctype ="Customer" """,as_dict = 1)

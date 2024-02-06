@@ -4,13 +4,20 @@
  "docstatus": 0,
  "doctype": "Page",
  "idx": 0,
- "modified": "2024-01-12 11:37:31.521398",
+ "modified": "2024-01-26 14:32:48.402864",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "room-details",
  "owner": "Administrator",
  "page_name": "room-details",
- "roles": [],
+ "roles": [
+  {
+   "role": "Astart Admin"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
  "script": null,
  "standard": "Yes",
  "style": null,

@@ -1,7 +1,7 @@
 import frappe
 from frappe.utils import now , getdate
 from datetime import datetime , timedelta
-
+import json
 @frappe.whitelist()
 def current_room_booking_data(room):
     current_time = now()
@@ -29,7 +29,7 @@ def current_room_booking_data(room):
         elif now_time <= row.from_datetime:
             display_data.append(row)
     current_date = getdate(now())
-    formatted_date = current_date.strftime("%a,%d %B, %Y")
+    formatted_date = current_date.strftime("%a,%d %b, %Y")
     display = {}
     event = []
     if len(display_data) >= 1:
@@ -43,7 +43,9 @@ def current_room_booking_data(room):
 
     return display
 
-
-
+@frappe.whitelist()
+def get_color_code():
+    doc = frappe.get_single('Display Color Settings')
+    return doc
 
     

@@ -7,5 +7,11 @@ frappe.ui.form.on('Customer', {
             })
         },__('Create'));
         frm.remove_custom_button(__("Pricing Rule") , __("Create"))
+    },
+    custom_agreement_start_date:function(frm){
+        if(frm.doc.custom_agreement_start_date){
+            var end_date = frappe.datetime.add_days(frm.doc.custom_agreement_start_date, 365);
+            cur_frm.set_value("custom_agreement_end_date", end_date);
+        }
     }
 })

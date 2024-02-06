@@ -1,0 +1,105 @@
+{
+ "actions": [],
+ "creation": "2024-02-06 16:45:54.262115",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "current_time",
+  "current_day_and_date",
+  "available",
+  "not_available",
+  "column_break_u7mb7",
+  "room_title",
+  "current_reservation_title",
+  "current_reservation_time_log",
+  "column_break_69tm4",
+  "label_upcoming",
+  "title_booking",
+  "upcomming_time"
+ ],
+ "fields": [
+  {
+   "fieldname": "current_time",
+   "fieldtype": "Color",
+   "label": "Current Time"
+  },
+  {
+   "fieldname": "current_day_and_date",
+   "fieldtype": "Color",
+   "label": "Current Day and date"
+  },
+  {
+   "fieldname": "available",
+   "fieldtype": "Color",
+   "label": "Available"
+  },
+  {
+   "fieldname": "not_available",
+   "fieldtype": "Color",
+   "label": "Not Available"
+  },
+  {
+   "fieldname": "room_title",
+   "fieldtype": "Color",
+   "label": "Room Title"
+  },
+  {
+   "fieldname": "label_upcoming",
+   "fieldtype": "Color",
+   "label": "Label UPCOMING"
+  },
+  {
+   "fieldname": "title_booking",
+   "fieldtype": "Color",
+   "label": "Title Reservation"
+  },
+  {
+   "fieldname": "column_break_u7mb7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_69tm4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "upcomming_time",
+   "fieldtype": "Color",
+   "label": "Upcomming Time"
+  },
+  {
+   "fieldname": "current_reservation_title",
+   "fieldtype": "Color",
+   "label": "Current Reservation Title"
+  },
+  {
+   "fieldname": "current_reservation_time_log",
+   "fieldtype": "Color",
+   "label": "Current Reservation Time Log"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-02-06 18:40:24.469750",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Display Color Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
