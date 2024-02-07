@@ -160,13 +160,28 @@ def check_subscription_period():
 def monthly_credit_allocation():
     cu_list = frappe.db.get_list("Customer" , pluck="name")
     for row in cu_list:
-        customer = frappe.get_doc("Customer", row)
-        doc = frappe.new_doc("Credit Allocation")
-        doc.customer = row
-        doc.credit_score = customer.custom_credit_assigned_monthly
-        doc.save(ignore_permissions = True)
-        doc.submit()
+        warehouse = "{0} - {1}".format(row , frappe.db.get_value("Company","Astartcentral","abbr"))
+        sr_doc = frappe.new_doc("Stock Reconciliation")
+        sr_doc.company = "Astartcentral"
+        sr_doc.purpose = "Stock Reconciliation"
+        sr_doc.append('items', {
+            'item_code': "Credit Points",
+            "warehouse": warehouse,
+            'qty': 0,
+        })
+        try:
+            sr_doc.save(ignore_permissions=True)
+            sr_doc.submit()
+            customer = frappe.get_doc("Customer", row)
+            doc = frappe.new_doc("Credit Allocation")
+            doc.customer = row
+            doc.credit_score = customer.custom_credit_assigned_monthly
+            doc.save(ignore_permissions = True)
+            doc.submit()
+        except:
+            frappe.log_error("Customer {0} not found any warehouse for credit point".format(row))
 
+        
 
 def create_user_permission(self , method):
     if self.user and len(self.links) > 0:

@@ -41,12 +41,15 @@ frappe.ready(function() {
                     var current_log = document.createElement('b');
                     current_log.className = 'current_timelog'
                     current_log.innerHTML = data.current_booking.from_time + " "+ data.current_booking.end_time
+                    var br = document.createElement('p');
+                    br.innerHTML = '<br>'
                     var contact_title = document.createElement('p');
                     var contact_name = document.createElement('b');
                     contact_title.innerHTML = "Meeting Leader"
                     contact_name.innerHTML = data.current_booking.contact_name  
                     center_main_element.append(title_of_current)
                     center_main_element.append(current_log)
+                    center_main_element.append(br)
                     center_main_element.append(contact_title)
                     center_main_element.append(contact_name)
                 }
@@ -96,11 +99,15 @@ frappe.ready(function() {
             var upcoming = document.querySelector('.upcomming')
             upcoming.style.color = r.message.label_upcoming
 
-            var title_of_reservation = document.querySelector('.title_reservation')
-            title_of_reservation.style.color = r.message.title_booking
-
+            var title_of_reservation = document.querySelectorAll('.title_reservation')
+            title_of_reservation.forEach(function(element) {
+                element.style.color = r.message.title_booking
+            });
+            
             var uptiming = document.querySelector('.uptiming')
-            uptiming.style.color = r.message.upcomming_time
+            uptiming.forEach(function(element) {
+                element.style.color = r.message.upcomming_time
+            });
             
             var current_reservation_title = document.querySelector('.current_resevation')
             current_reservation_title.style.color = r.message.current_resevation

@@ -70,6 +70,7 @@
         padding-top: 80px;
     }    
     .inner-box3{
+      padding-left: 40px;
         background-color: rgba(0, 0, 0, 0.5);
         height : 100%;
     }
@@ -90,7 +91,6 @@
     .upcomming{
       font-weight: 900;
       text-align:left;
-      margin-left: 20px;
       color: #1D9861;
     }
     body, html {
@@ -102,7 +102,7 @@
       color: white;
     }
     hr{
-      margin-left: 20px;
+      margin-left:0px;
       margin-top: 0.3rem;
       margin-bottom: 0.3rem;
       border: 0;
@@ -111,13 +111,15 @@
     }
     .title_reservation,.uptiming{
       text-align: left;
-      margin-left: 20px;
       color:#B2B2B2;
       font-weight:45px;
     }
     .uptiming{
       color: rgb(0, 0, 0);
       margin-bottom: 20px;
+    }
+    p.current_resevation{
+      margin-top:30px !important;
     }
   </style>
 </head>
@@ -133,7 +135,9 @@
     </div>
   </div>
   <div class="box center-div">
-    <h2 class="room_title">{{ document_name }}</h2>
+    <h2 class="room_title" style="padding-top: 15% !important;">{{ document_name }}</h2>
+    <hr>
+    <br>
   </div>
 
   <div class="box">
