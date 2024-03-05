@@ -4,7 +4,7 @@
 import frappe
 from frappe.model.document import Document
 import json
-from frappe.utils import now , getdate, today , flt
+from frappe.utils import now , getdate, today, flt, get_link_to_form
 from datetime import datetime, timedelta, time
 
 class RoomBooking(Document):
@@ -147,6 +147,8 @@ class RoomBooking(Document):
     def credit_utilization(self):
         time_diff = self.end_datetime - self.from_datetime
         time_diff_hour = time_diff.total_seconds()/3600
+        if not frappe.db.get_value("Room" , self.select_room_type , "utilize_point"):
+            frappe.throw(f"Please Update a Rate per hour in in room {get_link_to_form(self.select_room_type,"Room")}")
         qty = time_diff_hour * frappe.db.get_value("Room" , self.select_room_type , "utilize_point")
         
         from frappe.utils import now , getdate
