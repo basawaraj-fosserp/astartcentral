@@ -147,8 +147,11 @@ class RoomBooking(Document):
     def credit_utilization(self):
         time_diff = self.end_datetime - self.from_datetime
         time_diff_hour = time_diff.total_seconds()/3600
+        if not time_diff_hour:
+            frappe.throw("From time and End time should not be same")
         if not frappe.db.get_value("Room" , self.select_room_type , "utilize_point"):
-            frappe.throw(f"Please Update a Rate per hour in in room {get_link_to_form(self.select_room_type,"Room")}")
+            from frappe.utils import now , getdate, today, flt, get_link_to_form
+            frappe.throw(f"Please Update a Rate per hour in in room {get_link_to_form('Room',self.select_room_type)}")
         qty = time_diff_hour * frappe.db.get_value("Room" , self.select_room_type , "utilize_point")
         
         from frappe.utils import now , getdate

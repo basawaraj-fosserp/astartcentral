@@ -17,6 +17,7 @@ from erpnext.stock.doctype.inventory_dimension.inventory_dimension import get_in
 from erpnext.stock.doctype.warehouse.warehouse import apply_warehouse_filter
 from erpnext.stock.report.stock_ageing.stock_ageing import FIFOSlots, get_average_age
 from erpnext.stock.utils import add_additional_uom_columns
+from rental.rental.doctype.room_booking.room_booking import check_log_in_user
 
 
 class StockBalanceFilter(TypedDict):
@@ -41,17 +42,12 @@ def execute(filters: Optional[StockBalanceFilter] = None):
 
 class StockBalanceReport(object):
 	def __init__(self, filters: Optional[StockBalanceFilter]) -> None:
-		if contact := frappe.db.exists("Contact" , {"user":frappe.session.user}) and get_user_roll():
-			customer = frappe.db.sql(f""" Select name,link_name 
-										From `tabDynamic Link` 
-										where parent = "{contact}" and link_doctype ="Customer" """,as_dict = 1)
-			
-			warehouse = customer[0].link_name + " - " + frappe.db.get_value('Company' , filters.get('company') , 'abbr')
-
-			try:
-				filters.update({'warehouse': warehouse})
-			except Exception:
-				frappe.throw("User is not link with any customer")
+		customer = check_log_in_user(frappe.session.user)
+		warehouse = customer + " - " + frappe.db.get_value('Company' , filters.get('company') , 'abbr')
+		try:
+			filters.update({'warehouse': warehouse})
+		except Exception:
+			frappe.throw("User is not link with any the customer document")
 
 		self.filters = filters
 		self.from_date = getdate(filters.get("from_date"))

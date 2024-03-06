@@ -15,20 +15,15 @@ from erpnext.stock.utils import (
 	is_reposting_item_valuation_in_progress,
 	update_included_uom_in_report,
 )
-
+from rental.rental.doctype.room_booking.room_booking import check_log_in_user
 
 def execute(filters=None):
-	if contact := frappe.db.exists("Contact" , {"user":frappe.session.user}) and get_user_roll():
-		customer = frappe.db.sql(f""" Select name,link_name 
-									From `tabDynamic Link` 
-									where parent = "{contact}" and link_doctype ="Customer" """,as_dict = 1)
-		
-		warehouse = customer[0].link_name + " - " + frappe.db.get_value('Company' , filters.get('company') , 'abbr')
-
-		try:
-			filters.update({'warehouse': warehouse})
-		except Exception:
-			frappe.throw("User is not link with any customer")
+	customer = check_log_in_user(frappe.session.user)
+	warehouse = customer + " - " + frappe.db.get_value('Company' , filters.get('company') , 'abbr')
+	try:
+		filters.update({'warehouse': warehouse})
+	except Exception:
+		frappe.throw("User is not link with any the customer document")
 	is_reposting_item_valuation_in_progress()
 	include_uom = filters.get("include_uom")
 	columns = get_columns(filters)

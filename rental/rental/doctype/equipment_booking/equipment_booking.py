@@ -4,7 +4,7 @@
 import frappe
 from frappe.model.document import Document
 import json
-from frappe.utils import now, getdate
+from frappe.utils import now , getdate, today, flt, get_link_to_form
 from datetime import datetime, timedelta
 
 class EquipmentBooking(Document):
@@ -127,7 +127,8 @@ class EquipmentBooking(Document):
         time_diff = self.to_datetime - self.from_datetime
         time_diff_hour = time_diff.total_seconds()/3600
         from frappe.utils import now , getdate
-        
+        if not time_diff_hour:
+            frappe.throw("From time and To time should not be same")
         now = now()
         current_time = now.split(" ")
 
@@ -139,6 +140,9 @@ class EquipmentBooking(Document):
 
         abbr = frappe.db.get_value("Company" , self.company , 'abbr')
         for row in self.equipment:
+            if not frappe.db.get_value("Equipment" , row.equipment , "rate_per_hour"):
+                from frappe.utils import now , getdate, today, flt, get_link_to_form
+                frappe.throw(f"Please Update a Rate per hour in in equipment {get_link_to_form('Equipment',row.equipment)}")
             qty = time_diff_hour * frappe.db.get_value("Equipment" , row.equipment , "rate_per_hour")
             doc.append("items",{
                 "s_warehouse" : self.customer + " - {0}".format(abbr),
