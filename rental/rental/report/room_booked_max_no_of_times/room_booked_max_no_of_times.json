@@ -1,0 +1,37 @@
+{
+ "_liked_by": "[\"Administrator\"]",
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2024-02-20 22:08:13.593763",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{\"columns\":[{\"fieldname\":\"select_room_type\",\"label\":\"Room Name\",\"fieldtype\":\"Data\",\"options\":null,\"width\":null,\"id\":\"select_room_type\",\"name\":\"Room Name\",\"editable\":false,\"compareValue\":null},{\"fieldname\":\"COUNT\",\"label\":\"Max Booking\",\"fieldtype\":\"Data\",\"options\":null,\"width\":null,\"id\":\"COUNT\",\"name\":\"Max Booking\",\"editable\":false,\"compareValue\":null}],\"filters\":{\"customer\":\"MYCROCELL1\"}}",
+ "modified": "2024-03-08 13:53:41.826435",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Room Booked Max No of Times",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "",
+ "ref_doctype": "Room Booking",
+ "reference_report": "",
+ "report_name": "Room Booked Max No of Times",
+ "report_script": "columns = [\n        {\n        'label': \"Room Name\",\n        'fieldname': \"select_room_type\",\n        'fieldtype': \"Data\",\n        'width': 300  ,\n        },\n        {\n        'label': \"Number Of Booking\",\n        'fieldname': \"number_of_booking\",\n        'fieldtype': \"Data\",\n        'width': 300  ,\n        },  \n        {\n        'label': \"Customer\",\n        'fieldname': \"customer\",\n        'fieldtype': \"Link\",\n        'options': 'Customer',\n        'width': 300  ,\n        }, \n    ]\ncondition = ''\n\nif filters.get('from_date'):\n    condition = condition + \"and from_datetime >= '{0}'\".format(filters.get('from_date'))\nif filters.get('from_date'):\n    condition = condition + \"and end_datetime <= '{0}'\".format(filters.get('end_date'))\nif filters.get('customer'):\n    condition = condition + \"and customer = '{0}'\".format(filters.get('customer'))\n    \nresult = frappe.db.sql(f\"\"\"\n                    Select select_room_type , count(select_room_type) as number_of_booking , customer\n                    From `tabRoom Booking`\n                    Where docstatus = 1 {condition}\n                    \"\"\",as_dict=1)\n                    \n\ndata = columns, result",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Astart Customer"
+  },
+  {
+   "role": "Customer Rental Booking"
+  }
+ ]
+}
