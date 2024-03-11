@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 /* eslint-disable */
 
-frappe.query_reports["Reservation List"] = {
+frappe.query_reports["Reservation List of Equipment Booking"] = {
 	"filters": [
 
 	]

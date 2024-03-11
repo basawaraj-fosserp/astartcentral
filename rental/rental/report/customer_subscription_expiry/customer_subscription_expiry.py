@@ -42,8 +42,6 @@ def execute(filters=None):
 						Where status != 'Cancelled' and party_type = 'Customer' and end_date > '{str(getdate())}' {condition}
 						Order By end_date
 						 """,as_dict= 1)
-	
-	
 
 	for row in data:
 		day_diff = (row.end_date - getdate()).days
