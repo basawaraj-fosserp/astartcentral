@@ -1,0 +1,60 @@
+{
+ "_liked_by": "[\"Administrator\"]",
+ "add_total_row": 0,
+ "columns": [
+  {
+   "fieldname": "custom_agreement_start_date",
+   "fieldtype": "Date",
+   "label": "Customer Agreement Start Date",
+   "width": 0
+  },
+  {
+   "fieldname": "custom_agreement_end_date",
+   "fieldtype": "Date",
+   "label": "Customer Agreement End Date",
+   "width": 0
+  },
+  {
+   "fieldname": "custom_subscription_plan",
+   "fieldtype": "Data",
+   "label": "Subscription Plan",
+   "width": 0
+  }
+ ],
+ "creation": "2024-02-19 14:14:37.762720",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Link",
+   "label": "Customer Name",
+   "mandatory": 1,
+   "options": "Customer",
+   "wildcard_filter": 0
+  }
+ ],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{\"filters\":[],\"fields\":[[\"name\",\"Customer\"],[\"custom_agreement_start_date\",\"Customer\"],[\"custom_agreement_end_date\",\"Customer\"]],\"order_by\":\"`tabCustomer`.`modified` desc\",\"page_length\":20,\"column_widths\":{\"name\":120,\"custom_agreement_start_date\":120,\"custom_agreement_end_date\":120},\"group_by\":null}",
+ "modified": "2024-03-08 15:46:17.243930",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Customer subscription expiry",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT custom_agreement_start_date,custom_agreement_end_date,custom_subscription_plan\nFROM`tabCustomer`\nwhere customer_name=%(customer_name)s",
+ "ref_doctype": "Customer",
+ "report_name": "Customer subscription expiry",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Sales Manager"
+  }
+ ]
+}
