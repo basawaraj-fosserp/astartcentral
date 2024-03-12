@@ -25,13 +25,13 @@ def execute(filters=None):
 		{
 			'label': "From Date",
 			'fieldname': "from_datetime",
-			'fieldtype': "Date",
+			'fieldtype': "Datetime",
 			'width': 200,
 		},
 		{
 			'label': "End Date",
 			'fieldname': "end_datetime",
-			'fieldtype': "Date",
+			'fieldtype': "Datetime",
 			'width': 200,
 		},
 		{

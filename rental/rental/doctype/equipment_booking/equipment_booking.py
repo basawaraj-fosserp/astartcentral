@@ -202,13 +202,13 @@ def get_booking_data(start , end , filters = None):
     return data
 
 
-def convert_inactive_booking():
+def convert_inactive_equipment_booking():
     from frappe.utils import now
     to_datetime = now()
     data = frappe.db.sql(f""" Select name from `tabEquipment Booking` where docstatus = 1 and status = "Active" and to_datetime < '{str(to_datetime)}'""",as_dict = 1)
     
     for row in data:
-        frappe.db.set_value("Room Booking" , row.get('name') , 'status' , 'Inactive',update_modified = False)
+        frappe.db.set_value("Equipment Booking" , row.get('name') , 'status' , 'Inactive',update_modified = False)
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs

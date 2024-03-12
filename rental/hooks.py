@@ -77,7 +77,7 @@ scheduler_events = {
 	"cron": {
 		"0/1 * * * *": [
 			"rental.rental.doctype.room_booking.room_booking.convert_inactive_booking",
-			"rental.rental.doctype.equipment_booking.equipment_booking.convert_inactive_booking"
+			"rental.rental.doctype.equipment_booking.equipment_booking.convert_inactive_equipment_booking"
 		],
     },
 	"daily": [
