@@ -101,7 +101,6 @@ def execute(filters=None):
 		if equipment_booking.get(row.voucher_no):
 			row.update({'equipment_booking' : equipment_booking[row.voucher_no].get('equipment_booking')})
 
-
 	return columns, data
 
 def get_columns(filters):

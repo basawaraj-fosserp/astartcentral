@@ -161,6 +161,12 @@ def monthly_credit_allocation():
     cu_list = frappe.db.get_list("Customer" , pluck="name")
     for row in cu_list:
         warehouse = "{0} - {1}".format(row , frappe.db.get_value("Company","Astartcentral","abbr"))
+
+        sle_list = frappe.db.get_list('Stock Ledger Entry', {'warehouse':warehouse})
+
+        if not len(sle_list):
+            continue
+            
         sr_doc = frappe.new_doc("Stock Reconciliation")
         sr_doc.company = "Astartcentral"
         sr_doc.purpose = "Stock Reconciliation"
