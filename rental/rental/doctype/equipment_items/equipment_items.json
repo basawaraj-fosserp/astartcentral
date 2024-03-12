@@ -22,18 +22,14 @@
   },
   {
    "fieldname": "serial_no",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Serial No",
-   "no_copy": 1,
-   "options": "Equipment Serial No",
-   "reqd": 1
+   "fieldtype": "Data",
+   "label": "Serial No"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-01-03 16:17:33.959770",
+ "modified": "2024-03-12 11:51:45.558203",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Equipment Items",

@@ -73,17 +73,7 @@ class EquipmentBooking(Document):
             frappe.throw("Only future bookings are allowed.<br>Kindly choose the accurate time and date.")
         self.validate_admin_setting()
         self.check_if_available()
-        self.validate_for_multiple_serial_no()
-        
-    def validate_for_multiple_serial_no(self):
-        unic_dict = {}
-        for row in self.equipment:
-            if not (unic_dict.get(row.equipment) == row.serial_no):
-                unic_dict.update({row.equipment : row.serial_no})
-            else:
-                frappe.throw("""Serian No <b>{0}</b> not allow to select in multiple row.
-                                <br><br>
-                                <b>#{1} Row:</b> Please select another serial no""".format(row.serial_no , row.idx))
+       
     def check_if_available(self):
         for row in self.equipment:
             data = frappe.db.sql(f""" SELECT eb.name, eb.from_datetime, eb.to_datetime, eb.from_date, eb.to_date, eb.from_time, eb.to_time
@@ -261,76 +251,3 @@ def set_from_end_time(self):
 			row.update({"to_time":to_datetime })
             
 		return row
-
-@frappe.whitelist()
-@frappe.validate_and_sanitize_search_inputs
-def get_available_serial_no(doctype, txt, searchfield, start, page_len, filters):
-    serial_no = frappe.get_list("Serial No List", {"equipment" : filters.get('item')}, pluck = "serial_no" , ignore_permissions = "True")
-
-    if not serial_no:
-        return ()
-    time = filters.get('from_time')
-    time_list = time.split(" ")
-
-    from_time = time_list[0]
-    from_date = str(filters.get('from_date'))
-    if filters.get('from_time') == "12:00 AM":
-        from_time = "00:00"
-    if filters.get('from_time') == "12:30 AM":
-        from_time = "00:30"
-    time_obj = datetime.strptime(str(from_time), "%H:%M").time()
-    date_obj = datetime.strptime(str(from_date), "%Y-%m-%d")
-
-    combined_datetime = datetime.combine(date_obj.date(), time_obj)
-    if time_list[1] == "PM" and time_list[0] not in ["12:00" , "12:30"]:
-        combined_datetime = combined_datetime + timedelta(hours = 12)
-    from_datetime =  combined_datetime
-
-    time = filters.get("to_time")
-    time_list = time.split(" ")
-
-    end_time = time_list[0]
-    end_date = str(filters.get("to_date"))
-
-    if filters.get("to_time") == "12:00 AM":
-        end_time = "00:00"
-    if filters.get("to_time") == "12:30 AM":
-        end_time = "00:30"
-
-    time_obj = datetime.strptime(str(end_time), "%H:%M").time()
-    date_obj = datetime.strptime(str(end_date), "%Y-%m-%d")
-
-    combined_datetime = datetime.combine(date_obj.date(), time_obj)
-    if time_list[1] == "PM" and time_list[0] not in ["12:00" , "12:30"]:
-        combined_datetime = combined_datetime + timedelta(hours = 12)
-    to_datetime =  combined_datetime
-
-    data = frappe.db.sql(f"""Select eq.name, eq.from_datetime, eq.to_datetime, ei.serial_no 
-                            From `tabEquipment Booking` as eq
-                            Left Join `tabEquipment Items` as ei On eq.name = ei.parent
-                            Where eq.docstatus = 1 and ei.equipment = '{filters.get('item')}' and 
-                            eq.status = "Active"
-                            """,as_dict = 1)
-    sr_list = []          
-    if not data:
-        for row in serial_no:
-            sr_list.append((row , ""))
-        return tuple(sr_list)
-    
-    under_use = []
-    if data:
-        for row in data:
-            if (from_datetime <= (row.from_datetime) < to_datetime or 
-                from_datetime < (row.to_datetime) <= to_datetime or 
-                row.from_datetime <= (from_datetime) < row.to_datetime or 
-                row.from_datetime < (to_datetime) <= row.to_datetime):
-                under_use.append(row.serial_no)
-    
-        for row in serial_no:
-            if row not in under_use:
-                sr_list.append((row , ""))
-        
-        if not sr_list:
-            return ()
-        
-        return tuple(sr_list)
