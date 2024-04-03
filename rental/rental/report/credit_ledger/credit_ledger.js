@@ -34,7 +34,12 @@ frappe.query_reports["Credit Ledger"] = {
 			"get_query": function() {
 				const company = frappe.query_report.get_filter_value('company');
 				return {
-					filters: { 'company': company }
+					filters: { 
+						'company': company,
+						'is_group':0,
+						'disabled':0,
+						'parent_warehouse':''
+					}
 				}
 			}
 		},

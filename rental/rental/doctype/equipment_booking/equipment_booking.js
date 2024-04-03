@@ -12,6 +12,9 @@ frappe.ui.form.on('Equipment Booking', {
 				if (!frm.doc.customer){
 					frm.set_value('customer' , r.message)
 				}
+				if(r.message){
+					frm.set_df_property('customer', 'hidden', 1);
+				}
 			}
 		})
 		frm.call({

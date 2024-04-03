@@ -9,7 +9,7 @@ def validate_customer(self, method):
     create_warehouse(self)
     create_subscription_plan(self)
 
-    
+
 def create_warehouse(self):
     if self.get("__islocal"):
         warehouse = str(self.name) + ' - '+ 'KPL'
@@ -233,8 +233,10 @@ def create_subscription_plan(self):
         doc.currency = "SGD"
         doc.plan_name = self.customer_name + ' - '+ str(self.custom_membership_costmonthly)
         doc.item = "Credit Points"
+        doc.cost = self.custom_membership_costmonthly
         doc.price_determination = 'Fixed Rate'
         doc.billing_interval = 'Month'
         doc.billing_interval_count = 1
         doc.flags.ignore_permissions = 1
         doc.save()
+        self.custom_subscription_plan = doc.name
