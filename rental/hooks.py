@@ -119,7 +119,7 @@ scheduler_events = {
 
 doc_events = {
 	"Customer": {
-		"validate": "rental.api.create_warehouse",
+		"validate": "rental.api.validate_customer",
 		'on_update':"rental.api.on_update"
 	},
 	"Contact":{

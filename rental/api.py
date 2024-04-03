@@ -5,8 +5,12 @@ from frappe.utils import flt, getdate, now
 from frappe.model.mapper import get_mapped_doc
 from datetime import datetime, timedelta, time
 
+def validate_customer(self, method):
+    create_warehouse(self)
+    create_subscription_plan(self)
 
-def create_warehouse(self , method):
+    
+def create_warehouse(self):
     if self.get("__islocal"):
         warehouse = str(self.name) + ' - '+ 'KPL'
         if not frappe.db.exists('Warehouse', warehouse):
@@ -222,3 +226,15 @@ def invite_user(contact):
         user.insert(ignore_permissions=True)
         user.add_roles('Customer Rental Booking' , 'Astart Customer')
         return user.name
+
+def create_subscription_plan(self):
+    if not self.custom_subscription_plan:
+        doc = frappe.new_doc('Subscription Plan')
+        doc.currency = "SGD"
+        doc.plan_name = self.customer_name + ' - '+ str(self.custom_membership_costmonthly)
+        doc.item = "Credit Points"
+        doc.price_determination = 'Fixed Rate'
+        doc.billing_interval = 'Month'
+        doc.billing_interval_count = 1
+        doc.flags.ignore_permissions = 1
+        doc.save()
