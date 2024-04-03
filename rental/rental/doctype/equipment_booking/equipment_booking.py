@@ -73,7 +73,18 @@ class EquipmentBooking(Document):
             frappe.throw("Only future bookings are allowed.<br>Kindly choose the accurate time and date.")
         self.validate_admin_setting()
         self.check_if_available()
-       
+        self.validate_for_multiple_serial_no()
+        
+    def validate_for_multiple_serial_no(self):
+        unic_dict = {}
+        for row in self.equipment:
+            if not (unic_dict.get(row.equipment) == row.serial_no):
+                unic_dict.update({row.equipment : row.serial_no})
+            else:
+                frappe.throw("""Equipment <b>{0}</b> not allow to select in multiple row.
+                                <br><br>
+                                <b>#{1} Row:</b> Please select another Equipment""".format(row.equipment , row.idx))
+    
     def check_if_available(self):
         for row in self.equipment:
             data = frappe.db.sql(f""" SELECT eb.name, eb.from_datetime, eb.to_datetime, eb.from_date, eb.to_date, eb.from_time, eb.to_time

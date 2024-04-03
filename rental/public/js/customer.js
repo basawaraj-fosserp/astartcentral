@@ -10,7 +10,7 @@ frappe.ui.form.on('Customer', {
     },
     custom_agreement_start_date:function(frm){
         if(frm.doc.custom_agreement_start_date){
-            var end_date = frappe.datetime.add_days(frm.doc.custom_agreement_start_date, 365);
+            var end_date = frappe.datetime.add_days(frm.doc.custom_agreement_start_date, 364);
             cur_frm.set_value("custom_agreement_end_date", end_date);
         }
     }

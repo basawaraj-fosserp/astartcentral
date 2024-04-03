@@ -8,9 +8,11 @@ from datetime import datetime, timedelta, time
 
 def create_warehouse(self , method):
     if self.get("__islocal"):
-        doc = frappe.new_doc("Warehouse")
-        doc.warehouse_name = self.name
-        doc.save(ignore_permissions = True)
+        warehouse = str(self.name) + ' - '+ 'KPL'
+        if not frappe.db.exists('Warehouse', warehouse):
+            doc = frappe.new_doc("Warehouse")
+            doc.warehouse_name = self.name
+            doc.save(ignore_permissions = True)
         
 def on_update(self , method):
     data = frappe.db.get_list("Credit Allocation" , filters ={'customer':self.name , "docstatus":1})
