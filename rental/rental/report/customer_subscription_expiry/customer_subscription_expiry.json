@@ -1,6 +1,6 @@
 {
  "_liked_by": "[\"Administrator\"]",
- "add_total_row": 0,
+ "add_total_row": 1,
  "columns": [
   {
    "fieldname": "custom_agreement_start_date",
@@ -39,7 +39,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "json": "{\"filters\":[],\"fields\":[[\"name\",\"Customer\"],[\"custom_agreement_start_date\",\"Customer\"],[\"custom_agreement_end_date\",\"Customer\"]],\"order_by\":\"`tabCustomer`.`modified` desc\",\"page_length\":20,\"column_widths\":{\"name\":120,\"custom_agreement_start_date\":120,\"custom_agreement_end_date\":120},\"group_by\":null}",
- "modified": "2024-03-08 15:46:17.243930",
+ "modified": "2024-04-04 11:57:46.638211",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Customer subscription expiry",
@@ -55,6 +55,9 @@
   },
   {
    "role": "Sales Manager"
+  },
+  {
+   "role": "Astart Admin"
   }
  ]
 }

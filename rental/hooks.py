@@ -120,7 +120,8 @@ scheduler_events = {
 doc_events = {
 	"Customer": {
 		"validate": "rental.api.validate_customer",
-		'on_update':"rental.api.on_update"
+		'on_update':"rental.api.on_update",
+		"on_trash" : "rental.api.on_trash_customer"
 	},
 	"Contact":{
 		"validate": "rental.api.create_user_permission",

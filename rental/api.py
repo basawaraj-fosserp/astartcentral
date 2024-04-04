@@ -4,10 +4,16 @@ from erpnext.stock.stock_ledger import  get_previous_sle , NegativeStockError
 from frappe.utils import flt, getdate, now  
 from frappe.model.mapper import get_mapped_doc
 from datetime import datetime, timedelta, time
+from erpnext.accounts.doctype.subscription.subscription import get_subscription_updates
 
 def validate_customer(self, method):
     create_warehouse(self)
     create_subscription_plan(self)
+    if not self.custom_subscription:
+        sub_doc = create_subscription(source_name = self.name)
+        sub_doc.save()
+        get_subscription_updates(sub_doc.name)
+        self.custom_subscription = sub_doc.name
 
 
 def create_warehouse(self):
@@ -240,3 +246,12 @@ def create_subscription_plan(self):
         doc.flags.ignore_permissions = 1
         doc.save()
         self.custom_subscription_plan = doc.name
+
+
+def on_trash_customer(self, method):
+    warehouse = self.name + ' - ' + 'KPL'
+    if frappe.db.exists('Warehouse', warehouse):
+        try:
+            frappe.db.delete('Warehouse', warehouse)
+        except Exception:
+            frappe.throw(f"Company <b>{self.name}</b> is link with some transaction please contact to Administrator")

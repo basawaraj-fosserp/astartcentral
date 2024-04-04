@@ -1,6 +1,6 @@
 {
  "_liked_by": "[\"Administrator\"]",
- "add_total_row": 0,
+ "add_total_row": 1,
  "columns": [],
  "creation": "2024-02-20 22:08:13.593763",
  "disable_prepared_report": 0,
@@ -11,7 +11,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "json": "{\"columns\":[{\"fieldname\":\"select_room_type\",\"label\":\"Room Name\",\"fieldtype\":\"Data\",\"options\":null,\"width\":null,\"id\":\"select_room_type\",\"name\":\"Room Name\",\"editable\":false,\"compareValue\":null},{\"fieldname\":\"COUNT\",\"label\":\"Max Booking\",\"fieldtype\":\"Data\",\"options\":null,\"width\":null,\"id\":\"COUNT\",\"name\":\"Max Booking\",\"editable\":false,\"compareValue\":null}],\"filters\":{\"customer\":\"MYCROCELL1\"}}",
- "modified": "2024-03-08 13:53:41.826435",
+ "modified": "2024-04-04 11:57:40.277625",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Room Booked Max No of Times",
@@ -32,6 +32,9 @@
   },
   {
    "role": "Customer Rental Booking"
+  },
+  {
+   "role": "Astart Admin"
   }
  ]
 }
