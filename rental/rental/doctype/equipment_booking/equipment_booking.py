@@ -91,7 +91,7 @@ class EquipmentBooking(Document):
                                 From `tabEquipment Booking` as eb
                                 Left Join `tabEquipment Items` as ei ON ei.parent = eb.name
                                 Where
-                                    eb.docstatus = 1 and eb.status="Active" and ei.equipment = "{row.equipment}" """,as_dict = 1)
+                                    eb.docstatus = 1 and eb.status="Active" and ei.equipment = "{row.equipment}" and ei.serial_no = "{row.serial_no}" """,as_dict = 1)
             flag = 0
             error = "Equipment {0} is booked for below schedule. Please choose another time".format(row.equipment)
             error += """<br><br>
@@ -121,7 +121,7 @@ class EquipmentBooking(Document):
                                 """.format(d.get('from_date'), d.get('from_time'), d.get('to_date'), d.get('to_time'))               
                 if flag:
                     error += "</table>"
-                    # frappe.throw(error)
+                    frappe.throw(error)
                 
     
     def credit_utilization(self):
