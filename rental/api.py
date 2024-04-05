@@ -9,6 +9,8 @@ from erpnext.accounts.doctype.subscription.subscription import get_subscription_
 def validate_customer(self, method):
     create_warehouse(self)
     create_subscription_plan(self)
+
+def create_suto_sub(self, method):
     if not self.custom_subscription:
         sub_doc = create_subscription(source_name = self.name)
         sub_doc.save()
