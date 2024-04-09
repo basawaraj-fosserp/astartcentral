@@ -136,7 +136,15 @@ doc_events = {
 
 # Scheduled Tasks
 # ---------------
-
+# This Hooks is commented because of Rental app
+default_mail_footer = """
+	<span>
+		
+		<p class="text-muted">
+			Sent via Astartcentral
+		</p>
+	</span>
+"""
 # scheduler_events = {
 #	"all": [
 #		"rental.tasks.all"

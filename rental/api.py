@@ -9,7 +9,17 @@ from erpnext.accounts.doctype.subscription.subscription import get_subscription_
 def validate_customer(self, method):
     create_warehouse(self)
     create_subscription_plan(self)
+    data = frappe.db.get_list("Credit Allocation" , filters ={'customer':self.name , "docstatus":1})
+    if self.custom_credit_assigned_monthly and not len(data):
+        doc_ = frappe.new_doc("Credit Allocation")
+        doc_.customer = self.name
+        doc_.ignore_linked_doctypes= ['Customer']
+        doc_.posting_date = getdate()
+        doc_.credit_score = self.custom_credit_assigned_monthly
+        doc_.save(ignore_permissions = True)
+        doc_.submit()
 
+        
 def create_suto_sub(self, method):
     if not self.custom_subscription:
         sub_doc = create_subscription(source_name = self.name)
