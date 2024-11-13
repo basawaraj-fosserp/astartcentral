@@ -4,7 +4,7 @@
 import frappe
 from frappe.model.document import Document
 import json
-from frappe.utils import now , getdate, today, flt, get_link_to_form
+from frappe.utils import now , getdate, today, flt, get_link_to_form, get_datetime
 from datetime import datetime, timedelta, time
 
 class RoomBooking(Document):
@@ -23,11 +23,10 @@ class RoomBooking(Document):
     def on_cancel(self):
         from frappe.utils import now
         restricted_min = frappe.db.get_single_value("Admin Setting" , "minutes_before_cancellation")
-        time_before_refund = self.from_datetime + timedelta(minutes= restricted_min)
+        time_before_refund = self.from_datetime + timedelta(minutes= -restricted_min)
         current_time = now()
-        now = datetime.strptime(str( current_time ), "%Y-%m-%d %H:%M:%S.%f")
-        if not (time_before_refund > now > self.from_datetime):
-            frappe.throw(f"Cancellation is only allowed within {restricted_min} minutes from booking time.")
+        if (get_datetime(time_before_refund) < get_datetime(now()) < get_datetime(self.from_datetime)):
+            frappe.throw(f"Cancellation should not be allowed within {restricted_min} min")
         
         doc = frappe.get_doc("Stock Entry" , self.stock_entry)
         doc.cancel()
