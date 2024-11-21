@@ -2,6 +2,11 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Equipment Booking', {
+	setup:function(frm){
+		frm.set_query("equipment", "equipment", () => {
+			return { page_length: 100 };
+		  });
+	},
 	refresh:function(frm){
 		frappe.call({
 			method:"rental.rental.doctype.room_booking.room_booking.check_log_in_user",

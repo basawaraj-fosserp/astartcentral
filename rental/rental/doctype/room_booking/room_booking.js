@@ -2,6 +2,14 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Room Booking', {
+	setup:function(frm){
+		frm.set_query("select_room_type", () => {
+			return { page_length: 100 };
+		  });
+		frm.set_query("customer", () => {
+			return { page_length: 100 };
+		});
+	},
 	refresh:function(frm){
 		frm.add_custom_button(__('Check Availablity'), function() {
 			window.open(`http://astartcentral.fameonu.com/app/room-booking/view/calendar/default?select_room_type=${frm.doc.select_room_type}`)

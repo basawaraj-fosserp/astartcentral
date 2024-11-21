@@ -77,6 +77,20 @@ class RoomBooking(Document):
         self.validate_admin_setting()
         self.check_if_available()
         self.check_admin_validation()
+        self.same_time_booking_validation()
+    
+    def same_time_booking_validation(self):
+        todays_data = frappe.db.sql(f"""
+                    Select name, from_date, from_datetime, customer, end_datetime, end_date, select_room_type
+                    From `tabRoom Booking` as rb
+                    Where docstatus = 1 and customer = '{self.customer}' and from_date = '{self.from_date}'
+        """, as_dict=1)
+        
+
+        for row in todays_data:
+            if (get_datetime(self.from_datetime) <= get_datetime(row.from_datetime) < get_datetime(self.end_datetime)) or (get_datetime(self.from_datetime) < get_datetime(row.end_datetime) <= get_datetime(self.end_datetime)):
+                frappe.throw(f"Company {self.customer} has booking of the Room {row.select_room_type} between selected time.<br>Please choose another time.")
+
 
     def validate_admin_setting(self):
         # #To check Admin setting Refund validation
@@ -178,7 +192,7 @@ class RoomBooking(Document):
         dayofweeks = disable_advance_booking_time * 7
         get_last_date_of_booking = getdate(today()) - timedelta(days= -dayofweeks)
         if getdate(self.from_date) > getdate(get_last_date_of_booking):
-            frappe.throw(f"Booking is only allow to the {frappe.format(get_last_date_of_booking , {'fieldtype': 'Date'})}")
+            frappe.throw(f"Booking is only allow till {frappe.format(get_last_date_of_booking , {'fieldtype': 'Date'})}")
 
         difference = self.end_datetime - self.from_datetime
         booking_hours = difference.total_seconds()/3600
@@ -208,7 +222,7 @@ class RoomBooking(Document):
             frappe.throw(f"The Per-day booking hour limit is {per_day_booking_hours}")
 
         if per_day_booking_hours < (flt(per_day_booking_hours) + flt(hours)) and (per_day_booking_hours-hours) < current_booking_hours:
-            frappe.throw(f"The per-day booking limit is {per_day_booking_hours} hours.<br>Bookings are now limited to {flt(per_day_booking_hours) - flt(hours)} hour.")
+            frappe.throw(f"The per-day booking limit is {per_day_booking_hours} hours.<br>you can book for {flt(per_day_booking_hours) - flt(hours)} hour more.")
 
 @frappe.whitelist()
 def get_booking_data(start , end , filters = None):
@@ -303,3 +317,5 @@ def set_from_end_time(self):
             row.update({"end_time":end_datetime })
 
         return row	
+
+
