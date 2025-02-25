@@ -271,3 +271,8 @@ def on_trash_customer(self, method):
             frappe.db.delete('Warehouse', warehouse)
         except Exception:
             frappe.throw(f"Company <b>{self.name}</b> is link with some transaction please contact to Administrator")
+
+
+@frappe.whitelist()
+def get_all_equipment():
+    return frappe.db.get_list("Equipment", {"status" : "Active"}, pluck="name")

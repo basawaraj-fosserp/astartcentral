@@ -6,8 +6,9 @@ from frappe.model.document import Document
 
 class Equipment(Document):
 	def validate(self):
-		if not self.rate_per_hour:
-			frappe.throw("Input mandatory field <b>Rate Per Hour</b>")
+		pass
+		# if not self.rate_per_hour:
+		# 	frappe.throw("Input mandatory field <b>Rate Per Hour</b>")
 
 @frappe.whitelist()
 def create_serial_no(equipment , serial_no):

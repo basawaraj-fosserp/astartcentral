@@ -133,27 +133,31 @@ class EquipmentBooking(Document):
         now = now()
         current_time = now.split(" ")
 
-        doc = frappe.new_doc("Stock Entry")
-        doc.company = self.company
-        doc.posting_date = getdate()
-        doc.posting_time = current_time[1]
-        doc.stock_entry_type = "Material Issue"
+        # Start Disabel Code (Allow Equipment Booking at 0 rate)  {{{
 
-        abbr = frappe.db.get_value("Company" , self.company , 'abbr')
-        for row in self.equipment:
-            if not frappe.db.get_value("Equipment" , row.equipment , "rate_per_hour"):
-                from frappe.utils import now , getdate, today, flt, get_link_to_form
-                frappe.throw(f"Please Update a Rate per hour in in equipment {get_link_to_form('Equipment',row.equipment)}")
-            qty = time_diff_hour * frappe.db.get_value("Equipment" , row.equipment , "rate_per_hour")
-            doc.append("items",{
-                "s_warehouse" : self.customer + " - {0}".format(abbr),
-                "qty":qty,
-                "item_code":"Credit Points"
-            })
+        # doc = frappe.new_doc("Stock Entry")
+        # doc.company = self.company
+        # doc.posting_date = getdate()
+        # doc.posting_time = current_time[1]
+        # doc.stock_entry_type = "Material Issue"
 
-        doc.save(ignore_permissions = True)
-        doc.submit()
-        frappe.db.set_value("Equipment Booking" , self.name , "stock_entry" , doc.name)
+        # abbr = frappe.db.get_value("Company" , self.company , 'abbr')
+        # for row in self.equipment:
+        #     if not frappe.db.get_value("Equipment" , row.equipment , "rate_per_hour"):
+        #         from frappe.utils import now , getdate, today, flt, get_link_to_form
+        #         frappe.throw(f"Please Update a Rate per hour in in equipment {get_link_to_form('Equipment',row.equipment)}")
+        #     qty = time_diff_hour * frappe.db.get_value("Equipment" , row.equipment , "rate_per_hour")
+        #     doc.append("items",{
+        #         "s_warehouse" : self.customer + " - {0}".format(abbr),
+        #         "qty":qty,
+        #         "item_code":"Credit Points"
+        #     })
+
+        # doc.save(ignore_permissions = True)
+        # doc.submit()
+        # frappe.db.set_value("Equipment Booking" , self.name , "stock_entry" , doc.name)
+
+        # End Disable Code   }}}
 
     def validate_admin_setting(self):
         # #To check Admin setting Refund validation
