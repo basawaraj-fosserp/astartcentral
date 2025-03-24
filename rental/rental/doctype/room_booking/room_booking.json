@@ -28,6 +28,7 @@
   "contact_number",
   "amended_from",
   "status",
+  "color",
   "from_web_form",
   "stock_entry",
   "booking_time"
@@ -180,12 +181,18 @@
    "fieldtype": "Datetime",
    "hidden": 1,
    "label": "Booking Time"
+  },
+  {
+   "fetch_from": "select_room_type.color",
+   "fieldname": "color",
+   "fieldtype": "Color",
+   "label": "Color"
   }
  ],
  "is_calendar_and_gantt": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-01-26 11:48:48.870294",
+ "modified": "2025-03-24 14:52:58.916374",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Room Booking",

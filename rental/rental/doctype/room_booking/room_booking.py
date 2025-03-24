@@ -231,8 +231,15 @@ def get_booking_data(start , end , filters = None):
     conditions = ''
     from frappe.desk.calendar import get_event_conditions
     conditions = get_event_conditions("Room Booking", filters)
-    data = frappe.db.sql(f""" SELECT `tabRoom Booking`.name, `tabRoom Booking`.from_datetime, `tabRoom Booking`.end_datetime, `tabRoom Booking`.title_of_reservation, 
-                            `tabRoom Booking`.select_room_type, `tabRoom Booking`.status, `tabRoom Booking`.from_time, `tabRoom Booking`.end_time, room.color
+    data = frappe.db.sql(f""" SELECT `tabRoom Booking`.name, 
+                            `tabRoom Booking`.from_datetime, 
+                            `tabRoom Booking`.end_datetime, 
+                            `tabRoom Booking`.title_of_reservation, 
+                            `tabRoom Booking`.select_room_type, 
+                            `tabRoom Booking`.status, 
+                            `tabRoom Booking`.from_time, 
+                            `tabRoom Booking`.end_time, 
+                            room.color
                             From `tabRoom Booking` 
                             left join `tabRoom` as room ON room.name = `tabRoom Booking`.select_room_type
                             where `tabRoom Booking`.docstatus = 1 {conditions}
