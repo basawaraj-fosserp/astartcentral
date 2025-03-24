@@ -276,3 +276,7 @@ def on_trash_customer(self, method):
 @frappe.whitelist()
 def get_all_equipment():
     return frappe.db.get_list("Equipment", {"status" : "Active"}, pluck="name")
+
+@frappe.whitelist()
+def get_all_room():
+    return frappe.db.get_list("Room", pluck="name")

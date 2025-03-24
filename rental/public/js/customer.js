@@ -29,5 +29,22 @@ frappe.ui.form.on('Customer', {
                 frm.refresh_field('custom_agreement_on_equipment');
             }
         })
+    },
+    custom_select_all_room : (frm) =>{
+        console.log("jjjj")
+        frappe.call({
+            method : "rental.api.get_all_room",
+            args : {
+
+            },
+            callback:(r)=>{
+                frm.doc.custom_agreement_on_room = []
+                $.each(r.message, function(i, d) {
+                    var row = frm.add_child('custom_agreement_on_room');
+                    row.room = d
+                });
+                frm.refresh_field('custom_agreement_on_room');
+            }
+        })
     }
 })
