@@ -186,26 +186,71 @@ class EquipmentBooking(Document):
             frappe.throw(f"Booking is only allowed from {admin_from_time} to {admin_to_time}")
 
 @frappe.whitelist()
-def get_booking_data(start , end , filters = None):
-    filters = json.loads(filters)
-    
-    conditions = ''
+def get_booking_data(start, end, filters=None):
+    """
+    Fetch Equipment Booking calendar data within a date range.
 
+    Args:
+        start (str): Start datetime string for the calendar view.
+        end   (str): End datetime string for the calendar view.
+        filters (str | None): JSON-encoded filter dict from the calendar widget.
+
+    Returns:
+        list[dict]: Booking rows enriched with `title` and `allDay` fields.
+    """
+    # --- Parse & validate filters ------------------------------------
+    if filters and isinstance(filters, str):
+        try:
+            filters = json.loads(filters)
+        except (ValueError, TypeError):
+            filters = {}
+    else:
+        filters = filters or {}
+
+    # --- Build safe event conditions (uses frappe internal escaping) --
     from frappe.desk.calendar import get_event_conditions
-
     conditions = get_event_conditions("Equipment Booking", filters)
 
-    data = frappe.db.sql(f""" SELECT eb.name, eb.from_datetime, eb.to_datetime, eb.title_of_reservation,
-                            eb.status, `tabEquipment Items`.equipment, eb.from_time , eb.to_time,`tabEquipment Items`.serial_no, 
-                            equip.custom_color as color
-                            From `tabEquipment Booking` as eb
-                            left join `tabEquipment Items`  ON `tabEquipment Items`.parent = eb.name
-                            left Join `tabEquipment` as equip ON equip.name = `tabEquipment Items`.equipment
-                            where eb.docstatus = 1 {conditions}
-                            Order by eb.to_datetime """, as_dict = 1)
-    
+    # --- Query -------------------------------------------------------
+    # `conditions` comes from Frappe's own helper (already escaped).
+    # Date range is passed as explicit bind values — never interpolated.
+    data = frappe.db.sql(
+        """
+        SELECT
+            eb.name,
+            eb.from_datetime,
+            eb.to_datetime,
+            eb.title_of_reservation,
+            eb.status,
+            ei.equipment,
+            ei.serial_no,
+            eb.from_time,
+            eb.to_time,
+            equip.custom_color AS color
+        FROM
+            `tabEquipment Booking` AS eb
+            LEFT JOIN `tabEquipment Items` AS ei
+                ON ei.parent = eb.name
+            LEFT JOIN `tabEquipment` AS equip
+                ON equip.name = ei.equipment
+        WHERE
+            eb.docstatus = 1
+            AND eb.from_datetime <= %(end)s
+            AND eb.to_datetime   >= %(start)s
+            {conditions}
+        ORDER BY
+            eb.from_datetime ASC
+        """.format(conditions=conditions),
+        {"start": start, "end": end},
+        as_dict=1,
+    )
+
+    # --- Enrich rows -------------------------------------------------
     for row in data:
-        row.update({'title' : f"{row.get('equipment')} SR={row.get('serial_no')}" , "allDay": 0})
+        equipment  = row.get("equipment") or "N/A"
+        serial_no  = row.get("serial_no") or "N/A"
+        row["title"]  = f"{equipment} | SR: {serial_no}"
+        row["allDay"] = 0
 
     return data
 
