@@ -19,8 +19,9 @@ class EquipmentBooking(Document):
         self.credit_utilization()
 
     def on_cancel(self):
-        doc = frappe.get_doc("Stock Entry" , self.stock_entry)
-        doc.cancel()
+        if self.stock_entry:
+            doc = frappe.get_doc("Stock Entry" , self.stock_entry)
+            doc.cancel()
 
     def validate(self):
         time = self.from_time
