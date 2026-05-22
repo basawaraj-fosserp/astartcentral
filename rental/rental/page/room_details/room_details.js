@@ -29,7 +29,7 @@ frappe.room_details = {
 				'room' : page.title_field.get_value()
 			},
 			callback:function(r){
-				var data = {'data':r.message};
+				var data = {'data':r.message, 'base_url': window.location.origin};
 				var parent = page.main.find(".content").empty();
 				$(frappe.render_template('room_details', data)).appendTo(me.body);
 			}

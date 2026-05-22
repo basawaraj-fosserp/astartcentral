@@ -178,10 +178,10 @@ class EquipmentBooking(Document):
         from_time = admin_from_time.split(' ')
         end_time = admin_to_time.split(' ')
 
-        if from_time[1] == "PM":
-            ad_from_datetime = ad_from_datetime + timedelta(hours = 12)
-        if end_time[1] == "PM":
-            ad_to_datetime = ad_to_datetime + timedelta(hours = 12)
+        if from_time[1] == "PM" and from_time[0] not in ["12:00", "12:30"]:
+            ad_from_datetime = ad_from_datetime + timedelta(hours=12)
+        if end_time[1] == "PM" and end_time[0] not in ["12:00", "12:30"]:
+            ad_to_datetime = ad_to_datetime + timedelta(hours=12)
 
         if not ((ad_from_datetime <= self.from_datetime <= ad_to_datetime) and (ad_from_datetime <= self.to_datetime <= ad_to_datetime)):
             frappe.throw(f"Booking is only allowed from {admin_from_time} to {admin_to_time}")
@@ -259,7 +259,7 @@ def get_booking_data(start, end, filters=None):
 def convert_inactive_equipment_booking():
     from frappe.utils import now
     to_datetime = now()
-    data = frappe.db.sql(f""" Select name from `tabEquipment Booking` where docstatus = 1 and status = "Active" and to_datetime < '{str(to_datetime)}'""",as_dict = 1)
+    data = frappe.db.sql(""" Select name from `tabEquipment Booking` where docstatus = 1 and status = "Active" and to_datetime < %s""", str(to_datetime), as_dict=1)
     
     for row in data:
         frappe.db.set_value("Equipment Booking" , row.get('name') , 'status' , 'Inactive',update_modified = False)
@@ -268,9 +268,9 @@ def convert_inactive_equipment_booking():
 @frappe.validate_and_sanitize_search_inputs
 def get_equipment(doctype, txt, searchfield, start, page_len, filters):
     # filters = json.loads(filters)
-    data = frappe.db.sql(f""" Select Equipment
+    data = frappe.db.sql(""" Select Equipment
                             From `tabAgreement on Equipment`
-                            Where parent = '{filters.get('customer')}' """)
+                            Where parent = %s """, filters.get('customer'))
     return data
 
 @frappe.whitelist()

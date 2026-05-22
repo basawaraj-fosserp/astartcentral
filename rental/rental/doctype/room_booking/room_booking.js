@@ -12,7 +12,7 @@ frappe.ui.form.on('Room Booking', {
 	},
 	refresh:function(frm){
 		frm.add_custom_button(__('Check Availablity'), function() {
-			window.open(`http://astartcentral.fameonu.com/app/room-booking/view/calendar/default?select_room_type=${frm.doc.select_room_type}`)
+			window.open(`${window.location.origin}/app/room-booking/view/calendar/default?select_room_type=${frm.doc.select_room_type}`)
 		})
 		frappe.call({
 			method:"rental.rental.doctype.room_booking.room_booking.check_log_in_user",

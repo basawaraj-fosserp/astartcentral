@@ -14,11 +14,15 @@ frappe.ui.form.on('Equipment Booking', {
 				user:frappe.session.user
 			},
 			callback:function(r){
-				if (!frm.doc.customer){
-					frm.set_value('customer' , r.message)
-				}
-				if(r.message){
+				if (r.message) {
+					// non-admin: hide and auto-fill customer only on new doc
 					frm.set_df_property('customer', 'hidden', 1);
+					if (frm.is_new() && !frm.doc.customer) {
+						frm.set_value('customer', r.message);
+					}
+				} else {
+					// admin: customer field visible and editable
+					frm.set_df_property('customer', 'hidden', 0);
 				}
 			}
 		})
@@ -27,8 +31,8 @@ frappe.ui.form.on('Equipment Booking', {
 			args:{
 				self:frm.doc
 			},
-			callback:function(r){
-				
+			callback:function() {
+
 			}
 		})
 		
@@ -42,7 +46,7 @@ frappe.ui.form.on('Equipment Booking', {
 		}
 	},
 	customer:function(frm){
-		frm.set_query("equipment", "equipment", function(doc, cdt, cdn) {
+		frm.set_query("equipment", "equipment", function() {
 			return {
 				query: "rental.rental.doctype.equipment_booking.equipment_booking.get_equipment",
 				filters: {

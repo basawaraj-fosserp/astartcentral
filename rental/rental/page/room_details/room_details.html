@@ -60,7 +60,7 @@
           <center>{{ row.idx }}</center>
         </td>
         <td>
-            <a href="https://astartcentral.fameonu.com/app/room/{{ row.name }}">{{ row.name }}</a>
+            <a href="{{ base_url }}/app/room/{{ row.name }}">{{ row.name }}</a>
         </td>
         <td>
             {{ row.description }}
@@ -70,7 +70,7 @@
         </td>
         <td width="10%">
           
-            <a href="https://astartcentral.fameonu.com/{{ row.link }}">
+            <a href="{{ base_url }}/{{ row.link }}">
             <button class="zoom-effect-button">
                 <i  style="font-size:24px" class="fa">&#xf073;</i>
             </button>
