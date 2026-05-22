@@ -8,6 +8,21 @@ from frappe.model.mapper import get_mapped_doc
 
 
 class CreditRequest(Document):
+	def validate(self):
+		if not self.customer:
+			frappe.throw("Customer is required before saving.")
+		self.create_customer_warehouse_if_not_exists()
+
+	def create_customer_warehouse_if_not_exists(self):
+		company_abbr = frappe.db.get_value("Company", self.company, "abbr")
+		warehouse_name = "{0} - {1}".format(self.customer, company_abbr)
+		if not frappe.db.exists("Warehouse", warehouse_name):
+			warehouse = frappe.new_doc("Warehouse")
+			warehouse.warehouse_name = self.customer
+			warehouse.company = self.company
+			warehouse.save(ignore_permissions=True)
+			frappe.msgprint("Warehouse <b>{0}</b> created automatically.".format(warehouse_name))
+
 	def on_submit(self):
 		doc = frappe.new_doc("Material Request")
 		doc.material_request_type = "Purchase"

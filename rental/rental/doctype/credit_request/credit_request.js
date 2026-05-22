@@ -9,9 +9,15 @@ frappe.ui.form.on('Credit Request', {
 				user:frappe.session.user
 			},
 			callback:function(r){
-				if (!frm.doc.customer){
-					frm.set_value('customer' , r.message)
+				if (r.message) {
+					// non-admin: auto-fill and lock the customer field
 					frm.set_df_property('customer', 'read_only', 1);
+					if (frm.is_new()) {
+						frm.set_value('customer', r.message);
+					}
+				} else {
+					// admin: customer field remains editable
+					frm.set_df_property('customer', 'read_only', 0);
 				}
 			}
 		})
