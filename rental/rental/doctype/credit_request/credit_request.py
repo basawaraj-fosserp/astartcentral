@@ -35,12 +35,14 @@ class CreditRequest(Document):
 			"warehouse":"{0} - {1}".format(self.customer , frappe.db.get_value("Company" , self.company , "abbr"))
 		})
 		doc.save(ignore_permissions = True)
+		doc.flags.ignore_permissions = True
 		doc.submit()
 		self.db_set("material_request" , doc.name)
 		self.db_set("status" , "Pending")
 	
 	def on_cancel(self):
 		doc = frappe.get_doc("Material Request" , self.material_request)
+		doc.flags.ignore_permissions = True
 		doc.cancel()
 
 @frappe.whitelist()
