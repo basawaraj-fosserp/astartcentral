@@ -1,5 +1,19 @@
 frappe.ui.form.on('Customer', {
     refresh:function(frm){
+        frm.set_query('room', 'custom_agreement_on_room', function() {
+            return {
+                filters: {
+                    enable_booking: 1
+                }
+            };
+        });
+        frm.set_query('equipment', 'custom_agreement_on_equipment', function() {
+            return {
+                filters: {
+                    status: 'Active'
+                }
+            };
+        });
         frm.add_custom_button(__('Create Subscription'), function () {
             frappe.model.open_mapped_doc({
                 method: "rental.api.create_subscription",
