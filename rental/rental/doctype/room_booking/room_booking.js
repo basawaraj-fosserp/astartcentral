@@ -3,9 +3,14 @@
 
 frappe.ui.form.on('Room Booking', {
 	setup:function(frm){
-		frm.set_query("select_room_type", () => {
-			return { page_length: 100 };
-		  });
+		frm.set_query("select_room_type", function() {
+			return {
+				query: "rental.rental.doctype.room_booking.room_booking.get_rooms",
+				filters: {
+					customer: frm.doc.customer
+				}
+			};
+		});
 		frm.set_query("customer", () => {
 			return { page_length: 100 };
 		});
@@ -51,13 +56,6 @@ frappe.ui.form.on('Room Booking', {
 		
 	},
 	customer:function(frm){
-		frm.set_query("select_room_type", function(doc, cdt, cdn) {
-			return {
-				query: "rental.rental.doctype.room_booking.room_booking.get_rooms",
-				filters: {
-					'customer': frm.doc.customer
-				}
-			}
-		});
+		frm.set_value("select_room_type", "");
 	}
 });

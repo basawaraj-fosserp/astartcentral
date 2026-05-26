@@ -3,9 +3,14 @@
 
 frappe.ui.form.on('Equipment Booking', {
 	setup:function(frm){
-		frm.set_query("equipment", "equipment", () => {
-			return { page_length: 100 };
-		  });
+		frm.set_query("equipment", "equipment", function() {
+			return {
+				query: "rental.rental.doctype.equipment_booking.equipment_booking.get_equipment",
+				filters: {
+					customer: frm.doc.customer
+				}
+			};
+		});
 	},
 	refresh:function(frm){
 		frappe.call({
@@ -46,13 +51,7 @@ frappe.ui.form.on('Equipment Booking', {
 		}
 	},
 	customer:function(frm){
-		frm.set_query("equipment", "equipment", function() {
-			return {
-				query: "rental.rental.doctype.equipment_booking.equipment_booking.get_equipment",
-				filters: {
-					'customer': frm.doc.customer
-				}
-			}
-		});
+		frm.clear_table("equipment");
+		frm.refresh_field("equipment");
 	}
 });

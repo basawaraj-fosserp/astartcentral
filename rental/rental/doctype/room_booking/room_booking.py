@@ -276,11 +276,27 @@ def check_log_in_user(user):
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def get_rooms(doctype, txt, searchfield, start, page_len, filters):
-    # filters = json.loads(filters)
-    data = frappe.db.sql(f""" Select room
-                            From `tabAgreement on Room`
-                            Where parent = '{filters.get('customer')}' """)
-    return data
+    customer = filters.get("customer") if filters else None
+    conditions = ""
+    if customer:
+        conditions = "AND aor.parent = %(customer)s"
+
+    return frappe.db.sql(
+        """
+        SELECT aor.room
+        FROM `tabAgreement on Room` aor
+        INNER JOIN `tabRoom` r ON r.name = aor.room
+        WHERE (aor.room LIKE %(txt)s OR r.room_name LIKE %(txt)s)
+        {conditions}
+        LIMIT %(start)s, %(page_len)s
+        """.format(conditions=conditions),
+        {
+            "txt": f"%{txt}%",
+            "customer": customer,
+            "start": start,
+            "page_len": page_len,
+        },
+    )
 
 @frappe.whitelist()
 def set_from_end_time(self):

@@ -267,11 +267,39 @@ def convert_inactive_equipment_booking():
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def get_equipment(doctype, txt, searchfield, start, page_len, filters):
-    # filters = json.loads(filters)
-    data = frappe.db.sql(""" Select Equipment
-                            From `tabAgreement on Equipment`
-                            Where parent = %s """, filters.get('customer'))
-    return data
+    customer = filters.get("customer") if filters else None
+
+    if customer:
+        return frappe.db.sql(
+            """
+            SELECT ae.equipment
+            FROM `tabAgreement on Equipment` ae
+            INNER JOIN `tabEquipment` e ON e.name = ae.equipment
+            WHERE ae.parent = %(customer)s
+              AND (ae.equipment LIKE %(txt)s OR e.equipment_name LIKE %(txt)s)
+            LIMIT %(start)s, %(page_len)s
+            """,
+            {
+                "txt": f"%{txt}%",
+                "customer": customer,
+                "start": start,
+                "page_len": page_len,
+            },
+        )
+
+    return frappe.db.sql(
+        """
+        SELECT name, equipment_name
+        FROM `tabEquipment`
+        WHERE (name LIKE %(txt)s OR equipment_name LIKE %(txt)s)
+        LIMIT %(start)s, %(page_len)s
+        """,
+        {
+            "txt": f"%{txt}%",
+            "start": start,
+            "page_len": page_len,
+        },
+    )
 
 @frappe.whitelist()
 def set_from_end_time(self):
