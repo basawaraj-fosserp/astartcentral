@@ -247,7 +247,7 @@ def get_booking_data(start , end , filters = None):
                             room.color
                             From `tabRoom Booking` 
                             left join `tabRoom` as room ON room.name = `tabRoom Booking`.select_room_type
-                            where `tabRoom Booking`.docstatus = 1 {conditions}
+                            where `tabRoom Booking`.docstatus = 1 and `tabRoom Booking`.status != 'Inactive' {conditions}
                             Order by `tabRoom Booking`.end_datetime """, as_dict = 1)
     
     for row in data:

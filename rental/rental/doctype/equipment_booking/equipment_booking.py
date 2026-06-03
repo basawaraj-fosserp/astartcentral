@@ -235,7 +235,7 @@ def get_booking_data(start, end, filters=None):
             LEFT JOIN `tabEquipment` AS equip
                 ON equip.name = ei.equipment
         WHERE
-            eb.docstatus = 1
+            eb.docstatus = 1 and ed.status != 'Inactive'
             AND eb.from_datetime <= %(end)s
             AND eb.to_datetime   >= %(start)s
             {conditions}
