@@ -21,14 +21,19 @@ class RoomBooking(Document):
         self.credit_utilization()
 
     def on_cancel(self):
-        from frappe.utils import now
-        restricted_min = frappe.db.get_single_value("Admin Setting" , "minutes_before_cancellation")
-        time_before_refund = self.from_datetime + timedelta(minutes= -restricted_min)
-        current_time = now()
-        if (get_datetime(time_before_refund) < get_datetime(now()) < get_datetime(self.from_datetime)):
-            frappe.throw(f"Cancellation should not be allowed within {restricted_min} min")
+        from frappe.utils import now, get_datetime
+
+        if get_datetime(self.from_datetime) < get_datetime(now()):
+            frappe.throw(f"Cancellation not allowed after the booking time <b>{self.from_datetime}</b>")
+
+        restricted_min = frappe.db.get_single_value("Admin Setting", "minutes_before_cancellation")
         
-        doc = frappe.get_doc("Stock Entry" , self.stock_entry)
+        if restricted_min:  # Guard against None
+            time_before_refund = get_datetime(self.from_datetime) + timedelta(minutes=-restricted_min)
+            if get_datetime(time_before_refund) < get_datetime(now()) < get_datetime(self.from_datetime):
+                frappe.throw(f"Cancellation should not be allowed within {restricted_min} min")
+
+        doc = frappe.get_doc("Stock Entry", self.stock_entry)
         doc.cancel()
 
     def validate(self):
