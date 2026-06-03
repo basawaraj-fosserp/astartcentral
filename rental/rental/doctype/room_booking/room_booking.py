@@ -304,6 +304,16 @@ def get_rooms(doctype, txt, searchfield, start, page_len, filters):
     )
 
 @frappe.whitelist()
+def get_current_time():
+    from frappe.utils import now_datetime, today
+    current = now_datetime()
+    return {
+        "today": str(today()),
+        "hours": current.hour,
+        "minutes": current.minute
+    }
+
+@frappe.whitelist()
 def set_from_end_time(self):
     self = json.loads(self)
     if self.get('from_datetime') and self.get('end_datetime') and not(self.get('from_time') and self.get('end_time')):
