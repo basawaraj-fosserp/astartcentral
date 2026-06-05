@@ -40,6 +40,12 @@ class RoomBooking(Document):
         from frappe.utils import now , getdate
         if not frappe.db.get_value("Room" , self.select_room_type , "enable_booking"):
             frappe.throw("The Room <b>{0}</b> is not allow to book".format(self.select_room_type))
+        from_date_obj = datetime.strptime(str(self.from_date), "%Y-%m-%d")
+        end_date_obj  = datetime.strptime(str(self.end_date),  "%Y-%m-%d")
+        if from_date_obj.weekday() >= 5:
+            frappe.throw("Bookings are only allowed on weekdays (Monday – Friday).<br>Please select a valid <b>From Date</b>.")
+        if end_date_obj.weekday() >= 5:
+            frappe.throw("Bookings are only allowed on weekdays (Monday – Friday).<br>Please select a valid <b>End Date</b>.")
         time = self.from_time
         time_list = time.split(" ")
 
@@ -86,15 +92,20 @@ class RoomBooking(Document):
     
     def same_time_booking_validation(self):
         todays_data = frappe.db.sql(f"""
-                    Select name, from_date, from_datetime, customer, end_datetime, end_date, select_room_type
+                    Select name, from_date, from_datetime, from_time, customer, end_datetime, end_date, end_time, select_room_type
                     From `tabRoom Booking` as rb
                     Where docstatus = 1 and customer = '{self.customer}' and from_date = '{self.from_date}'
         """, as_dict=1)
-        
 
         for row in todays_data:
-            if (get_datetime(self.from_datetime) <= get_datetime(row.from_datetime) < get_datetime(self.end_datetime)) or (get_datetime(self.from_datetime) < get_datetime(row.end_datetime) <= get_datetime(self.end_datetime)):
-                frappe.throw(f"Company {self.customer} has booking of the Room {row.select_room_type} between selected time.<br>Please choose another time.")
+            if get_datetime(self.from_datetime) < get_datetime(row.end_datetime) and \
+               get_datetime(self.end_datetime) > get_datetime(row.from_datetime):
+                frappe.throw(
+                    f"Customer <b>{self.customer}</b> already has a booking for room "
+                    f"<b>{row.select_room_type}</b> from <b>{row.from_time}</b> to "
+                    f"<b>{row.end_time}</b> on this date.<br>"
+                    f"Simultaneous room bookings are not allowed. Please choose a different time."
+                )
 
 
     def validate_admin_setting(self):
@@ -302,6 +313,34 @@ def get_rooms(doctype, txt, searchfield, start, page_len, filters):
             "page_len": page_len,
         },
     )
+
+@frappe.whitelist()
+def get_time_picker_data(room, date):
+    admin_from = frappe.db.get_single_value("Admin Setting", "booking_hours_from")
+    admin_to   = frappe.db.get_single_value("Admin Setting", "booking_hours_to")
+
+    booked = frappe.db.sql("""
+        SELECT from_time, end_time
+        FROM `tabRoom Booking`
+        WHERE docstatus = 1
+          AND status = 'Active'
+          AND select_room_type = %(room)s
+          AND from_date = %(date)s
+    """, {"room": room, "date": date}, as_dict=True)
+
+    max_booking_hours = frappe.db.get_single_value("Admin Setting", "max_booking_hours_per_room_booking")
+
+    from frappe.utils import now_datetime, getdate
+    current = now_datetime()
+    booking_date = getdate(date)
+    return {
+        "admin_from": admin_from,
+        "admin_to": admin_to,
+        "booked_slots": booked,
+        "is_today": booking_date == getdate(current.date()),
+        "current_minutes": current.hour * 60 + current.minute,
+        "max_booking_hours": max_booking_hours or 0
+    }
 
 @frappe.whitelist()
 def get_current_time():

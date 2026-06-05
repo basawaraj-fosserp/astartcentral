@@ -14,6 +14,8 @@
   "section_break_7r6rh",
   "naming_series",
   "from_date",
+  "time_picker_btn",
+  "selected_time_display",
   "from_time",
   "from_datetime",
   "column_break_vjirp",
@@ -125,10 +127,22 @@
    "fieldtype": "Section Break"
   },
   {
+   "fieldname": "time_picker_btn",
+   "fieldtype": "Button",
+   "label": "Select Time"
+  },
+  {
+   "fieldname": "selected_time_display",
+   "fieldtype": "Data",
+   "label": "Selected Time Range",
+   "read_only": 1
+  },
+  {
    "fieldname": "from_time",
    "fieldtype": "Select",
    "label": "From Time",
    "options": "\n12:00 AM\n12:30 AM\n01:00 AM\n01:30 AM\n02:00 AM\n02:30 AM\n03:00 AM\n03:30 AM\n04:00 AM\n04:30 AM\n05:00 AM\n05:30 AM\n06:00 AM\n06:30 AM\n07:00 AM\n07:30 AM\n08:00 AM\n08:30 AM\n09:00 AM\n09:30 AM\n10:00 AM\n10:30 AM\n11:00 AM\n11:30 AM\n12:00 PM\n12:30 PM\n01:00 PM\n01:30 PM\n02:00 PM\n02:30 PM\n03:00 PM\n03:30 PM\n04:00 PM\n04:30 PM\n05:00 PM\n05:30 PM\n06:00 PM\n06:30 PM\n07:00 PM\n07:30 PM\n08:00 PM\n08:30 PM\n09:00 PM\n09:30 PM\n10:00 PM\n10:30 PM\n11:00 PM\n11:30 PM",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -136,6 +150,7 @@
    "fieldtype": "Select",
    "label": "End time",
    "options": "\n12:00 AM\n12:30 AM\n01:00 AM\n01:30 AM\n02:00 AM\n02:30 AM\n03:00 AM\n03:30 AM\n04:00 AM\n04:30 AM\n05:00 AM\n05:30 AM\n06:00 AM\n06:30 AM\n07:00 AM\n07:30 AM\n08:00 AM\n08:30 AM\n09:00 AM\n09:30 AM\n10:00 AM\n10:30 AM\n11:00 AM\n11:30 AM\n12:00 PM\n12:30 PM\n01:00 PM\n01:30 PM\n02:00 PM\n02:30 PM\n03:00 PM\n03:30 PM\n04:00 PM\n04:30 PM\n05:00 PM\n05:30 PM\n06:00 PM\n06:30 PM\n07:00 PM\n07:30 PM\n08:00 PM\n08:30 PM\n09:00 PM\n09:30 PM\n10:00 PM\n10:30 PM\n11:00 PM\n11:30 PM",
+   "read_only": 1,
    "reqd": 1
   },
   {
