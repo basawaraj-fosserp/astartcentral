@@ -386,6 +386,20 @@ frappe.ui.form.on('Room Booking', {
 	},
 
 	from_date: function(frm) {
+		if (frm.doc.from_date) {
+			const selected = new Date(frm.doc.from_date);
+			const today = new Date();
+			if (selected.getMonth() !== today.getMonth() || selected.getFullYear() !== today.getFullYear()) {
+				const current_month = today.toLocaleString('default', { month: 'long', year: 'numeric' });
+				frappe.show_alert({
+					message: __('Oops! Your credits are available for {0} only. Please choose a date within the current month.', [current_month]),
+					indicator: 'orange'
+				}, 5);
+				frm.set_value("from_date", "");
+				frm.set_value("end_date", "");
+				return;
+			}
+		}
 		if (rb_is_weekend(frm.doc.from_date)) {
 			frappe.show_alert({ message: __('Bookings are only allowed on weekdays (Monday – Friday). Please select a valid From Date.'), indicator: 'red' });
 			frm.set_value("from_date", "");
