@@ -3,7 +3,7 @@
  "allow_rename": 1,
  "autoname": "naming_series:",
  "creation": "2023-11-02 20:05:26.562149",
- "default_view": "List",
+ "default_view": "Calendar",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
