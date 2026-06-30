@@ -310,6 +310,53 @@ function rb_is_weekend(date_str) {
 }
 
 frappe.ui.form.on('Room Booking', {
+	onload: function(frm) {
+		// Auto-set customer based on logged-in user on new docs
+		if (frm.is_new() && !frm.doc.customer) {
+			frappe.call({
+				method: "rental.rental.doctype.room_booking.room_booking.check_log_in_user",
+				args: { user: frappe.session.user },
+				callback: function(r) {
+					if (r.message && !frm.doc.customer) {
+						frm.set_value('customer', r.message);
+					}
+				}
+			});
+		}
+
+		// When opened from calendar slot click, from_datetime / end_datetime are pre-set
+		// as local "YYYY-MM-DD HH:mm:ss" strings. Parse them directly with moment.
+		if (frm.is_new() && frm.doc.from_datetime) {
+			const start = moment(frm.doc.from_datetime, "YYYY-MM-DD HH:mm:ss");
+			const end   = frm.doc.end_datetime ? moment(frm.doc.end_datetime, "YYYY-MM-DD HH:mm:ss") : null;
+			const fmt_time = (m) => m.format("hh:mm A");  // e.g. "12:00 AM", "01:30 PM"
+			const from_time_val = fmt_time(start);
+			const end_time_val  = end ? fmt_time(end) : null;
+
+			// Use a flag so the from_date handler skips clearing time values
+			frm._calendar_prefill = true;
+			frm.set_value('from_date', start.format("YYYY-MM-DD"));
+			if (end) frm.set_value('end_date', end.format("YYYY-MM-DD"));
+
+			// filter_from_time_options makes a server call; set times after it resolves
+			frappe.call({
+				method: "rental.rental.doctype.room_booking.room_booking.get_current_time",
+				callback: function(r) {
+					frm._calendar_prefill = false;
+					if (r.message) {
+						const { today, hours, minutes } = r.message;
+						apply_time_filter(frm, today, hours * 60 + minutes);
+					}
+					frm.set_value('from_time', from_time_val);
+					if (end_time_val) {
+						frm.set_value('end_time', end_time_val);
+						frm.set_value('selected_time_display', `${from_time_val} → ${end_time_val}`);
+					}
+				}
+			});
+		}
+	},
+
 	setup: function(frm) {
 		frm.set_query("select_room_type", function() {
 			return {
@@ -374,11 +421,15 @@ frappe.ui.form.on('Room Booking', {
 			frm.set_value('selected_time_display', `${frm.doc.from_time} → ${frm.doc.end_time}`);
 		}
 
-		if (frm.doc.docstatus === 1) {
-			frm.fields_dict.time_picker_btn && frm.fields_dict.time_picker_btn.$input && frm.fields_dict.time_picker_btn.$input.hide();
-		} else {
-			frm.fields_dict.time_picker_btn && frm.fields_dict.time_picker_btn.$input && frm.fields_dict.time_picker_btn.$input.show();
-		}
+		frm.set_df_property('time_picker_btn', 'hidden', frm.doc.docstatus === 0 ? 0 : 1);
+	},
+
+	after_save: function(frm) {
+		frm.set_df_property('time_picker_btn', 'hidden', frm.doc.docstatus === 0 ? 0 : 1);
+	},
+
+	onload_post_render: function(frm) {
+		frm.set_df_property('time_picker_btn', 'hidden', frm.doc.docstatus === 0 ? 0 : 1);
 	},
 
 	time_picker_btn: function(frm) {
@@ -407,10 +458,13 @@ frappe.ui.form.on('Room Booking', {
 			return;
 		}
 		frm.set_value("end_date", frm.doc.from_date);
-		frm.set_value("from_time", "");
-		frm.set_value("end_time", "");
-		frm.set_value("selected_time_display", "");
-		filter_from_time_options(frm);
+		// Skip clearing times when pre-filling from calendar slot click
+		if (!frm._calendar_prefill) {
+			frm.set_value("from_time", "");
+			frm.set_value("end_time", "");
+			frm.set_value("selected_time_display", "");
+			filter_from_time_options(frm);
+		}
 	},
 
 	customer: function(frm) {
