@@ -268,22 +268,29 @@ def get_booking_data(start , end , filters = None):
     conditions = ''
     from frappe.desk.calendar import get_event_conditions
     conditions = get_event_conditions("Room Booking", filters)
-    data = frappe.db.sql(f""" SELECT `tabRoom Booking`.name, 
-                            `tabRoom Booking`.from_datetime, 
-                            `tabRoom Booking`.end_datetime, 
-                            `tabRoom Booking`.title_of_reservation, 
-                            `tabRoom Booking`.select_room_type, 
-                            `tabRoom Booking`.status, 
-                            `tabRoom Booking`.from_time, 
-                            `tabRoom Booking`.end_time, 
+    data = frappe.db.sql(f""" SELECT `tabRoom Booking`.name,
+                            `tabRoom Booking`.from_datetime,
+                            `tabRoom Booking`.end_datetime,
+                            `tabRoom Booking`.title_of_reservation,
+                            `tabRoom Booking`.select_room_type,
+                            `tabRoom Booking`.status,
+                            `tabRoom Booking`.from_time,
+                            `tabRoom Booking`.end_time,
+                            `tabRoom Booking`.contact_name,
+                            `tabRoom Booking`.contact_number,
                             room.color
-                            From `tabRoom Booking` 
+                            From `tabRoom Booking`
                             left join `tabRoom` as room ON room.name = `tabRoom Booking`.select_room_type
                             where `tabRoom Booking`.docstatus = 1 and `tabRoom Booking`.status != 'Inactive' {conditions}
-                            Order by `tabRoom Booking`.end_datetime """, as_dict = 1)
-    
+                            Order by `tabRoom Booking`.end_datetime """, as_dict=1)
+
     for row in data:
-        row.update({'title' : f"{row.select_room_type}"})
+        parts = [row.select_room_type]
+        if row.contact_name:
+            parts.append(row.contact_name)
+        if row.contact_number:
+            parts.append(row.contact_number)
+        row.update({'title': ' | '.join(parts)})
     return data
 
 #cron job function

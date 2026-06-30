@@ -220,6 +220,8 @@ def get_booking_data(start, end, filters=None):
             eb.serial_no,
             eb.from_time,
             eb.to_time,
+            eb.contact_name,
+            eb.contact_number,
             equip.custom_color AS color
         FROM
             `tabEquipment Booking` AS eb
@@ -238,9 +240,14 @@ def get_booking_data(start, end, filters=None):
     )
 
     for row in data:
-        equipment  = row.get("equipment") or "N/A"
-        serial_no  = row.get("serial_no") or "N/A"
-        row["title"]  = f"{equipment} | SR: {serial_no}"
+        parts = [row.get("equipment") or "N/A"]
+        if row.get("serial_no"):
+            parts.append(f"SR: {row['serial_no']}")
+        if row.get("contact_name"):
+            parts.append(row["contact_name"])
+        if row.get("contact_number"):
+            parts.append(row["contact_number"])
+        row["title"]  = " | ".join(parts)
         row["allDay"] = 0
 
     return data
