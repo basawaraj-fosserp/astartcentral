@@ -204,22 +204,27 @@ class RoomBooking(Document):
         
         current_time = now.split(" ")
 
+        from rental.rental.utils import get_warehouse_for_customer
+        warehouse = get_warehouse_for_customer(self.customer, self.company)
         doc = frappe.new_doc("Stock Entry")
         doc.company = self.company
         doc.posting_date = getdate()
         doc.posting_time = current_time[1]
         doc.stock_entry_type = "Material Issue"
-        abbr = frappe.db.get_value("Company" , self.company , 'abbr')
-        doc.append("items",{
-            "s_warehouse" : self.customer + " - {0}".format(abbr),
-            "qty":qty,
-            "item_code":"Credit Points"
+        doc.append("items", {
+            "s_warehouse": warehouse,
+            "qty": qty,
+            "item_code": "Credit Points",
         })
         doc.save(ignore_permissions = True)
         doc.submit()
         frappe.db.set_value("Room Booking" , self.name , "stock_entry" , doc.name)
 
     def check_admin_validation(self):
+        # System Manager and Astart Admin bypass all booking restrictions
+        if any(role in frappe.get_roles() for role in ["System Manager", "Astart Admin"]):
+            return
+
         disable_advance_booking_time = frappe.db.get_single_value("Admin Setting" , 'disable_advance_booking_time')
         dayofweeks = disable_advance_booking_time * 7
         get_last_date_of_booking = getdate(today()) - timedelta(days= -dayofweeks)
@@ -315,7 +320,7 @@ def get_rooms(doctype, txt, searchfield, start, page_len, filters):
 
     return frappe.db.sql(
         """
-        SELECT aor.room
+        SELECT aor.room, r.description
         FROM `tabAgreement on Room` aor
         INNER JOIN `tabRoom` r ON r.name = aor.room
         WHERE (aor.room LIKE %(txt)s OR r.room_name LIKE %(txt)s)
