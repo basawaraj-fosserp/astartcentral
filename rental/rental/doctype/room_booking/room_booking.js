@@ -374,9 +374,13 @@ frappe.ui.form.on('Room Booking', {
 		['from_date', 'end_date'].forEach(function(fieldname) {
 			const field = frm.get_field(fieldname);
 			if (field && field.datepicker) {
-				field.datepicker.set('disable', [
-					function(date) { return date.getDay() === 0 || date.getDay() === 6; }
-				]);
+				try {
+					field.datepicker.update('onBeforeSelect', function(fd, d) {
+						return d.getDay() !== 0 && d.getDay() !== 6;
+					});
+				} catch(e) {
+					// datepicker not yet initialised — skip silently
+				}
 			}
 		});
 
