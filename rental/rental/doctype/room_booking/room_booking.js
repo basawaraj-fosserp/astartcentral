@@ -380,7 +380,7 @@ frappe.ui.form.on('Room Booking', {
 			}
 		});
 
-		filter_from_time_options(frm);
+		if (frm.is_new()) filter_from_time_options(frm);
 
 		frm.add_custom_button(__('Check Availablity'), function() {
 			window.open(`${window.location.origin}/app/room-booking/view/calendar/default?select_room_type=${frm.doc.select_room_type}`);
@@ -390,13 +390,13 @@ frappe.ui.form.on('Room Booking', {
 			method: "rental.rental.doctype.room_booking.room_booking.check_log_in_user",
 			args: { user: frappe.session.user },
 			callback: function(r) {
-				if (!frm.doc.customer) {
+				if (frm.is_new() && !frm.doc.customer) {
 					frm.set_value('customer', r.message);
 				}
 			}
 		});
 
-		if (frm.doc.docstatus === 0) {
+		if (frm.is_new()) {
 			frm.call({
 				method: "set_from_end_time",
 				args: { self: frm.doc },
@@ -417,7 +417,7 @@ frappe.ui.form.on('Room Booking', {
 			}
 		});
 
-		if (frm.doc.from_time && frm.doc.end_time && frm.doc.docstatus === 0) {
+		if (frm.is_new() && frm.doc.from_time && frm.doc.end_time) {
 			frm.set_value('selected_time_display', `${frm.doc.from_time} → ${frm.doc.end_time}`);
 		}
 
