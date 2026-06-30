@@ -259,6 +259,49 @@ function eqb_is_weekend(date_str) {
 }
 
 frappe.ui.form.on('Equipment Booking', {
+	onload: function(frm) {
+		// Auto-set customer from logged-in user on new docs
+		if (frm.is_new() && !frm.doc.customer) {
+			frappe.call({
+				method: "rental.rental.doctype.room_booking.room_booking.check_log_in_user",
+				args: { user: frappe.session.user },
+				callback: function(r) {
+					if (r.message && !frm.doc.customer) {
+						frm.set_value('customer', r.message);
+					}
+				}
+			});
+		}
+
+		// When opened from calendar slot click, from_datetime / to_datetime are pre-set.
+		// Parse and populate individual date and time fields.
+		if (frm.is_new() && frm.doc.from_datetime) {
+			const start = moment(frm.doc.from_datetime, "YYYY-MM-DD HH:mm:ss");
+			const end   = frm.doc.to_datetime ? moment(frm.doc.to_datetime, "YYYY-MM-DD HH:mm:ss") : null;
+			const fmt_time = (m) => m.format("hh:mm A");
+			const from_time_val = fmt_time(start);
+			const end_time_val  = end ? fmt_time(end) : null;
+
+			frm._calendar_prefill = true;
+			frm.set_value('from_date', start.format("YYYY-MM-DD"));
+			if (end) frm.set_value('to_date', end.format("YYYY-MM-DD"));
+
+			// Set times after the from_date handler finishes resetting them
+			frappe.call({
+				method: "rental.rental.doctype.equipment_booking.equipment_booking.get_current_server_time",
+				args: { from_date: start.format("YYYY-MM-DD") },
+				callback: function(r) {
+					frm._calendar_prefill = false;
+					frm.set_value('from_time', from_time_val);
+					if (end_time_val) {
+						frm.set_value('to_time', end_time_val);
+						frm.set_value('selected_time_display', `${from_time_val} → ${end_time_val}`);
+					}
+				}
+			});
+		}
+	},
+
 	setup: function(frm) {
 		frm.set_query("equipment", function() {
 			return {
@@ -349,9 +392,11 @@ frappe.ui.form.on('Equipment Booking', {
 			return;
 		}
 		frm.set_value("to_date", frm.doc.from_date);
-		frm.set_value("from_time", "");
-		frm.set_value("to_time", "");
-		frm.set_value("selected_time_display", "");
+		if (!frm._calendar_prefill) {
+			frm.set_value("from_time", "");
+			frm.set_value("to_time", "");
+			frm.set_value("selected_time_display", "");
+		}
 	},
 
 	equipment: function(frm) {
