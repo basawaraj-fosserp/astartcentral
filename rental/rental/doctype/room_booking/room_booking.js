@@ -310,7 +310,7 @@ function rb_is_weekend(date_str) {
 }
 
 function rb_show_time_btn(frm) {
-	return frm.doc.docstatus === 0 && !['Active', 'Inactive'].includes(frm.doc.status);
+	return frm.doc.docstatus === 0 && !['Active', 'Inactive', 'Cancelled'].includes(frm.doc.status);
 }
 
 frappe.ui.form.on('Room Booking', {
