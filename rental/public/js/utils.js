@@ -1,5 +1,23 @@
 console.log("viral")
 
+// Restrict view switcher to List and Calendar only for booking doctypes
+const RENTAL_BOOKING_DOCTYPES = ["Room Booking", "Equipment Booking"];
+const RENTAL_ALLOWED_VIEWS = ["List", "Calendar"];
+
+frappe.after_ajax(() => {
+	const _original_setup_views = frappe.views.ListViewSelect.prototype.setup_views;
+	frappe.views.ListViewSelect.prototype.setup_views = function() {
+		_original_setup_views.call(this);
+		if (RENTAL_BOOKING_DOCTYPES.includes(this.doctype)) {
+			$(this.parent).find("li[data-view]").each(function() {
+				if (!RENTAL_ALLOWED_VIEWS.includes($(this).attr("data-view"))) {
+					$(this).hide();
+				}
+			});
+		}
+	};
+});
+
 frappe.views.Workspace = class Workspace extends frappe.views.Workspace {
     setup_actions(page) {
 		let pages = page.public ? this.public_pages : this.private_pages;
