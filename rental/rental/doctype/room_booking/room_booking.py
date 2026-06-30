@@ -125,30 +125,31 @@ class RoomBooking(Document):
 
 
     def validate_admin_setting(self):
-        # #To check Admin setting Refund validation
-        admin_from_time = frappe.db.get_single_value("Admin Setting" ,  "booking_hours_from" )
-        admin_to_time = frappe.db.get_single_value("Admin Setting" ,   "booking_hours_to")
-        
-        admin_time_obj = datetime.strptime(str(admin_from_time.split(' ')[0]), "%H:%M").time()
-        admin_date_obj = datetime.strptime(str(self.from_date), "%Y-%m-%d")
-        
-        ad_from_datetime = datetime.combine(admin_date_obj.date(), admin_time_obj)
+        # System Manager and Astart Admin bypass the booking hours restriction
+        if any(role in frappe.get_roles() for role in ["System Manager", "Astart Admin"]):
+            return
 
-        admin_time_obj = datetime.strptime(str(admin_to_time.split(' ')[0]), "%H:%M").time()
-        admin_date_obj = datetime.strptime(str(self.end_date), "%Y-%m-%d")
-        
-        ad_to_datetime = datetime.combine(admin_date_obj.date(), admin_time_obj)
+        admin_from_time = frappe.db.get_single_value("Admin Setting", "booking_hours_from")
+        admin_to_time   = frappe.db.get_single_value("Admin Setting", "booking_hours_to")
 
-        from_time = admin_from_time.split(' ')
-        end_time = admin_to_time.split(' ')
-        if from_time[1] == "PM":
-            ad_from_datetime = ad_from_datetime + timedelta(hours = 12)
-        if end_time[1] == "PM":
-            ad_to_datetime = ad_to_datetime + timedelta(hours = 12)
-        from_datetime = datetime.strptime(str(self.from_datetime) , "%Y-%m-%d %H:%M:%S")
-        end_datetime = datetime.strptime(str(self.end_datetime) , "%Y-%m-%d %H:%M:%S")
+        if not admin_from_time or not admin_to_time:
+            return
 
-        if not ((ad_from_datetime <= from_datetime < ad_to_datetime) and (ad_from_datetime < end_datetime <= ad_to_datetime)):
+        def parse_admin_time(time_str, date_str):
+            parts = time_str.split(' ')
+            t = datetime.strptime(parts[0], "%H:%M").time()
+            dt = datetime.combine(datetime.strptime(date_str, "%Y-%m-%d").date(), t)
+            if parts[1] == "PM" and parts[0] not in ["12:00", "12:30"]:
+                dt += timedelta(hours=12)
+            return dt
+
+        ad_from_datetime = parse_admin_time(admin_from_time, str(self.from_date))
+        ad_to_datetime   = parse_admin_time(admin_to_time,   str(self.end_date))
+
+        from_datetime = datetime.strptime(str(self.from_datetime), "%Y-%m-%d %H:%M:%S")
+        end_datetime  = datetime.strptime(str(self.end_datetime),  "%Y-%m-%d %H:%M:%S")
+
+        if not (ad_from_datetime <= from_datetime and end_datetime <= ad_to_datetime):
             frappe.throw(f"Booking is only allowed from {admin_from_time} to {admin_to_time}")
 
 
