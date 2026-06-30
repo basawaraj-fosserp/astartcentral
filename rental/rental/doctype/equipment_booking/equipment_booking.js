@@ -258,6 +258,10 @@ function eqb_is_weekend(date_str) {
 	return day === 0 || day === 6;
 }
 
+function eqb_show_time_btn(frm) {
+	return frm.doc.docstatus === 0 && !['Active', 'Inactive'].includes(frm.doc.status);
+}
+
 frappe.ui.form.on('Equipment Booking', {
 	onload: function(frm) {
 		// Auto-set customer from logged-in user on new docs
@@ -358,15 +362,15 @@ frappe.ui.form.on('Equipment Booking', {
 			frm.set_value('selected_time_display', `${frm.doc.from_time} → ${frm.doc.to_time}`);
 		}
 
-		frm.set_df_property('time_picker_btn', 'hidden', frm.doc.docstatus === 0 ? 0 : 1);
+		frm.set_df_property('time_picker_btn', 'hidden', eqb_show_time_btn(frm) ? 0 : 1);
 	},
 
 	after_save: function(frm) {
-		frm.set_df_property('time_picker_btn', 'hidden', frm.doc.docstatus === 0 ? 0 : 1);
+		frm.set_df_property('time_picker_btn', 'hidden', eqb_show_time_btn(frm) ? 0 : 1);
 	},
 
 	onload_post_render: function(frm) {
-		frm.set_df_property('time_picker_btn', 'hidden', frm.doc.docstatus === 0 ? 0 : 1);
+		frm.set_df_property('time_picker_btn', 'hidden', eqb_show_time_btn(frm) ? 0 : 1);
 	},
 
 	// Button field event — fires when the "Select Time" button is clicked
