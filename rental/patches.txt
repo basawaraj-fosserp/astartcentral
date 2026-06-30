@@ -1,1 +1,2 @@
 rental.patches.create_item
+rental.patches.link_warehouse_to_customer

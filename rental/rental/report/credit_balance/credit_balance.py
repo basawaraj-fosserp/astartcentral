@@ -44,11 +44,9 @@ class StockBalanceReport(object):
 	def __init__(self, filters: Optional[StockBalanceFilter]) -> None:
 		customer = check_log_in_user(frappe.session.user)
 		if customer:
-			warehouse = customer + " - " + frappe.db.get_value('Company' , filters.get('company') , 'abbr')
-			try:
-				filters.update({'warehouse': warehouse})
-			except Exception:
-				frappe.throw("User is not link with any the customer document")
+			from rental.rental.utils import get_warehouse_for_customer
+			warehouse = get_warehouse_for_customer(customer, filters.get('company'))
+			filters.update({'warehouse': warehouse})
 
 		self.filters = filters
 		self.from_date = getdate(filters.get("from_date"))

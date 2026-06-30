@@ -34,11 +34,14 @@ def create_suto_sub(self, method):
 
 def create_warehouse(self):
     if self.get("__islocal"):
-        warehouse = str(self.name) + ' - '+ 'KPL'
-        if not frappe.db.exists('Warehouse', warehouse):
+        existing = frappe.db.get_value("Warehouse", {"customer": self.name}, "name")
+        if not existing:
+            company = frappe.db.get_single_value("Global Defaults", "default_company")
             doc = frappe.new_doc("Warehouse")
             doc.warehouse_name = self.name
-            doc.save(ignore_permissions = True)
+            doc.company = company
+            doc.customer = self.name
+            doc.save(ignore_permissions=True)
         
 def on_update(self , method):
     data = frappe.db.get_list("Credit Allocation" , filters ={'customer':self.name , "docstatus":1})
@@ -106,14 +109,18 @@ def get_current_credit():
     if not len(customer):
         return  { "value" : 0 , "fieldtype":"Float"}
 
-    warehouse = "{0} - {1}".format(customer[0].link_name , frappe.db.get_value("Company","Astartcentral","abbr"))
+    customer_name = customer[0].link_name
+    warehouse = frappe.db.get_value("Warehouse", {"customer": customer_name}, "name")
+    if not warehouse:
+        return {"value": 0, "fieldtype": "Float"}
+
     data = frappe.db.sql(f""" Select qty_after_transaction From `tabStock Ledger Entry`
-                            where is_cancelled = 0 and warehouse = "{warehouse}" and item_code ="Credit Points" 
-                            Order By creation Desc """,as_dict = 1)
+                            where is_cancelled = 0 and warehouse = "{warehouse}" and item_code ="Credit Points"
+                            Order By creation Desc """, as_dict=1)
     if data:
-        return { "value" : data[0].qty_after_transaction , "fieldtype":"Float"}
-        
-    return  { "value" : 0 , "fieldtype":"Float"}
+        return {"value": data[0].qty_after_transaction, "fieldtype": "Float"}
+
+    return {"value": 0, "fieldtype": "Float"}
 
 @frappe.whitelist()
 def create_subscription(source_name , target_doc = None):
@@ -186,17 +193,18 @@ def check_subscription_period():
     
 #cron monthly credit allocation
 def monthly_credit_allocation():
-    cu_list = frappe.db.get_list("Customer" , pluck="name")
+    cu_list = frappe.db.get_list("Customer", pluck="name")
     for row in cu_list:
-        warehouse = "{0} - {1}".format(row , frappe.db.get_value("Company","Astartcentral","abbr"))
+        warehouse = frappe.db.get_value("Warehouse", {"customer": row}, "name")
+        if not warehouse:
+            continue
 
-        sle_list = frappe.db.get_list('Stock Ledger Entry', {'warehouse':warehouse})
-
+        sle_list = frappe.db.get_list('Stock Ledger Entry', {'warehouse': warehouse})
         if not len(sle_list):
             continue
-            
+
         sr_doc = frappe.new_doc("Stock Reconciliation")
-        sr_doc.company = "Astartcentral"
+        sr_doc.company = frappe.db.get_value("Warehouse", warehouse, "company")
         sr_doc.purpose = "Stock Reconciliation"
         sr_doc.append('items', {
             'item_code': "Credit Points",
@@ -210,9 +218,9 @@ def monthly_credit_allocation():
             doc = frappe.new_doc("Credit Allocation")
             doc.customer = row
             doc.credit_score = customer.custom_credit_assigned_monthly
-            doc.save(ignore_permissions = True)
+            doc.save(ignore_permissions=True)
             doc.submit()
-        except:
+        except Exception:
             frappe.log_error("Customer {0} not found any warehouse for credit point".format(row))
 
         
@@ -265,12 +273,12 @@ def create_subscription_plan(self):
 
 
 def on_trash_customer(self, method):
-    warehouse = self.name + ' - ' + 'KPL'
-    if frappe.db.exists('Warehouse', warehouse):
+    warehouse = frappe.db.get_value("Warehouse", {"customer": self.name}, "name")
+    if warehouse:
         try:
             frappe.db.delete('Warehouse', warehouse)
         except Exception:
-            frappe.throw(f"Company <b>{self.name}</b> is link with some transaction please contact to Administrator")
+            frappe.throw(f"Customer <b>{self.name}</b> is linked to transactions. Please contact the Administrator.")
 
 
 @frappe.whitelist()

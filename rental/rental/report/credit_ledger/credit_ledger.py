@@ -20,11 +20,9 @@ from rental.rental.doctype.room_booking.room_booking import check_log_in_user
 def execute(filters=None):
 	customer = check_log_in_user(frappe.session.user)
 	if customer:
-		warehouse = customer + " - " + frappe.db.get_value('Company' , filters.get('company') , 'abbr')
-		try:
-			filters.update({'warehouse': warehouse})
-		except Exception:
-			frappe.throw("User is not link with any the customer document")
+		from rental.rental.utils import get_warehouse_for_customer
+		warehouse = get_warehouse_for_customer(customer, filters.get('company'))
+		filters.update({'warehouse': warehouse})
 	
 	is_reposting_item_valuation_in_progress()
 	include_uom = filters.get("include_uom")
