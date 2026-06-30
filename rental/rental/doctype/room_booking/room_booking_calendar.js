@@ -18,10 +18,15 @@ frappe.views.calendar["Room Booking"] = {
 
 	options: {
 		select: function(startDate, endDate, jsEvent, view) {
-			// Block booking on past dates (today is allowed)
 			const today = moment().format('YYYY-MM-DD');
+			// Block past dates
 			if (startDate.format('YYYY-MM-DD') < today) {
 				frappe.show_alert({ message: __('Booking on past dates is not allowed.'), indicator: 'red' });
+				return;
+			}
+			// Block past time slots on today
+			if (startDate.format('YYYY-MM-DD') === today && startDate.isBefore(moment())) {
+				frappe.show_alert({ message: __('Booking for past times is not allowed.'), indicator: 'red' });
 				return;
 			}
 			// Replicate core Frappe select logic
