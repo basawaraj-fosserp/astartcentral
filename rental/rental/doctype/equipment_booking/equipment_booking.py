@@ -23,7 +23,27 @@ class EquipmentBooking(Document):
             doc = frappe.get_doc("Stock Entry" , self.stock_entry)
             doc.cancel()
 
+    def _derive_times_from_datetime(self):
+        """When from_time/to_time are empty but datetimes are set (e.g. calendar pre-fill),
+        derive the AM/PM time strings from the datetime fields."""
+        def fmt(dt_str):
+            dt = datetime.strptime(str(dt_str), "%Y-%m-%d %H:%M:%S")
+            h, m = dt.hour, dt.minute
+            period = "PM" if h >= 12 else "AM"
+            h12 = h % 12 or 12
+            return f"{str(h12).zfill(2)}:{str(m).zfill(2)} {period}"
+
+        if not self.from_time and self.from_datetime:
+            self.from_time = fmt(self.from_datetime)
+        if not self.to_time and self.to_datetime:
+            self.to_time = fmt(self.to_datetime)
+
     def validate(self):
+        self._derive_times_from_datetime()
+
+        if not self.from_time or not self.to_time:
+            frappe.throw("Please select From Time and To Time.")
+
         from_date_obj = datetime.strptime(str(self.from_date), "%Y-%m-%d")
         to_date_obj   = datetime.strptime(str(self.to_date),   "%Y-%m-%d")
         if from_date_obj.weekday() >= 5:
