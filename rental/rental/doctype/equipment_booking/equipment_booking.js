@@ -311,12 +311,15 @@ frappe.ui.form.on('Equipment Booking', {
 			frm.set_value('selected_time_display', `${frm.doc.from_time} → ${frm.doc.to_time}`);
 		}
 
-		// Show/hide the picker button based on submit state (mirrors room booking)
-		if (frm.doc.docstatus === 1) {
-			frm.fields_dict.time_picker_btn && frm.fields_dict.time_picker_btn.$input && frm.fields_dict.time_picker_btn.$input.hide();
-		} else {
-			frm.fields_dict.time_picker_btn && frm.fields_dict.time_picker_btn.$input && frm.fields_dict.time_picker_btn.$input.show();
-		}
+		frm.set_df_property('time_picker_btn', 'hidden', frm.doc.docstatus === 0 ? 0 : 1);
+	},
+
+	after_save: function(frm) {
+		frm.set_df_property('time_picker_btn', 'hidden', frm.doc.docstatus === 0 ? 0 : 1);
+	},
+
+	onload_post_render: function(frm) {
+		frm.set_df_property('time_picker_btn', 'hidden', frm.doc.docstatus === 0 ? 0 : 1);
 	},
 
 	// Button field event — fires when the "Select Time" button is clicked
