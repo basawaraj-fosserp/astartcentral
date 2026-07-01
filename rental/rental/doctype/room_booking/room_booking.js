@@ -179,6 +179,9 @@ function open_time_picker_dialog(frm) {
 					const tm = time_to_minutes(t);
 					return tm >= af_min && tm <= at_min;
 				});
+				// Clear pre-selection if current times are outside the allowed window
+				if (picker_from && !visible_slots.includes(picker_from)) picker_from = null;
+				if (picker_to   && !visible_slots.includes(picker_to))   picker_to   = null;
 			} else {
 				visible_slots = ALL_TIMES.slice();
 			}
