@@ -23,34 +23,38 @@ frappe.views.calendar["Room Booking"] = {
 
 			const site_tz = (frappe.boot.time_zone && frappe.boot.time_zone.system) || 'Asia/Singapore';
 			const now = moment.tz(site_tz);
+			// Convert FullCalendar's local-time date to site timezone for comparison
+			const start_sg = frappe.datetime.convert_to_system_tz(moment(startDate).locale("en"));
 			const today = now.format('YYYY-MM-DD');
-			const startStr = startDate.format('YYYY-MM-DD');
+			const startStr = start_sg.format('YYYY-MM-DD');
 			// Block past dates
 			if (startStr < today) {
 				frappe.show_alert({ message: __('Booking on past dates is not allowed.'), indicator: 'red' });
 				return;
 			}
 			// Block past time slots on today
-			if (startStr === today && startDate.isBefore(now)) {
+			if (startStr === today && start_sg.isBefore(now)) {
 				frappe.show_alert({ message: __('Booking for past times is not allowed.'), indicator: 'red' });
 				return;
 			}
 			var event = frappe.model.get_new_doc("Room Booking");
-			event["from_datetime"] = startDate.format("YYYY-MM-DD HH:mm:ss");
-			event["end_datetime"]  = endDate.format("YYYY-MM-DD HH:mm:ss");
+			event["from_datetime"] = start_sg.format("YYYY-MM-DD HH:mm:ss");
+			event["end_datetime"]  = frappe.datetime.convert_to_system_tz(moment(endDate).locale("en")).format("YYYY-MM-DD HH:mm:ss");
 			frappe.set_route("Form", "Room Booking", event.name);
 		},
 		dayClick: function(date, jsEvent, view) {
 			const site_tz = (frappe.boot.time_zone && frappe.boot.time_zone.system) || 'Asia/Singapore';
 			const now = moment.tz(site_tz);
+			// Convert FullCalendar's local-time date to site timezone for comparison
+			const date_sg = frappe.datetime.convert_to_system_tz(moment(date).locale("en"));
 			const today = now.format('YYYY-MM-DD');
-			const dateStr = date.format('YYYY-MM-DD');
+			const dateStr = date_sg.format('YYYY-MM-DD');
 			if (dateStr < today) {
 				frappe.show_alert({ message: __('Booking on past dates is not allowed.'), indicator: 'red' });
 				return false;
 			}
 			// In day/week view, a click on a past time slot should also be blocked
-			if (view.name !== "month" && dateStr === today && date.isBefore(now)) {
+			if (view.name !== "month" && dateStr === today && date_sg.isBefore(now)) {
 				frappe.show_alert({ message: __('Booking for past times is not allowed.'), indicator: 'red' });
 				return false;
 			}
