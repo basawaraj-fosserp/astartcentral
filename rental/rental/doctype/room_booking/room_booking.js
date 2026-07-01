@@ -421,15 +421,15 @@ frappe.ui.form.on('Room Booking', {
 			frm.set_value('selected_time_display', `${frm.doc.from_time} → ${frm.doc.end_time}`);
 		}
 
-		frm.set_df_property('time_picker_btn', 'hidden', frm.doc.docstatus === 0 ? 0 : 1);
+		frm.set_df_property('time_picker_btn', 'hidden', (frm.is_new() && frm.doc.docstatus === 0) ? 0 : 1);
 	},
 
 	after_save: function(frm) {
-		frm.set_df_property('time_picker_btn', 'hidden', frm.doc.docstatus === 0 ? 0 : 1);
+		frm.set_df_property('time_picker_btn', 'hidden', (frm.is_new() && frm.doc.docstatus === 0) ? 0 : 1);
 	},
 
 	onload_post_render: function(frm) {
-		frm.set_df_property('time_picker_btn', 'hidden', frm.doc.docstatus === 0 ? 0 : 1);
+		frm.set_df_property('time_picker_btn', 'hidden', (frm.is_new() && frm.doc.docstatus === 0) ? 0 : 1);
 	},
 
 	time_picker_btn: function(frm) {
