@@ -375,10 +375,14 @@ def get_time_picker_data(room, date):
 def get_current_time():
     from frappe.utils import now_datetime, today, convert_utc_to_user_timezone
     current = convert_utc_to_user_timezone(now_datetime())
+    admin_from = frappe.db.get_single_value("Admin Setting", "booking_hours_from")
+    admin_to   = frappe.db.get_single_value("Admin Setting", "booking_hours_to")
     return {
         "today": str(current.date()),
         "hours": current.hour,
-        "minutes": current.minute
+        "minutes": current.minute,
+        "admin_from": admin_from,
+        "admin_to": admin_to
     }
 
 @frappe.whitelist()

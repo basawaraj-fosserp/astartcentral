@@ -1,3 +1,15 @@
+function rb_ampm_to_minutes(time_str) {
+	// Converts "09:00 AM" / "06:00 PM" to total minutes from midnight
+	const match = time_str.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+	if (!match) return 0;
+	let h = parseInt(match[1]);
+	const m = parseInt(match[2]);
+	const period = match[3].toUpperCase();
+	if (period === 'AM' && h === 12) h = 0;
+	if (period === 'PM' && h !== 12) h += 12;
+	return h * 60 + m;
+}
+
 frappe.views.calendar["Room Booking"] = {
     field_map: {
 		start: "from_datetime",
@@ -18,15 +30,17 @@ frappe.views.calendar["Room Booking"] = {
 
 	options: {
 		viewRender: function() {
-			// Fetch server time once and store offset vs browser time
+			// Fetch server time once and store offset + admin booking window
 			if (frappe._rb_server_offset_ms !== undefined) return;
 			frappe.call({
 				method: 'rental.rental.doctype.room_booking.room_booking.get_current_time',
 				callback: function(r) {
 					if (r.message) {
-						const { today, hours, minutes } = r.message;
+						const { today, hours, minutes, admin_from, admin_to } = r.message;
 						const server_now = moment(today + ' ' + String(hours).padStart(2,'0') + ':' + String(minutes).padStart(2,'0'), 'YYYY-MM-DD HH:mm');
 						frappe._rb_server_offset_ms = server_now.valueOf() - moment().valueOf();
+						frappe._rb_admin_from = admin_from || null;
+						frappe._rb_admin_to   = admin_to   || null;
 					}
 				}
 			});
@@ -47,6 +61,20 @@ frappe.views.calendar["Room Booking"] = {
 				frappe.show_alert({ message: __('Booking for past times is not allowed.'), indicator: 'red' });
 				return;
 			}
+			// Enforce admin booking hours window
+			if (frappe._rb_admin_from && frappe._rb_admin_to) {
+				const slot_from_min = startDate.hours() * 60 + startDate.minutes();
+				const slot_to_min   = endDate.hours() * 60 + endDate.minutes();
+				const admin_from_min = rb_ampm_to_minutes(frappe._rb_admin_from);
+				const admin_to_min   = rb_ampm_to_minutes(frappe._rb_admin_to);
+				if (slot_from_min < admin_from_min || slot_to_min > admin_to_min) {
+					frappe.show_alert({
+						message: __('Bookings are only allowed between {0} and {1}.', [frappe._rb_admin_from, frappe._rb_admin_to]),
+						indicator: 'red'
+					});
+					return;
+				}
+			}
 			var event = frappe.model.get_new_doc("Room Booking");
 			event["from_datetime"] = startDate.format("YYYY-MM-DD HH:mm:ss");
 			event["end_datetime"]  = endDate.format("YYYY-MM-DD HH:mm:ss");
@@ -63,6 +91,19 @@ frappe.views.calendar["Room Booking"] = {
 			if (view.name !== "month" && dateStr === today && date.isBefore(now)) {
 				frappe.show_alert({ message: __('Booking for past times is not allowed.'), indicator: 'red' });
 				return false;
+			}
+			// Enforce admin booking hours window in day/week view
+			if (view.name !== "month" && frappe._rb_admin_from && frappe._rb_admin_to) {
+				const slot_min     = date.hours() * 60 + date.minutes();
+				const admin_from_min = rb_ampm_to_minutes(frappe._rb_admin_from);
+				const admin_to_min   = rb_ampm_to_minutes(frappe._rb_admin_to);
+				if (slot_min < admin_from_min || slot_min >= admin_to_min) {
+					frappe.show_alert({
+						message: __('Bookings are only allowed between {0} and {1}.', [frappe._rb_admin_from, frappe._rb_admin_to]),
+						indicator: 'red'
+					});
+					return false;
+				}
 			}
 			if (view.name === "month") {
 				const $cal = $(jsEvent.target).closest(".fc");
