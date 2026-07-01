@@ -76,21 +76,19 @@ class EquipmentBooking(Document):
         now = datetime.strptime(now() , "%Y-%m-%d %H:%M:%S.%f")
         if from_datetime < now:
             frappe.throw("Only future bookings are allowed.<br>Kindly choose the accurate time and date.")
-        self.validate_current_month_booking()
+        self.validate_advance_booking_window()
         self.check_if_available()
 
-    def validate_current_month_booking(self):
+    def validate_advance_booking_window(self):
         from frappe.utils import getdate, today
         booking_date = getdate(self.from_date)
         current_date = getdate(today())
+        max_advance_date = current_date + timedelta(weeks=12)
 
-        if booking_date.month != current_date.month or booking_date.year != current_date.year:
-            current_month_name = current_date.strftime("%B %Y")
-            booking_month_name = booking_date.strftime("%B %Y")
+        if booking_date > max_advance_date:
             frappe.throw(
-                f"Oops! It looks like the selected date is in <b>{booking_month_name}</b>.<br>"
-                f"Your credits are available for <b>{current_month_name}</b> only.<br>"
-                f"Please choose a date within the current month to proceed."
+                f"Oops! Equipment can only be booked up to <b>12 weeks</b> in advance.<br>"
+                f"Please choose a date on or before <b>{max_advance_date.strftime('%B %d, %Y')}</b>."
             )
 
     def check_if_available(self):
