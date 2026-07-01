@@ -141,14 +141,14 @@ def get_columns(filters):
 				"width": 130,
 			},
 			{
-				"label": _("Room Booking Ref"),
+				"label": _("Room Booked"),
 				"fieldname": "room_booking",
 				"fieldtype": "Link",
 				"options":'Room Booking',
 				"width": 130,
 			},
 			{
-				"label": _("Equipment Booking Ref"),
+				"label": _("Equipment Booked"),
 				"fieldname": "equipment_booking",
 				"fieldtype": "Link",
 				"options":'Equipment Booking',
