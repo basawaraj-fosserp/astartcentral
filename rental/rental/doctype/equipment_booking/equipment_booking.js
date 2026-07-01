@@ -352,7 +352,8 @@ frappe.ui.form.on('Equipment Booking', {
 			}
 		});
 
-		if (frm.doc.docstatus === 0) {
+		// Only derive times from datetime when times are not already set
+		if (frm.doc.docstatus === 0 && !frm.doc.from_time && !frm.doc.to_time) {
 			frm.call({
 				method: "set_from_end_time",
 				args: { self: frm.doc },
@@ -371,6 +372,10 @@ frappe.ui.form.on('Equipment Booking', {
 		}
 
 		frm.set_df_property('time_picker_btn', 'hidden', eqb_show_time_btn(frm) ? 0 : 1);
+		// Re-apply after rendering settles to counter any async re-renders
+		setTimeout(function() {
+			frm.set_df_property('time_picker_btn', 'hidden', eqb_show_time_btn(frm) ? 0 : 1);
+		}, 300);
 	},
 
 	after_save: function(frm) {
@@ -423,13 +428,19 @@ frappe.ui.form.on('Equipment Booking', {
 			});
 		} else {
 			frm.set_value("serial_no", "");
-			eqb_clear_time(frm);
+			// Only clear time when user manually cleared equipment,
+			// not when equipment was cleared programmatically by customer change
+			if (!frm._customer_changing) {
+				eqb_clear_time(frm);
+			}
 		}
 	},
 
 	customer: function(frm) {
+		frm._customer_changing = true;
 		frm.set_value("equipment", "");
 		frm.set_value("serial_no", "");
+		frm._customer_changing = false;
 	}
 });
 
