@@ -411,17 +411,52 @@ frappe.ui.form.on('Equipment Booking', {
 		if (frm.doc.equipment) {
 			frappe.db.get_value("Equipment", frm.doc.equipment, "custom_a_asset_serial_no", function(r) {
 				frm.set_value("serial_no", r && r.custom_a_asset_serial_no ? r.custom_a_asset_serial_no : "");
+				eqb_check_time_availability(frm);
 			});
 		} else {
 			frm.set_value("serial_no", "");
+			eqb_clear_time(frm);
 		}
 	},
 
 	customer: function(frm) {
 		frm.set_value("equipment", "");
 		frm.set_value("serial_no", "");
-		frm.set_value("from_time", "");
-		frm.set_value("to_time", "");
-		frm.set_value("selected_time_display", "");
+		eqb_clear_time(frm);
 	}
 });
+
+function eqb_clear_time(frm) {
+	frm.set_value("from_time", "");
+	frm.set_value("to_time", "");
+	frm.set_value("selected_time_display", "");
+}
+
+function eqb_check_time_availability(frm) {
+	// Only check if a time has already been selected and all required fields are set
+	if (!frm.doc.from_time || !frm.doc.to_time || !frm.doc.equipment || !frm.doc.from_date) return;
+
+	frappe.call({
+		method: 'rental.rental.doctype.equipment_booking.equipment_booking.get_booked_slots',
+		args: {
+			equipment:    frm.doc.equipment,
+			date:         frm.doc.from_date,
+			serial_no:    frm.doc.serial_no || null,
+			exclude_name: frm.doc.name || null
+		},
+		callback: function(r) {
+			const booked = r.message || [];
+			const from_min = eqb_time_to_minutes(frm.doc.from_time);
+			const to_min   = eqb_time_to_minutes(frm.doc.to_time);
+
+			if (eqb_is_range_blocked(from_min, to_min, booked)) {
+				eqb_clear_time(frm);
+				frappe.show_alert({
+					message: __('The selected time slot is not available for {0}. Please choose a different time.', [frm.doc.equipment]),
+					indicator: 'red'
+				}, 7);
+			}
+			// else: time is still available, keep it as-is
+		}
+	});
+}
