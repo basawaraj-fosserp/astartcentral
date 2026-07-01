@@ -264,6 +264,8 @@ function eqb_show_time_btn(frm) {
 
 frappe.ui.form.on('Equipment Booking', {
 	onload: function(frm) {
+		frm.set_df_property('time_picker_btn', 'hidden', eqb_show_time_btn(frm) ? 0 : 1);
+
 		// Auto-set customer from logged-in user on new docs
 		if (frm.is_new() && !frm.doc.customer) {
 			frappe.call({
@@ -346,6 +348,7 @@ frappe.ui.form.on('Equipment Booking', {
 				} else {
 					frm.set_df_property('customer', 'hidden', 0);
 				}
+				frm.set_df_property('time_picker_btn', 'hidden', eqb_show_time_btn(frm) ? 0 : 1);
 			}
 		});
 
@@ -357,6 +360,7 @@ frappe.ui.form.on('Equipment Booking', {
 					if (r.message) {
 						frm.set_value(r.message);
 					}
+					frm.set_df_property('time_picker_btn', 'hidden', eqb_show_time_btn(frm) ? 0 : 1);
 				}
 			});
 		}
