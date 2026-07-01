@@ -428,19 +428,12 @@ frappe.ui.form.on('Equipment Booking', {
 			});
 		} else {
 			frm.set_value("serial_no", "");
-			// Only clear time when user manually cleared equipment,
-			// not when equipment was cleared programmatically by customer change
-			if (!frm._customer_changing) {
-				eqb_clear_time(frm);
-			}
 		}
 	},
 
 	customer: function(frm) {
-		frm._customer_changing = true;
 		frm.set_value("equipment", "");
 		frm.set_value("serial_no", "");
-		frm._customer_changing = false;
 	}
 });
 
