@@ -30,8 +30,8 @@ frappe.views.calendar["Room Booking"] = {
 
 	options: {
 		viewRender: function() {
-			// Fetch server time once and store offset + admin booking window
-			if (frappe._rb_server_offset_ms !== undefined) return;
+			// Fetch server time and admin booking window (re-fetch if admin times not yet set)
+			if (frappe._rb_server_offset_ms !== undefined && frappe._rb_admin_from) return;
 			frappe.call({
 				method: 'rental.rental.doctype.room_booking.room_booking.get_current_time',
 				callback: function(r) {
@@ -63,8 +63,10 @@ frappe.views.calendar["Room Booking"] = {
 			}
 			// Enforce admin booking hours window
 			if (frappe._rb_admin_from && frappe._rb_admin_to) {
-				const slot_from_min = startDate.hours() * 60 + startDate.minutes();
-				const slot_to_min   = endDate.hours() * 60 + endDate.minutes();
+				const slot_from_min  = startDate.hours() * 60 + startDate.minutes();
+				// endDate midnight (00:00) means end of day — treat as 24*60
+				const raw_end_min    = endDate.hours() * 60 + endDate.minutes();
+				const slot_to_min    = (raw_end_min === 0 && endDate.diff(startDate, 'minutes') > 30) ? 1440 : raw_end_min;
 				const admin_from_min = rb_ampm_to_minutes(frappe._rb_admin_from);
 				const admin_to_min   = rb_ampm_to_minutes(frappe._rb_admin_to);
 				if (slot_from_min < admin_from_min || slot_to_min > admin_to_min) {
