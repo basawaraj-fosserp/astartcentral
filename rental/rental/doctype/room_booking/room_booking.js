@@ -320,6 +320,8 @@ function rb_clear_time(frm) {
 
 frappe.ui.form.on('Room Booking', {
 	onload: function(frm) {
+		frm.set_df_property('time_picker_btn', 'hidden', rb_show_time_btn(frm) ? 0 : 1);
+
 		// Auto-set customer based on logged-in user on new docs
 		if (frm.is_new() && !frm.doc.customer) {
 			frappe.call({
@@ -403,13 +405,15 @@ frappe.ui.form.on('Room Booking', {
 			method: "rental.rental.doctype.room_booking.room_booking.check_log_in_user",
 			args: { user: frappe.session.user },
 			callback: function(r) {
-				if (frm.is_new() && !frm.doc.customer) {
-					frm.set_value('customer', r.message);
+				if (frm.is_new() && !frm.doc.customer && r.message) {
+					frm.doc.customer = r.message;
+					frm.refresh_field('customer');
 				}
+				frm.set_df_property('time_picker_btn', 'hidden', rb_show_time_btn(frm) ? 0 : 1);
 			}
 		});
 
-		if (frm.is_new()) {
+		if (frm.is_new() && !frm.doc.from_time && !frm.doc.end_time) {
 			frm.call({
 				method: "set_from_end_time",
 				args: { self: frm.doc },
@@ -417,6 +421,7 @@ frappe.ui.form.on('Room Booking', {
 					if (r.message) {
 						frm.set_value(r.message);
 					}
+					frm.set_df_property('time_picker_btn', 'hidden', rb_show_time_btn(frm) ? 0 : 1);
 				}
 			});
 		}
@@ -427,6 +432,7 @@ frappe.ui.form.on('Room Booking', {
 				if (!r.message) {
 					frm.set_df_property('customer', 'read_only', 1);
 				}
+				frm.set_df_property('time_picker_btn', 'hidden', rb_show_time_btn(frm) ? 0 : 1);
 			}
 		});
 
@@ -435,6 +441,9 @@ frappe.ui.form.on('Room Booking', {
 		}
 
 		frm.set_df_property('time_picker_btn', 'hidden', rb_show_time_btn(frm) ? 0 : 1);
+		setTimeout(function() {
+			frm.set_df_property('time_picker_btn', 'hidden', rb_show_time_btn(frm) ? 0 : 1);
+		}, 300);
 	},
 
 	after_save: function(frm) {
