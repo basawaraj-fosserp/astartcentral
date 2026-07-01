@@ -18,11 +18,27 @@ frappe.views.calendar["Equipment Booking"] = {
     get_events_method: "rental.rental.doctype.equipment_booking.equipment_booking.get_booking_data",
 
 	options: {
+		viewRender: function() {
+			// Fetch server time once and store offset vs browser time
+			if (frappe._eqb_server_offset_ms !== undefined) return;
+			frappe.call({
+				method: 'rental.rental.doctype.equipment_booking.equipment_booking.get_current_server_time',
+				callback: function(r) {
+					if (r.message) {
+						const now_server_minutes = r.message.current_minutes;
+						const today_server = moment().format('YYYY-MM-DD');
+						const server_now = moment(today_server + ' ' + String(Math.floor(now_server_minutes/60)).padStart(2,'0') + ':' + String(now_server_minutes%60).padStart(2,'0'), 'YYYY-MM-DD HH:mm');
+						frappe._eqb_server_offset_ms = server_now.valueOf() - moment().valueOf();
+					}
+				}
+			});
+		},
+
 		select: function(startDate, endDate, jsEvent, view) {
 			// Single day click in month view — let dayClick handle it, ignore here
 			if (view.name === "month" && endDate - startDate === 86400000) return;
 
-			const now = moment();
+			const now = moment().add(frappe._eqb_server_offset_ms || 0, 'ms');
 			const today = now.format('YYYY-MM-DD');
 			const startStr = startDate.format('YYYY-MM-DD');
 			if (startStr < today) {
@@ -39,7 +55,7 @@ frappe.views.calendar["Equipment Booking"] = {
 			frappe.set_route("Form", "Equipment Booking", event.name);
 		},
 		dayClick: function(date, jsEvent, view) {
-			const now = moment();
+			const now = moment().add(frappe._eqb_server_offset_ms || 0, 'ms');
 			const today = now.format('YYYY-MM-DD');
 			const dateStr = date.format('YYYY-MM-DD');
 			if (dateStr < today) {

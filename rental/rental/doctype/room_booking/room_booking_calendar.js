@@ -17,11 +17,26 @@ frappe.views.calendar["Room Booking"] = {
     get_events_method: "rental.rental.doctype.room_booking.room_booking.get_booking_data",
 
 	options: {
+		viewRender: function() {
+			// Fetch server time once and store offset vs browser time
+			if (frappe._rb_server_offset_ms !== undefined) return;
+			frappe.call({
+				method: 'rental.rental.doctype.room_booking.room_booking.get_current_time',
+				callback: function(r) {
+					if (r.message) {
+						const { today, hours, minutes } = r.message;
+						const server_now = moment(today + ' ' + String(hours).padStart(2,'0') + ':' + String(minutes).padStart(2,'0'), 'YYYY-MM-DD HH:mm');
+						frappe._rb_server_offset_ms = server_now.valueOf() - moment().valueOf();
+					}
+				}
+			});
+		},
+
 		select: function(startDate, endDate, jsEvent, view) {
 			// Single day click in month view — let dayClick handle it, ignore here
 			if (view.name === "month" && endDate - startDate === 86400000) return;
 
-			const now = moment();
+			const now = moment().add(frappe._rb_server_offset_ms || 0, 'ms');
 			const today = now.format('YYYY-MM-DD');
 			const startStr = startDate.format('YYYY-MM-DD');
 			if (startStr < today) {
@@ -38,7 +53,7 @@ frappe.views.calendar["Room Booking"] = {
 			frappe.set_route("Form", "Room Booking", event.name);
 		},
 		dayClick: function(date, jsEvent, view) {
-			const now = moment();
+			const now = moment().add(frappe._rb_server_offset_ms || 0, 'ms');
 			const today = now.format('YYYY-MM-DD');
 			const dateStr = date.format('YYYY-MM-DD');
 			if (dateStr < today) {
@@ -49,7 +64,6 @@ frappe.views.calendar["Room Booking"] = {
 				frappe.show_alert({ message: __('Booking for past times is not allowed.'), indicator: 'red' });
 				return false;
 			}
-			// Default month-view drill-down behaviour — use DOM directly (no Frappe `this`)
 			if (view.name === "month") {
 				const $cal = $(jsEvent.target).closest(".fc");
 				const $date_cell = $("td[data-date=" + date.format("YYYY-MM-DD") + "]");
