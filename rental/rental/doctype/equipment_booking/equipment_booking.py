@@ -274,6 +274,7 @@ def get_equipment(doctype, txt, searchfield, start, page_len, filters):
             INNER JOIN `tabEquipment` e ON e.name = ae.equipment
             WHERE ae.parent = %(customer)s
               AND (ae.equipment LIKE %(txt)s OR e.equipment_name LIKE %(txt)s)
+            ORDER BY e.equipment_name ASC
             LIMIT %(start)s, %(page_len)s
             """,
             {
@@ -289,6 +290,7 @@ def get_equipment(doctype, txt, searchfield, start, page_len, filters):
         SELECT name, equipment_name
         FROM `tabEquipment`
         WHERE (name LIKE %(txt)s OR equipment_name LIKE %(txt)s)
+        ORDER BY equipment_name ASC
         LIMIT %(start)s, %(page_len)s
         """,
         {
