@@ -266,9 +266,7 @@ function apply_time_filter(frm, today_server, current_minutes) {
 		const filtered = ALL_TIMES.filter(t => time_to_minutes(t) >= current_minutes);
 		frm.set_df_property("from_time", "options", "\n" + filtered.join("\n"));
 		if (frm.doc.from_time && !filtered.includes(frm.doc.from_time)) {
-			frm.set_value("from_time", "");
-			frm.set_value("end_time", "");
-			frm.set_value("selected_time_display", "");
+			rb_clear_time(frm);
 		}
 	} else {
 		frm.set_df_property("from_time", "options", "\n" + ALL_TIMES.join("\n"));
@@ -311,6 +309,13 @@ function rb_is_weekend(date_str) {
 
 function rb_show_time_btn(frm) {
 	return frm.doc.docstatus === 0 && !['Active', 'Inactive', 'Cancelled'].includes(frm.doc.status);
+}
+
+function rb_clear_time(frm) {
+	frm.set_value("from_time", "");
+	frm.set_value("end_time", "");
+	frm.set_value("selected_time_display", "");
+	frm.set_df_property('time_picker_btn', 'hidden', rb_show_time_btn(frm) ? 0 : 1);
 }
 
 frappe.ui.form.on('Room Booking', {
@@ -468,9 +473,7 @@ frappe.ui.form.on('Room Booking', {
 		frm.set_value("end_date", frm.doc.from_date);
 		// Skip clearing times when pre-filling from calendar slot click
 		if (!frm._calendar_prefill) {
-			frm.set_value("from_time", "");
-			frm.set_value("end_time", "");
-			frm.set_value("selected_time_display", "");
+			rb_clear_time(frm);
 			filter_from_time_options(frm);
 		}
 	},
