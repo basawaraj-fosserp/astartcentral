@@ -308,6 +308,7 @@ function rb_is_weekend(date_str) {
 }
 
 function rb_show_time_btn(frm) {
+	if (frm.is_new()) return true;
 	return frm.doc.docstatus === 0 && !['Active', 'Inactive', 'Cancelled'].includes(frm.doc.status);
 }
 
