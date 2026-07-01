@@ -156,29 +156,31 @@ class EquipmentBooking(Document):
         current_time = now.split(" ")
 
     def validate_admin_setting(self):
-        # #To check Admin setting Refund validation
-        admin_from_time = frappe.db.get_single_value("Admin Setting" ,  "booking_hours_from" )
-        admin_to_time = frappe.db.get_single_value("Admin Setting" ,   "booking_hours_to")
+        # System Manager and Astart Admin bypass the booking hours restriction
+        if any(role in frappe.get_roles() for role in ["System Manager", "Astart Admin"]):
+            return
 
-        admin_time_obj = datetime.strptime(str(admin_from_time.split(' ')[0]), "%H:%M").time()
-        admin_date_obj = datetime.strptime(str(self.from_date), "%Y-%m-%d")
+        admin_from_time = frappe.db.get_single_value("Admin Setting", "booking_hours_from")
+        admin_to_time   = frappe.db.get_single_value("Admin Setting", "booking_hours_to")
 
-        ad_from_datetime = datetime.combine(admin_date_obj.date(), admin_time_obj)
+        if not admin_from_time or not admin_to_time:
+            return
 
-        admin_time_obj = datetime.strptime(str(admin_to_time.split(' ')[0]), "%H:%M").time()
-        admin_date_obj = datetime.strptime(str(self.to_date), "%Y-%m-%d")
+        def parse_admin_time(time_str, date_str):
+            parts = time_str.split(' ')
+            t = datetime.strptime(parts[0], "%H:%M").time()
+            dt = datetime.combine(datetime.strptime(date_str, "%Y-%m-%d").date(), t)
+            if parts[1] == "PM" and parts[0] not in ["12:00", "12:30"]:
+                dt += timedelta(hours=12)
+            return dt
 
-        ad_to_datetime = datetime.combine(admin_date_obj.date(), admin_time_obj)
+        ad_from_datetime = parse_admin_time(admin_from_time, str(self.from_date))
+        ad_to_datetime   = parse_admin_time(admin_to_time,   str(self.to_date))
 
-        from_time = admin_from_time.split(' ')
-        end_time = admin_to_time.split(' ')
+        from_datetime = datetime.strptime(str(self.from_datetime), "%Y-%m-%d %H:%M:%S")
+        to_datetime   = datetime.strptime(str(self.to_datetime),   "%Y-%m-%d %H:%M:%S")
 
-        if from_time[1] == "PM" and from_time[0] not in ["12:00", "12:30"]:
-            ad_from_datetime = ad_from_datetime + timedelta(hours=12)
-        if end_time[1] == "PM" and end_time[0] not in ["12:00", "12:30"]:
-            ad_to_datetime = ad_to_datetime + timedelta(hours=12)
-
-        if not ((ad_from_datetime <= self.from_datetime <= ad_to_datetime) and (ad_from_datetime <= self.to_datetime <= ad_to_datetime)):
+        if not (ad_from_datetime <= from_datetime and to_datetime <= ad_to_datetime):
             frappe.throw(f"Booking is only allowed from {admin_from_time} to {admin_to_time}")
 
 @frappe.whitelist()
@@ -294,6 +296,7 @@ def get_equipment(doctype, txt, searchfield, start, page_len, filters):
             INNER JOIN `tabEquipment` e ON e.name = ae.equipment
             WHERE ae.parent = %(customer)s
               AND (ae.equipment LIKE %(txt)s OR e.equipment_name LIKE %(txt)s)
+            ORDER BY ae.equipment ASC
             LIMIT %(start)s, %(page_len)s
             """,
             {
@@ -309,6 +312,7 @@ def get_equipment(doctype, txt, searchfield, start, page_len, filters):
         SELECT name, equipment_name
         FROM `tabEquipment`
         WHERE (name LIKE %(txt)s OR equipment_name LIKE %(txt)s)
+        ORDER BY name ASC
         LIMIT %(start)s, %(page_len)s
         """,
         {
