@@ -359,8 +359,8 @@ def get_time_picker_data(room, date):
 
     max_booking_hours = frappe.db.get_single_value("Admin Setting", "max_booking_hours_per_room_booking")
 
-    from frappe.utils import now_datetime, getdate
-    current = now_datetime()
+    from frappe.utils import now_datetime, getdate, convert_utc_to_user_timezone
+    current = convert_utc_to_user_timezone(now_datetime())
     booking_date = getdate(date)
     return {
         "admin_from": admin_from,
@@ -373,10 +373,10 @@ def get_time_picker_data(room, date):
 
 @frappe.whitelist()
 def get_current_time():
-    from frappe.utils import now_datetime, today
-    current = now_datetime()
+    from frappe.utils import now_datetime, today, convert_utc_to_user_timezone
+    current = convert_utc_to_user_timezone(now_datetime())
     return {
-        "today": str(today()),
+        "today": str(current.date()),
         "hours": current.hour,
         "minutes": current.minute
     }

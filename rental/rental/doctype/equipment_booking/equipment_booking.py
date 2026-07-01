@@ -183,8 +183,8 @@ class EquipmentBooking(Document):
 
 @frappe.whitelist()
 def get_current_server_time(from_date=None):
-    from frappe.utils import now_datetime, getdate
-    current = now_datetime()
+    from frappe.utils import now_datetime, getdate, convert_utc_to_user_timezone
+    current = convert_utc_to_user_timezone(now_datetime())
     is_today = getdate(from_date) == getdate(current.date()) if from_date else False
     return {
         "is_today": is_today,

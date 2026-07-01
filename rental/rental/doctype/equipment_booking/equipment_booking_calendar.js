@@ -22,7 +22,9 @@ frappe.views.calendar["Equipment Booking"] = {
 			// Single day click in month view — let dayClick handle it, ignore here
 			if (view.name === "month" && endDate - startDate === 86400000) return;
 
-			const today = moment().format('YYYY-MM-DD');
+			const site_tz = (frappe.boot.time_zone && frappe.boot.time_zone.system) || 'Asia/Singapore';
+			const now = moment.tz(site_tz);
+			const today = now.format('YYYY-MM-DD');
 			const startStr = startDate.format('YYYY-MM-DD');
 			// Block past dates
 			if (startStr < today) {
@@ -30,7 +32,7 @@ frappe.views.calendar["Equipment Booking"] = {
 				return;
 			}
 			// Block past time slots on today
-			if (startStr === today && startDate.isBefore(moment())) {
+			if (startStr === today && startDate.isBefore(now)) {
 				frappe.show_alert({ message: __('Booking for past times is not allowed.'), indicator: 'red' });
 				return;
 			}
@@ -40,14 +42,16 @@ frappe.views.calendar["Equipment Booking"] = {
 			frappe.set_route("Form", "Equipment Booking", event.name);
 		},
 		dayClick: function(date, jsEvent, view) {
-			const today = moment().format('YYYY-MM-DD');
+			const site_tz = (frappe.boot.time_zone && frappe.boot.time_zone.system) || 'Asia/Singapore';
+			const now = moment.tz(site_tz);
+			const today = now.format('YYYY-MM-DD');
 			const dateStr = date.format('YYYY-MM-DD');
 			if (dateStr < today) {
 				frappe.show_alert({ message: __('Booking on past dates is not allowed.'), indicator: 'red' });
 				return false;
 			}
 			// In day/week view, block clicks on past time slots
-			if (view.name !== "month" && dateStr === today && date.isBefore(moment())) {
+			if (view.name !== "month" && dateStr === today && date.isBefore(now)) {
 				frappe.show_alert({ message: __('Booking for past times is not allowed.'), indicator: 'red' });
 				return false;
 			}
