@@ -40,7 +40,7 @@ frappe.views.calendar["Equipment Booking"] = {
 			}
 			var event = frappe.model.get_new_doc("Equipment Booking");
 			event["from_datetime"] = start_sg.format("YYYY-MM-DD HH:mm:ss");
-			event["to_datetime"]   = frappe.datetime.convert_to_system_tz(moment(endDate).locale("en")).format("YYYY-MM-DD HH:mm:ss");
+			event["to_datetime"]   = moment(frappe.datetime.convert_to_system_tz(moment(endDate).locale("en"))).format("YYYY-MM-DD HH:mm:ss");
 			frappe.set_route("Form", "Equipment Booking", event.name);
 		},
 		dayClick: function(date, jsEvent, view) {

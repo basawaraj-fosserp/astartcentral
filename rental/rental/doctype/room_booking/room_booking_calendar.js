@@ -39,7 +39,7 @@ frappe.views.calendar["Room Booking"] = {
 			}
 			var event = frappe.model.get_new_doc("Room Booking");
 			event["from_datetime"] = start_sg.format("YYYY-MM-DD HH:mm:ss");
-			event["end_datetime"]  = frappe.datetime.convert_to_system_tz(moment(endDate).locale("en")).format("YYYY-MM-DD HH:mm:ss");
+			event["end_datetime"]  = moment(frappe.datetime.convert_to_system_tz(moment(endDate).locale("en"))).format("YYYY-MM-DD HH:mm:ss");
 			frappe.set_route("Form", "Room Booking", event.name);
 		},
 		dayClick: function(date, jsEvent, view) {
