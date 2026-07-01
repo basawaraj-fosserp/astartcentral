@@ -316,9 +316,13 @@ frappe.ui.form.on('Equipment Booking', {
 		['from_date', 'to_date'].forEach(function(fieldname) {
 			const field = frm.get_field(fieldname);
 			if (field && field.datepicker) {
-				field.datepicker.set('disable', [
-					function(date) { return date.getDay() === 0 || date.getDay() === 6; }
-				]);
+				field.datepicker.update({
+					onRenderCell: function(date, cellType) {
+						if (cellType === 'day' && (date.getDay() === 0 || date.getDay() === 6)) {
+							return { disabled: true };
+						}
+					}
+				});
 			}
 		});
 

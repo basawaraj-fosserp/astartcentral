@@ -1,3 +1,37 @@
+function room_booking_time_within_hours(momentDate) {
+	return room_booking_time_within_hours._check(momentDate);
+}
+
+room_booking_time_within_hours._admin_hours = null;
+room_booking_time_within_hours._fetch_admin_hours = function() {
+	if (room_booking_time_within_hours._admin_hours) {
+		return Promise.resolve(room_booking_time_within_hours._admin_hours);
+	}
+	return frappe.db.get_doc("Admin Setting").then(doc => {
+		room_booking_time_within_hours._admin_hours = {
+			from: doc.booking_hours_from,
+			to: doc.booking_hours_to
+		};
+		return room_booking_time_within_hours._admin_hours;
+	});
+};
+room_booking_time_within_hours._to_minutes = function(str) {
+	// e.g. "02:30 PM" -> minutes since midnight
+	const [time, meridian] = str.split(" ");
+	let [h, m] = time.split(":").map(Number);
+	if (meridian === "PM" && h !== 12) h += 12;
+	if (meridian === "AM" && h === 12) h = 0;
+	return h * 60 + m;
+};
+room_booking_time_within_hours._check = function(momentDate) {
+	const hours = room_booking_time_within_hours._admin_hours;
+	if (!hours || !hours.from || !hours.to) return true;
+	const minutes = momentDate.hours() * 60 + momentDate.minutes();
+	return minutes >= room_booking_time_within_hours._to_minutes(hours.from)
+		&& minutes <= room_booking_time_within_hours._to_minutes(hours.to);
+};
+room_booking_time_within_hours._fetch_admin_hours();
+
 frappe.views.calendar["Room Booking"] = {
     field_map: {
 		start: "from_datetime",
@@ -33,10 +67,21 @@ frappe.views.calendar["Room Booking"] = {
 				frappe.show_alert({ message: __('Booking for past times is not allowed.'), indicator: 'red' });
 				return;
 			}
-			var event = frappe.model.get_new_doc("Room Booking");
-			event["from_datetime"] = startDate.format("YYYY-MM-DD HH:mm:ss");
-			event["end_datetime"]  = endDate.format("YYYY-MM-DD HH:mm:ss");
-			frappe.set_route("Form", "Room Booking", event.name);
+			// Block slots outside Admin Setting's configured booking hours window
+			room_booking_time_within_hours._fetch_admin_hours().then((hours) => {
+				if (view.name !== "month" &&
+					(!room_booking_time_within_hours(startDate) || !room_booking_time_within_hours(endDate))) {
+					frappe.show_alert({
+						message: __('Booking is only allowed from {0} to {1}.', [hours.from, hours.to]),
+						indicator: 'red'
+					});
+					return;
+				}
+				var event = frappe.model.get_new_doc("Room Booking");
+				event["from_datetime"] = startDate.format("YYYY-MM-DD HH:mm:ss");
+				event["end_datetime"]  = endDate.format("YYYY-MM-DD HH:mm:ss");
+				frappe.set_route("Form", "Room Booking", event.name);
+			});
 		},
 		dayClick: function(date, jsEvent, view) {
 			const today = moment().format('YYYY-MM-DD');

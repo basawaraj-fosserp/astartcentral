@@ -332,6 +332,7 @@ def get_rooms(doctype, txt, searchfield, start, page_len, filters):
         INNER JOIN `tabRoom` r ON r.name = aor.room
         WHERE (aor.room LIKE %(txt)s OR r.room_name LIKE %(txt)s)
         {conditions}
+        ORDER BY aor.room ASC
         LIMIT %(start)s, %(page_len)s
         """.format(conditions=conditions),
         {
