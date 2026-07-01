@@ -336,8 +336,12 @@ frappe.ui.form.on('Equipment Booking', {
 			callback: function(r) {
 				if (r.message) {
 					frm.set_df_property('customer', 'hidden', 1);
+					// Only set customer on new docs where it isn't set yet,
+					// and use set_value only if it will actually change — avoids
+					// triggering the customer handler (which clears equipment/time)
 					if (frm.is_new() && !frm.doc.customer) {
-						frm.set_value('customer', r.message);
+						frm.doc.customer = r.message;
+						frm.refresh_field('customer');
 					}
 				} else {
 					frm.set_df_property('customer', 'hidden', 0);
@@ -422,7 +426,6 @@ frappe.ui.form.on('Equipment Booking', {
 	customer: function(frm) {
 		frm.set_value("equipment", "");
 		frm.set_value("serial_no", "");
-		eqb_clear_time(frm);
 	}
 });
 
