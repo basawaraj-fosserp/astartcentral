@@ -448,6 +448,7 @@ function eqb_clear_time(frm) {
 	frm.set_value("from_time", "");
 	frm.set_value("to_time", "");
 	frm.set_value("selected_time_display", "");
+	frm.set_df_property('time_picker_btn', 'hidden', eqb_show_time_btn(frm) ? 0 : 1);
 }
 
 function eqb_check_time_availability(frm) {
