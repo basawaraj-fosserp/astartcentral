@@ -378,10 +378,11 @@ frappe.ui.form.on('Equipment Booking', {
 		if (frm.doc.from_date) {
 			const selected = new Date(frm.doc.from_date);
 			const today = new Date();
-			if (selected.getMonth() !== today.getMonth() || selected.getFullYear() !== today.getFullYear()) {
-				const current_month = today.toLocaleString('default', { month: 'long', year: 'numeric' });
+			const max_advance_date = new Date(today);
+			max_advance_date.setDate(max_advance_date.getDate() + 12 * 7);
+			if (selected > max_advance_date) {
 				frappe.show_alert({
-					message: __('Oops! Your credits are available for {0} only. Please choose a date within the current month.', [current_month]),
+					message: __('Oops! Equipment can only be booked up to 12 weeks in advance. Please choose a date on or before {0}.', [frappe.datetime.obj_to_user(max_advance_date)]),
 					indicator: 'orange'
 				}, 5);
 				frm.set_value("from_date", "");
