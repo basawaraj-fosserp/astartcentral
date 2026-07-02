@@ -267,7 +267,7 @@ def get_equipment(doctype, txt, searchfield, start, page_len, filters):
     if customer:
         return frappe.db.sql(
             """
-            SELECT ae.equipment
+            SELECT DISTINCT ae.equipment
             FROM `tabAgreement on Equipment` ae
             INNER JOIN `tabEquipment` e ON e.name = ae.equipment
             WHERE ae.parent = %(customer)s
