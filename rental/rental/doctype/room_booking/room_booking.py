@@ -327,7 +327,7 @@ def get_rooms(doctype, txt, searchfield, start, page_len, filters):
 
     return frappe.db.sql(
         """
-        SELECT aor.room, r.description
+        SELECT aor.room
         FROM `tabAgreement on Room` aor
         INNER JOIN `tabRoom` r ON r.name = aor.room
         WHERE (aor.room LIKE %(txt)s OR r.room_name LIKE %(txt)s)

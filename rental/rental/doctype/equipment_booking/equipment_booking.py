@@ -285,7 +285,7 @@ def get_equipment(doctype, txt, searchfield, start, page_len, filters):
 
     return frappe.db.sql(
         """
-        SELECT name, equipment_name
+        SELECT name
         FROM `tabEquipment`
         WHERE (name LIKE %(txt)s OR equipment_name LIKE %(txt)s)
         ORDER BY equipment_name ASC
