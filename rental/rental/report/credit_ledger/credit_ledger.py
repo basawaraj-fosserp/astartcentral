@@ -151,13 +151,6 @@ def get_columns(filters):
 				"width": 130,
 			},
 			{
-				"label": _("Equipment Booked"),
-				"fieldname": "equipment_booking",
-				"fieldtype": "Link",
-				"options":'Equipment Booking',
-				"width": 130,
-			},
-			{
 				"label": _("Customer"),
 				"fieldname": "warehouse",
 				"fieldtype": "Data",
