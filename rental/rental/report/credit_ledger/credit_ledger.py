@@ -79,10 +79,13 @@ def execute(filters=None):
 
 	update_included_uom_in_report(columns, data, include_uom, conversion_factors)
 	condition = ''
+	sql_params = {}
 	if filters.get('warehouse'):
-		condition += f"and customer = '{filters.get('warehouse')[:-5]}' "
-	room_data = frappe.db.sql(f""" Select name as room_booking, stock_entry From `tabRoom Booking` where docstatus = 1 {condition} """,as_dict = True)
-	equipment_data = frappe.db.sql(f""" Select name as equipment_booking , stock_entry From`tabEquipment Booking` where docstatus = 1 {condition} """,as_dict = True)
+		customer = frappe.db.get_value("Warehouse", filters.get('warehouse'), "customer")
+		condition = "and customer = %(customer)s"
+		sql_params["customer"] = customer
+	room_data = frappe.db.sql(f""" Select name as room_booking, stock_entry From `tabRoom Booking` where docstatus = 1 {condition} """, sql_params, as_dict = True)
+	equipment_data = frappe.db.sql(f""" Select name as equipment_booking , stock_entry From`tabEquipment Booking` where docstatus = 1 {condition} """, sql_params, as_dict = True)
 	
 	room_data_map = {}
 	for row in room_data:
