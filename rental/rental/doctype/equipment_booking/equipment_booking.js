@@ -404,9 +404,6 @@ frappe.ui.form.on('Equipment Booking', {
 	},
 
 	equipment: function(frm) {
-		frm.set_value("from_time", "");
-		frm.set_value("to_time", "");
-		frm.set_value("selected_time_display", "");
 		if (frm.doc.equipment) {
 			frappe.db.get_value("Equipment", frm.doc.equipment, "custom_a_asset_serial_no", function(r) {
 				frm.set_value("serial_no", r && r.custom_a_asset_serial_no ? r.custom_a_asset_serial_no : "");
