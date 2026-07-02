@@ -157,19 +157,19 @@ class RoomBooking(Document):
             self.submit()
 
     def check_if_available(self):
-        data = frappe.db.sql(f"""Select name , from_datetime ,end_datetime 
+        data = frappe.db.sql(f"""Select name , from_datetime ,end_datetime
                                 From `tabRoom Booking`
-                                where docstatus = 1 and select_room_type = '{self.select_room_type}' and status = 'Active' """,as_dict="true")
+                                where docstatus = 1 and select_room_type = '{self.select_room_type}' and status = 'Active' and name != '{self.name or ""}' """,as_dict="true")
         booked_slot = []
         flag = False
         if data:
             for row in data:
-                if row.get('from_datetime') <= (self.from_datetime) < (row.get('end_datetime')) or row.get('from_datetime') < (self.end_datetime) < (row.get('end_datetime')):
+                if row.get('from_datetime') < self.end_datetime and self.from_datetime < row.get('end_datetime'):
                     flag = True
         if flag:
             booked_slot = frappe.db.sql(f"""Select name , from_datetime ,end_datetime , from_time , end_time
                                 From `tabRoom Booking`
-                                where docstatus = 1 and select_room_type = '{self.select_room_type}' and status = 'Active' """,as_dict="true")
+                                where docstatus = 1 and select_room_type = '{self.select_room_type}' and status = 'Active' and name != '{self.name or ""}' """,as_dict="true")
             error = """<br><table border=1 width="100%">
                             <tr>
                                 <td width="10%" align="center">
