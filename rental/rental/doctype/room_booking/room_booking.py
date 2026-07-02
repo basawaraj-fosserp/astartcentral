@@ -107,11 +107,11 @@ class RoomBooking(Document):
             )
 
     def same_time_booking_validation(self):
-        todays_data = frappe.db.sql(f"""
+        todays_data = frappe.db.sql("""
                     Select name, from_date, from_datetime, from_time, customer, end_datetime, end_date, end_time, select_room_type
                     From `tabRoom Booking` as rb
-                    Where docstatus = 1 and customer = '{self.customer}' and from_date = '{self.from_date}'
-        """, as_dict=1)
+                    Where docstatus = 1 and customer = %(customer)s and from_date = %(from_date)s and name != %(name)s
+        """, {"customer": self.customer, "from_date": self.from_date, "name": self.name or ""}, as_dict=1)
 
         for row in todays_data:
             if get_datetime(self.from_datetime) < get_datetime(row.end_datetime) and \
@@ -157,9 +157,10 @@ class RoomBooking(Document):
             self.submit()
 
     def check_if_available(self):
-        data = frappe.db.sql(f"""Select name , from_datetime ,end_datetime
+        sql_params = {"select_room_type": self.select_room_type, "name": self.name or ""}
+        data = frappe.db.sql("""Select name , from_datetime ,end_datetime
                                 From `tabRoom Booking`
-                                where docstatus = 1 and select_room_type = '{self.select_room_type}' and status = 'Active' and name != '{self.name or ""}' """,as_dict="true")
+                                where docstatus = 1 and select_room_type = %(select_room_type)s and status = 'Active' and name != %(name)s """, sql_params, as_dict="true")
         booked_slot = []
         flag = False
         if data:
@@ -167,9 +168,9 @@ class RoomBooking(Document):
                 if row.get('from_datetime') < self.end_datetime and self.from_datetime < row.get('end_datetime'):
                     flag = True
         if flag:
-            booked_slot = frappe.db.sql(f"""Select name , from_datetime ,end_datetime , from_time , end_time
+            booked_slot = frappe.db.sql("""Select name , from_datetime ,end_datetime , from_time , end_time
                                 From `tabRoom Booking`
-                                where docstatus = 1 and select_room_type = '{self.select_room_type}' and status = 'Active' and name != '{self.name or ""}' """,as_dict="true")
+                                where docstatus = 1 and select_room_type = %(select_room_type)s and status = 'Active' and name != %(name)s """, sql_params, as_dict="true")
             error = """<br><table border=1 width="100%">
                             <tr>
                                 <td width="10%" align="center">
@@ -226,34 +227,44 @@ class RoomBooking(Document):
             return
 
         disable_advance_booking_time = frappe.db.get_single_value("Admin Setting" , 'disable_advance_booking_time')
-        dayofweeks = disable_advance_booking_time * 7
-        get_last_date_of_booking = getdate(today()) - timedelta(days= -dayofweeks)
-        if getdate(self.from_date) > getdate(get_last_date_of_booking):
-            frappe.throw(f"Booking is only allow till {frappe.format(get_last_date_of_booking , {'fieldtype': 'Date'})}")
+        if disable_advance_booking_time is not None:
+            dayofweeks = disable_advance_booking_time * 7
+            get_last_date_of_booking = getdate(today()) - timedelta(days= -dayofweeks)
+            if getdate(self.from_date) > getdate(get_last_date_of_booking):
+                frappe.throw(f"Booking is only allow till {frappe.format(get_last_date_of_booking , {'fieldtype': 'Date'})}")
 
         difference = self.end_datetime - self.from_datetime
         booking_hours = difference.total_seconds()/3600
         default_booking_hours = frappe.db.get_single_value("Admin Setting" , "max_booking_hours_per_room_booking")
-        if booking_hours > default_booking_hours:
+        if default_booking_hours is not None and booking_hours > default_booking_hours:
             frappe.throw(f"Maximum booking allow for {default_booking_hours} hours")
 
         #Max hours per day per room
-        data =  frappe.db.sql(f""" SELECT name , from_datetime , end_datetime
-                                    From `tabRoom Booking` 
-                                    where docstatus = 1 and status = "Active" and from_date = '{self.from_date}'
-                                    and select_room_type = '{self.select_room_type}' and customer = '{self.customer}'
-                                    Order By from_datetime """,as_dict = 1)
+        data =  frappe.db.sql(""" SELECT name , from_datetime , end_datetime
+                                    From `tabRoom Booking`
+                                    where docstatus = 1 and status = "Active" and from_date = %(from_date)s
+                                    and select_room_type = %(select_room_type)s and customer = %(customer)s and name != %(name)s
+                                    Order By from_datetime """,
+                                    {
+                                        "from_date": self.from_date,
+                                        "select_room_type": self.select_room_type,
+                                        "customer": self.customer,
+                                        "name": self.name or "",
+                                    }, as_dict = 1)
         hours = 0
         if data:
             for row in data:
                 difference = row.end_datetime - row.from_datetime
                 booking_hours = difference.total_seconds()/3600
                 hours += booking_hours
-        
+
         per_day_booking_hours = frappe.db.get_single_value("Admin Setting" , "max_hours_per_day_per_room")
-        
+
         difference = self.end_datetime - self.from_datetime
         current_booking_hours = difference.total_seconds()/3600
+
+        if per_day_booking_hours is None:
+            return
 
         if per_day_booking_hours <= hours:
             frappe.throw(f"The Per-day booking hour limit is {per_day_booking_hours}")
@@ -297,7 +308,7 @@ def get_booking_data(start , end , filters = None):
 def convert_inactive_booking():
     from frappe.utils import now
     end_datetime = now()
-    data = frappe.db.sql(f""" Select name from `tabRoom Booking` where docstatus = 1 and status = "Active" and end_datetime < '{str(end_datetime)}'""",as_dict = 1)
+    data = frappe.db.sql(""" Select name from `tabRoom Booking` where docstatus = 1 and status = "Active" and end_datetime < %(end_datetime)s""", {"end_datetime": str(end_datetime)}, as_dict = 1)
     
     for row in data:
         frappe.db.set_value("Room Booking" , row.get('name') , 'status' , 'Inactive',update_modified = False)
@@ -306,9 +317,9 @@ def convert_inactive_booking():
 def check_log_in_user(user):
     if "Astart Admin" not in frappe.get_roles():
         if contact := frappe.db.exists("Contact" , {"user":user}):
-            customer = frappe.db.sql(f""" Select name,link_name 
-                                        From `tabDynamic Link` 
-                                        where parent = "{contact}" and link_doctype ="Customer" """,as_dict = 1)
+            customer = frappe.db.sql(""" Select name,link_name
+                                        From `tabDynamic Link`
+                                        where parent = %(contact)s and link_doctype ="Customer" """, {"contact": contact}, as_dict = 1)
             
             if not len(customer):
                 frappe.throw("Please Contact to Admin, your contact document is not link with your user")
