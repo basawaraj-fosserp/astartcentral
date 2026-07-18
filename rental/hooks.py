@@ -81,7 +81,8 @@ scheduler_events = {
 		],
     },
 	"daily": [
-		"rental.api.check_subscription_period"
+		"rental.api.check_subscription_period",
+		"rental.rental.doctype.room_booking.room_booking.charge_pending_credit_utilization"
 	],
 	"monthly": [
 		"rental.api.monthly_credit_allocation"

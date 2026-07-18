@@ -19,7 +19,13 @@ class RoomBooking(Document):
         now = datetime.strptime(now() , "%Y-%m-%d %H:%M:%S.%f")
         if from_datetime > now:
             self.status = "Active"
-        self.credit_utilization()
+
+        booking_date = getdate(self.from_date)
+        current_date = getdate(today())
+        if booking_date.month == current_date.month and booking_date.year == current_date.year:
+            self.credit_utilization()
+        # else: leave stock_entry blank — charge_pending_credit_utilization()
+        # will charge it once booking_date's month becomes the current month.
 
     def on_cancel(self):
         from frappe.utils import now, get_datetime
@@ -28,14 +34,15 @@ class RoomBooking(Document):
             frappe.throw(f"Cancellation not allowed after the booking time <b>{self.from_datetime}</b>")
 
         restricted_min = frappe.db.get_single_value("Admin Setting", "minutes_before_cancellation")
-        
+
         if restricted_min:  # Guard against None
             time_before_refund = get_datetime(self.from_datetime) + timedelta(minutes=-restricted_min)
             if get_datetime(time_before_refund) < get_datetime(now()) < get_datetime(self.from_datetime):
                 frappe.throw(f"Cancellation should not be allowed within {restricted_min} min")
 
-        doc = frappe.get_doc("Stock Entry", self.stock_entry)
-        doc.cancel()
+        if self.stock_entry:
+            doc = frappe.get_doc("Stock Entry", self.stock_entry)
+            doc.cancel()
 
     def validate(self):
         from frappe.utils import now , getdate
@@ -318,9 +325,30 @@ def convert_inactive_booking():
     from frappe.utils import now
     end_datetime = now()
     data = frappe.db.sql(""" Select name from `tabRoom Booking` where docstatus = 1 and status = "Active" and end_datetime < %(end_datetime)s""", {"end_datetime": str(end_datetime)}, as_dict = 1)
-    
+
     for row in data:
         frappe.db.set_value("Room Booking" , row.get('name') , 'status' , 'Inactive',update_modified = False)
+
+#daily scheduler job: charges credit for advance bookings once their month arrives
+def charge_pending_credit_utilization():
+    data = frappe.db.sql("""
+        SELECT name FROM `tabRoom Booking`
+        WHERE docstatus = 1 AND status = 'Active'
+          AND (stock_entry IS NULL OR stock_entry = '')
+          AND from_date <= %(today)s
+    """, {"today": today()}, as_dict=1)
+
+    for row in data:
+        try:
+            doc = frappe.get_doc("Room Booking", row.name)
+            doc.credit_utilization()
+            frappe.db.commit()
+        except Exception:
+            frappe.db.rollback()
+            frappe.log_error(
+                title="Room Booking credit utilization failed",
+                message=frappe.get_traceback()
+            )
 
 @frappe.whitelist(allow_guest = True)
 def check_log_in_user(user):
