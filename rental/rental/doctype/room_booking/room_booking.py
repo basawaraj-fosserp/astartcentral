@@ -6,6 +6,7 @@ from frappe.model.document import Document
 import json
 from frappe.utils import now , getdate, today, flt, get_link_to_form, get_datetime
 from datetime import datetime, timedelta, time
+from dateutil.relativedelta import relativedelta
 
 class RoomBooking(Document):
     def on_submit(self):
@@ -96,8 +97,16 @@ class RoomBooking(Document):
         booking_date = getdate(self.from_date)
         current_date = getdate(today())
 
+        if any(role in frappe.get_roles() for role in ["System Manager", "Astart Admin"]):
+            max_advance_date = current_date + relativedelta(months=12)
+            if booking_date > max_advance_date:
+                frappe.throw(
+                    f"Oops! Bookings can only be made up to <b>12 months</b> in advance.<br>"
+                    f"Please choose a date on or before <b>{max_advance_date.strftime('%B %d, %Y')}</b>."
+                )
+            return
+
         if booking_date.month != current_date.month or booking_date.year != current_date.year:
-            import calendar
             current_month_name = current_date.strftime("%B %Y")
             booking_month_name = booking_date.strftime("%B %Y")
             frappe.throw(
