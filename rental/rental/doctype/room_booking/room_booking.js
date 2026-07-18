@@ -440,7 +440,21 @@ frappe.ui.form.on('Room Booking', {
 		if (frm.doc.from_date) {
 			const selected = new Date(frm.doc.from_date);
 			const today = new Date();
-			if (selected.getMonth() !== today.getMonth() || selected.getFullYear() !== today.getFullYear()) {
+			const is_admin = frappe.user.has_role("System Manager") || frappe.user.has_role("Astart Admin");
+
+			if (is_admin) {
+				const max_advance_date = new Date(today);
+				max_advance_date.setMonth(max_advance_date.getMonth() + 12);
+				if (selected > max_advance_date) {
+					frappe.show_alert({
+						message: __('Oops! Bookings can only be made up to 12 months in advance. Please choose a date on or before {0}.', [frappe.datetime.obj_to_user(max_advance_date)]),
+						indicator: 'orange'
+					}, 5);
+					frm.set_value("from_date", "");
+					frm.set_value("end_date", "");
+					return;
+				}
+			} else if (selected.getMonth() !== today.getMonth() || selected.getFullYear() !== today.getFullYear()) {
 				const current_month = today.toLocaleString('default', { month: 'long', year: 'numeric' });
 				frappe.show_alert({
 					message: __('Oops! Your credits are available for {0} only. Please choose a date within the current month.', [current_month]),
