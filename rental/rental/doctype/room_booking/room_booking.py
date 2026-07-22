@@ -405,7 +405,10 @@ def get_time_picker_data(room, date):
           AND from_date = %(date)s
     """, {"room": room, "date": date}, as_dict=True)
 
-    max_booking_hours = frappe.db.get_single_value("Admin Setting", "max_booking_hours_per_room_booking")
+    if any(role in frappe.get_roles() for role in ["System Manager", "Astart Admin"]):
+        max_booking_hours = 0
+    else:
+        max_booking_hours = frappe.db.get_single_value("Admin Setting", "max_booking_hours_per_room_booking")
 
     from frappe.utils import now_datetime, getdate
     current = now_datetime()
