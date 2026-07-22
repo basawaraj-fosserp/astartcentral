@@ -212,7 +212,6 @@ class RoomBooking(Document):
         if not time_diff_hour:
             frappe.throw("From time and End time should not be same")
         if not frappe.db.get_value("Room" , self.select_room_type , "utilize_point"):
-            from frappe.utils import now , getdate, today, flt, get_link_to_form
             frappe.throw(f"Please Update a Rate per hour in in room {get_link_to_form('Room',self.select_room_type)}")
         qty = time_diff_hour * frappe.db.get_value("Room" , self.select_room_type , "utilize_point")
         
@@ -223,6 +222,17 @@ class RoomBooking(Document):
 
         from rental.rental.utils import get_warehouse_for_customer
         warehouse = get_warehouse_for_customer(self.customer, self.company)
+
+        from erpnext.stock.utils import get_stock_balance
+        available_credits = get_stock_balance("Credit Points", warehouse)
+        if flt(available_credits) < flt(qty):
+            frappe.throw(
+                f"Insufficient credits for <b>{self.customer}</b>.<br>"
+                f"This booking needs <b>{flt(qty)}</b> credits, but only <b>{flt(available_credits)}</b> "
+                f"are available for the booking month.<br>"
+                f"Please top up credits or choose a shorter booking duration."
+            )
+
         doc = frappe.new_doc("Stock Entry")
         doc.company = self.company
         doc.posting_date = getdate()
