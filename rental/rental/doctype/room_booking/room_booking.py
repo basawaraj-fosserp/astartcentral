@@ -123,6 +123,9 @@ class RoomBooking(Document):
             )
 
     def same_time_booking_validation(self):
+        if any(role in frappe.get_roles() for role in ["System Manager", "Astart Admin"]):
+            return
+
         todays_data = frappe.db.sql("""
                     Select name, from_date, from_datetime, from_time, customer, end_datetime, end_date, end_time, select_room_type
                     From `tabRoom Booking` as rb
