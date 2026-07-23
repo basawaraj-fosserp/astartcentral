@@ -378,16 +378,32 @@ frappe.ui.form.on('Equipment Booking', {
 		if (frm.doc.from_date) {
 			const selected = new Date(frm.doc.from_date);
 			const today = new Date();
-			const max_advance_date = new Date(today);
-			max_advance_date.setDate(max_advance_date.getDate() + 12 * 7);
-			if (selected > max_advance_date) {
-				frappe.show_alert({
-					message: __('Oops! Equipment can only be booked up to 12 weeks in advance. Please choose a date on or before {0}.', [frappe.datetime.obj_to_user(max_advance_date)]),
-					indicator: 'orange'
-				}, 5);
-				frm.set_value("from_date", "");
-				frm.set_value("to_date", "");
-				return;
+			const is_admin = frappe.user.has_role("System Manager") || frappe.user.has_role("Astart Admin");
+
+			if (is_admin) {
+				const max_advance_date = new Date(today);
+				max_advance_date.setMonth(max_advance_date.getMonth() + 12);
+				if (selected > max_advance_date) {
+					frappe.show_alert({
+						message: __('Oops! Bookings can only be made up to 12 months in advance. Please choose a date on or before {0}.', [frappe.datetime.obj_to_user(max_advance_date)]),
+						indicator: 'orange'
+					}, 5);
+					frm.set_value("from_date", "");
+					frm.set_value("to_date", "");
+					return;
+				}
+			} else {
+				const max_advance_date = new Date(today);
+				max_advance_date.setDate(max_advance_date.getDate() + 12 * 7);
+				if (selected > max_advance_date) {
+					frappe.show_alert({
+						message: __('Oops! Equipment can only be booked up to 12 weeks in advance. Please choose a date on or before {0}.', [frappe.datetime.obj_to_user(max_advance_date)]),
+						indicator: 'orange'
+					}, 5);
+					frm.set_value("from_date", "");
+					frm.set_value("to_date", "");
+					return;
+				}
 			}
 		}
 		if (eqb_is_weekend(frm.doc.from_date)) {
