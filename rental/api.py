@@ -7,12 +7,12 @@ from datetime import datetime, timedelta, time
 from erpnext.accounts.doctype.subscription.subscription import get_subscription_updates
 
 def validate_customer(self, method):
-    create_warehouse(self)
     create_subscription_plan(self)
-    
 
-        
+
+
 def create_suto_sub(self, method):
+    create_warehouse(self)
     if not self.custom_subscription:
         sub_doc = create_subscription(source_name = self.name)
         sub_doc.save()
@@ -22,10 +22,7 @@ def create_suto_sub(self, method):
     if self.custom_credit_assigned_monthly and not len(data):
         doc_ = frappe.new_doc("Credit Allocation")
         doc_.ignore_linked_doctypes= ('Customer')
-        if (self.__islocal):
-            doc_.customer = self.customer_name
-        else:
-            doc_.customer =  self.name
+        doc_.customer = self.name
         doc_.posting_date = getdate()
         doc_.credit_score = self.custom_credit_assigned_monthly
         doc_.save(ignore_permissions = True)
