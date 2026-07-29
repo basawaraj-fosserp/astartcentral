@@ -23,6 +23,7 @@ def create_suto_sub(self, method):
         doc_ = frappe.new_doc("Credit Allocation")
         doc_.ignore_linked_doctypes= ('Customer')
         doc_.customer = self.name
+        doc_.company = frappe.db.get_value("Warehouse", {"customer": self.name}, "company")
         doc_.posting_date = getdate()
         doc_.credit_score = self.custom_credit_assigned_monthly
         doc_.save(ignore_permissions = True)
@@ -30,15 +31,14 @@ def create_suto_sub(self, method):
 
 
 def create_warehouse(self):
-    if self.get("__islocal"):
-        existing = frappe.db.get_value("Warehouse", {"customer": self.name}, "name")
-        if not existing:
-            company = frappe.db.get_single_value("Global Defaults", "default_company")
-            doc = frappe.new_doc("Warehouse")
-            doc.warehouse_name = self.name
-            doc.company = company
-            doc.customer = self.name
-            doc.save(ignore_permissions=True)
+    existing = frappe.db.get_value("Warehouse", {"customer": self.name}, "name")
+    if not existing:
+        company = frappe.db.get_single_value("Global Defaults", "default_company")
+        doc = frappe.new_doc("Warehouse")
+        doc.warehouse_name = self.name
+        doc.company = company
+        doc.customer = self.name
+        doc.save(ignore_permissions=True)
         
 def on_update(self , method):
     data = frappe.db.get_list("Credit Allocation" , filters ={'customer':self.name , "docstatus":1})
@@ -46,6 +46,7 @@ def on_update(self , method):
         doc_ = frappe.new_doc("Credit Allocation")
         doc_.customer = self.name
         doc_.ignore_linked_doctypes= ['Customer']
+        doc_.company = frappe.db.get_value("Warehouse", {"customer": self.name}, "company")
         doc_.posting_date = getdate()
         doc_.credit_score = self.custom_credit_assigned_monthly
         doc_.save(ignore_permissions = True)
@@ -214,6 +215,7 @@ def monthly_credit_allocation():
             customer = frappe.get_doc("Customer", row)
             doc = frappe.new_doc("Credit Allocation")
             doc.customer = row
+            doc.company = sr_doc.company
             doc.credit_score = customer.custom_credit_assigned_monthly
             doc.save(ignore_permissions=True)
             doc.submit()
