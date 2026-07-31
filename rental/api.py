@@ -18,6 +18,11 @@ def create_suto_sub(self, method):
         sub_doc.save()
         get_subscription_updates(sub_doc.name)
         self.custom_subscription = sub_doc.name
+        self.custom_membership = sub_doc.name
+        frappe.db.set_value("Customer", self.name, {
+            "custom_subscription": sub_doc.name,
+            "custom_membership": sub_doc.name,
+        })
     data = frappe.db.get_list("Credit Allocation" , filters ={'customer':self.name , "docstatus":1})
     if self.custom_credit_assigned_monthly and not len(data):
         doc_ = frappe.new_doc("Credit Allocation")
