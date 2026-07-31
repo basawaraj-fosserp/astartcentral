@@ -335,6 +335,50 @@ def backfill_customer_subscription_links():
     print(f"Customer-Subscription link backfill done: {updated} updated, {skipped} already in sync, {orphaned} orphaned (customer missing).")
 
 
+def backfill_subscription_agreement_dates():
+    """One-off: sync every non-cancelled/non-completed Subscription's
+    start_date/end_date to its Customer's custom_agreement_start_date/
+    custom_agreement_end_date, since many are currently mismatched. Run via:
+    bench --site <site> execute rental.api.backfill_subscription_agreement_dates
+    """
+    subscriptions = frappe.db.get_all(
+        "Subscription",
+        filters={
+            "party_type": "Customer",
+            "status": ("not in", ["Cancelled", "Completed"]),
+        },
+        fields=["name", "party", "start_date", "end_date"],
+    )
+
+    updated, skipped, orphaned = 0, 0, 0
+    for row in subscriptions:
+        if not row.party or not frappe.db.exists("Customer", row.party):
+            orphaned += 1
+            continue
+
+        customer = frappe.db.get_value(
+            "Customer", row.party,
+            ["custom_agreement_start_date", "custom_agreement_end_date"],
+            as_dict=1,
+        )
+
+        if (
+            customer.custom_agreement_start_date == row.start_date
+            and customer.custom_agreement_end_date == row.end_date
+        ):
+            skipped += 1
+            continue
+
+        frappe.db.set_value("Subscription", row.name, {
+            "start_date": customer.custom_agreement_start_date,
+            "end_date": customer.custom_agreement_end_date,
+        })
+        updated += 1
+
+    frappe.db.commit()
+    print(f"Subscription agreement-date backfill done: {updated} updated, {skipped} already in sync, {orphaned} orphaned (customer missing).")
+
+
 def create_subscription_plan(self):
     if not self.custom_subscription_plan:
         old_plan = None
