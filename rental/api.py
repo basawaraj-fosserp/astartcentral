@@ -339,7 +339,11 @@ def create_subscription_plan(self):
     if not self.custom_subscription_plan:
         old_plan = None
         if not self.is_new():
-            old_plan = frappe.db.get_value("Customer", self.name, "custom_subscription_plan")
+            before_save = self.get_doc_before_save()
+            if before_save:
+                old_plan = before_save.custom_subscription_plan
+            if not old_plan:
+                old_plan = frappe.db.get_value("Customer", self.name, "custom_subscription_plan")
 
         doc = frappe.new_doc('Subscription Plan')
         doc.currency = "SGD"
@@ -364,11 +368,15 @@ def swap_subscription_plan(subscription_name, old_plan, new_plan):
     sub_doc = frappe.get_doc("Subscription", subscription_name)
     qty = 1
     for row in sub_doc.plans:
-        if row.plan == old_plan or (not old_plan and row.plan != new_plan):
+        if row.plan != new_plan:
             qty = row.qty or 1
 
-    sub_doc.set("plans", [row for row in sub_doc.plans if row.plan != old_plan])
-    if not any(row.plan == new_plan for row in sub_doc.plans):
+    # A customer's Subscription should only ever carry one membership
+    # plan at a time - drop every row that isn't the new plan, not just
+    # the specific old_plan we were told about, so a stale/duplicate
+    # plan can never linger if old_plan couldn't be determined.
+    sub_doc.set("plans", [row for row in sub_doc.plans if row.plan == new_plan])
+    if not sub_doc.plans:
         sub_doc.append("plans", {"plan": new_plan, "qty": qty})
 
     sub_doc.flags.ignore_permissions = True
