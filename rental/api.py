@@ -329,14 +329,14 @@ def swap_subscription_plan(subscription_name, old_plan, new_plan):
         return
 
     sub_doc = frappe.get_doc("Subscription", subscription_name)
-    swapped = False
+    qty = 1
     for row in sub_doc.plans:
         if row.plan == old_plan or (not old_plan and row.plan != new_plan):
-            row.plan = new_plan
-            swapped = True
+            qty = row.qty or 1
 
-    if not swapped:
-        sub_doc.append("plans", {"plan": new_plan, "qty": 1})
+    sub_doc.set("plans", [row for row in sub_doc.plans if row.plan != old_plan])
+    if not any(row.plan == new_plan for row in sub_doc.plans):
+        sub_doc.append("plans", {"plan": new_plan, "qty": qty})
 
     sub_doc.flags.ignore_permissions = True
     sub_doc.save()
