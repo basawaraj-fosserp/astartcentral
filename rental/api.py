@@ -8,6 +8,7 @@ from erpnext.accounts.doctype.subscription.subscription import get_subscription_
 
 def validate_customer(self, method):
     create_subscription_plan(self)
+    update_subscription_plan_cost(self)
 
 
 
@@ -260,6 +261,16 @@ def invite_user(contact):
         user.insert(ignore_permissions=True)
         user.add_roles('Customer Rental Booking' , 'Astart Customer')
         return user.name
+
+def update_subscription_plan_cost(self):
+    if self.is_new() or not self.custom_subscription_plan:
+        return
+
+    if not self.has_value_changed("custom_membership_costmonthly"):
+        return
+
+    frappe.db.set_value("Subscription Plan", self.custom_subscription_plan, "cost", self.custom_membership_costmonthly)
+
 
 def create_subscription_plan(self):
     if not self.custom_subscription_plan:
