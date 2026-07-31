@@ -304,6 +304,10 @@ def backfill_subscription_plan_costs():
 
 def create_subscription_plan(self):
     if not self.custom_subscription_plan:
+        old_plan = None
+        if not self.is_new():
+            old_plan = frappe.db.get_value("Customer", self.name, "custom_subscription_plan")
+
         doc = frappe.new_doc('Subscription Plan')
         doc.currency = "SGD"
         doc.plan_name = self.customer_name + ' - '+ str(self.custom_membership_costmonthly)
@@ -315,6 +319,27 @@ def create_subscription_plan(self):
         doc.flags.ignore_permissions = 1
         doc.save()
         self.custom_subscription_plan = doc.name
+
+        if self.custom_subscription:
+            swap_subscription_plan(self.custom_subscription, old_plan, doc.name)
+
+
+def swap_subscription_plan(subscription_name, old_plan, new_plan):
+    if not frappe.db.exists("Subscription", subscription_name):
+        return
+
+    sub_doc = frappe.get_doc("Subscription", subscription_name)
+    swapped = False
+    for row in sub_doc.plans:
+        if row.plan == old_plan or (not old_plan and row.plan != new_plan):
+            row.plan = new_plan
+            swapped = True
+
+    if not swapped:
+        sub_doc.append("plans", {"plan": new_plan, "qty": 1})
+
+    sub_doc.flags.ignore_permissions = True
+    sub_doc.save()
 
 
 def on_trash_customer(self, method):
