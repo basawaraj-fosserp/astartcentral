@@ -272,6 +272,36 @@ def update_subscription_plan_cost(self):
     frappe.db.set_value("Subscription Plan", self.custom_subscription_plan, "cost", self.custom_membership_costmonthly)
 
 
+def backfill_subscription_plan_costs():
+    """One-off: sync every customer's existing Subscription Plan cost to
+    their current custom_membership_costmonthly value. Run once via:
+    bench --site <site> execute rental.api.backfill_subscription_plan_costs
+    """
+    customers = frappe.db.get_all(
+        "Customer",
+        filters={"custom_subscription_plan": ("is", "set")},
+        fields=["name", "custom_subscription_plan", "custom_membership_costmonthly"],
+    )
+
+    updated, skipped = 0, 0
+    for row in customers:
+        current_cost = frappe.db.get_value("Subscription Plan", row.custom_subscription_plan, "cost")
+        if current_cost == row.custom_membership_costmonthly:
+            skipped += 1
+            continue
+
+        frappe.db.set_value(
+            "Subscription Plan",
+            row.custom_subscription_plan,
+            "cost",
+            row.custom_membership_costmonthly,
+        )
+        updated += 1
+
+    frappe.db.commit()
+    print(f"Subscription Plan cost backfill done: {updated} updated, {skipped} already in sync.")
+
+
 def create_subscription_plan(self):
     if not self.custom_subscription_plan:
         doc = frappe.new_doc('Subscription Plan')
