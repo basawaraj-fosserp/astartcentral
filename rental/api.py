@@ -302,6 +302,39 @@ def backfill_subscription_plan_costs():
     print(f"Subscription Plan cost backfill done: {updated} updated, {skipped} already in sync.")
 
 
+def backfill_customer_subscription_links():
+    """One-off: for every Subscription raised against a Customer, make sure
+    that Customer's custom_subscription and custom_membership fields point
+    back to it. Run once via:
+    bench --site <site> execute rental.api.backfill_customer_subscription_links
+    """
+    subscriptions = frappe.db.get_all(
+        "Subscription",
+        filters={"party_type": "Customer"},
+        fields=["name", "party"],
+    )
+
+    updated, skipped, orphaned = 0, 0, 0
+    for row in subscriptions:
+        if not row.party or not frappe.db.exists("Customer", row.party):
+            orphaned += 1
+            continue
+
+        current = frappe.db.get_value("Customer", row.party, ["custom_subscription", "custom_membership"], as_dict=1)
+        if current.custom_subscription == row.name and current.custom_membership == row.name:
+            skipped += 1
+            continue
+
+        frappe.db.set_value("Customer", row.party, {
+            "custom_subscription": row.name,
+            "custom_membership": row.name,
+        })
+        updated += 1
+
+    frappe.db.commit()
+    print(f"Customer-Subscription link backfill done: {updated} updated, {skipped} already in sync, {orphaned} orphaned (customer missing).")
+
+
 def create_subscription_plan(self):
     if not self.custom_subscription_plan:
         old_plan = None
