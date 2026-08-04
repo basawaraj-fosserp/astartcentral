@@ -163,7 +163,7 @@ def create_subscription(source_name , target_doc = None):
         },
         target_doc,
     )
-    doclist.update({'generate_invoice_at_period_start':1, "generate_new_invoices_past_due_date":1})
+    doclist.update({'generate_invoice_at_period_start':0, "generate_new_invoices_past_due_date":0})
     
     doclist.append('plans',{
         "plan" : frappe.db.get_value('Customer', source_name, 'custom_subscription_plan'),
