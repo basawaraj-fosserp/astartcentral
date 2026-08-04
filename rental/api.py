@@ -9,6 +9,7 @@ from erpnext.accounts.doctype.subscription.subscription import get_subscription_
 def validate_customer(self, method):
     create_subscription_plan(self)
     update_subscription_plan_cost(self)
+    update_subscription_agreement_dates(self)
 
 
 
@@ -288,6 +289,25 @@ def update_subscription_plan_cost(self):
         return
 
     frappe.db.set_value("Subscription Plan", self.custom_subscription_plan, "cost", self.custom_membership_costmonthly)
+
+
+def update_subscription_agreement_dates(self):
+    if self.is_new() or not self.custom_subscription:
+        return
+
+    if not (
+        self.has_value_changed("custom_agreement_start_date")
+        or self.has_value_changed("custom_agreement_end_date")
+    ):
+        return
+
+    if not frappe.db.exists("Subscription", self.custom_subscription):
+        return
+
+    frappe.db.set_value("Subscription", self.custom_subscription, {
+        "start_date": self.custom_agreement_start_date,
+        "end_date": self.custom_agreement_end_date,
+    })
 
 
 def backfill_subscription_plan_costs():
