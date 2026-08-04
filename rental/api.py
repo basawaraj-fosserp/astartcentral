@@ -45,7 +45,25 @@ def create_warehouse(self):
         doc.company = company
         doc.customer = self.name
         doc.save(ignore_permissions=True)
-        
+
+
+def rename_customer_warehouse(self, method, old_name, new_name, merge):
+    warehouse = frappe.db.get_value("Warehouse", {"customer": new_name}, ["name", "company"], as_dict=1)
+    if not warehouse:
+        return
+
+    new_warehouse_name = new_name
+    if warehouse.company:
+        suffix = " - " + frappe.get_cached_value("Company", warehouse.company, "abbr")
+        new_warehouse_name = new_name + suffix
+
+    if warehouse.name == new_warehouse_name:
+        return
+
+    frappe.rename_doc("Warehouse", warehouse.name, new_warehouse_name, force=True)
+    frappe.db.set_value("Warehouse", new_warehouse_name, "warehouse_name", new_name)
+
+
 def on_update(self , method):
     data = frappe.db.get_list("Credit Allocation" , filters ={'customer':self.name , "docstatus":1})
     if self.custom_credit_assigned_monthly and not len(data):

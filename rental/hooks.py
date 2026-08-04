@@ -123,7 +123,8 @@ doc_events = {
 		"validate": "rental.api.validate_customer",
 		'on_update':"rental.api.on_update",
 		"on_trash" : "rental.api.on_trash_customer",
-		"after_insert":"rental.api.create_suto_sub"
+		"after_insert":"rental.api.create_suto_sub",
+		"after_rename":"rental.api.rename_customer_warehouse"
 	},
 	"Contact":{
 		"validate": "rental.api.create_user_permission",
