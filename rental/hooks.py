@@ -81,7 +81,8 @@ scheduler_events = {
 		],
     },
 	"daily": [
-		"rental.api.check_subscription_period",
+		# Subscription is no longer created or used in this app (requirement change).
+		# "rental.api.check_subscription_period",
 		"rental.rental.doctype.room_booking.room_booking.charge_pending_credit_utilization"
 	],
 	"monthly": [

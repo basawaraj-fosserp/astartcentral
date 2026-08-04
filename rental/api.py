@@ -4,27 +4,30 @@ from erpnext.stock.stock_ledger import  get_previous_sle , NegativeStockError
 from frappe.utils import flt, getdate, now  
 from frappe.model.mapper import get_mapped_doc
 from datetime import datetime, timedelta, time
-from erpnext.accounts.doctype.subscription.subscription import get_subscription_updates
+# Subscription is no longer created or used in this app (requirement change).
+# from erpnext.accounts.doctype.subscription.subscription import get_subscription_updates
 
 def validate_customer(self, method):
-    create_subscription_plan(self)
-    update_subscription_plan_cost(self)
-    update_subscription_agreement_dates(self)
+    # create_subscription_plan(self)
+    # update_subscription_plan_cost(self)
+    # update_subscription_agreement_dates(self)
+    pass
 
 
 
 def create_suto_sub(self, method):
     create_warehouse(self)
-    if not self.custom_subscription:
-        sub_doc = create_subscription(source_name = self.name)
-        sub_doc.save()
-        get_subscription_updates(sub_doc.name)
-        self.custom_subscription = sub_doc.name
-        self.custom_membership = sub_doc.name
-        frappe.db.set_value("Customer", self.name, {
-            "custom_subscription": sub_doc.name,
-            "custom_membership": sub_doc.name,
-        })
+    # Subscription is no longer created or used in this app (requirement change).
+    # if not self.custom_subscription:
+    #     sub_doc = create_subscription(source_name = self.name)
+    #     sub_doc.save()
+    #     get_subscription_updates(sub_doc.name)
+    #     self.custom_subscription = sub_doc.name
+    #     self.custom_membership = sub_doc.name
+    #     frappe.db.set_value("Customer", self.name, {
+    #         "custom_subscription": sub_doc.name,
+    #         "custom_membership": sub_doc.name,
+    #     })
     data = frappe.db.get_list("Credit Allocation" , filters ={'customer':self.name , "docstatus":1})
     if self.custom_credit_assigned_monthly and not len(data):
         doc_ = frappe.new_doc("Credit Allocation")
@@ -145,50 +148,51 @@ def get_current_credit():
 
     return {"value": 0, "fieldtype": "Float"}
 
-@frappe.whitelist()
-def create_subscription(source_name , target_doc = None):
-    doclist = get_mapped_doc(
-        "Customer",
-        source_name,
-        {
-            "Customer": {
-                "doctype": "Subscription",
-                "field_map": {
-                    "doctype":"party_type",
-                    "name":"party",
-                    "custom_agreement_start_date":"start_date",
-                    "custom_agreement_end_date":"end_date"
-                },
-                },
-        },
-        target_doc,
-    )
-    doclist.update({'generate_invoice_at_period_start':0, "generate_new_invoices_past_due_date":0})
-    
-    doclist.append('plans',{
-        "plan" : frappe.db.get_value('Customer', source_name, 'custom_subscription_plan'),
-        'qty':1
-    })
+# Subscription is no longer created or used in this app (requirement change).
+# @frappe.whitelist()
+# def create_subscription(source_name , target_doc = None):
+#     doclist = get_mapped_doc(
+#         "Customer",
+#         source_name,
+#         {
+#             "Customer": {
+#                 "doctype": "Subscription",
+#                 "field_map": {
+#                     "doctype":"party_type",
+#                     "name":"party",
+#                     "custom_agreement_start_date":"start_date",
+#                     "custom_agreement_end_date":"end_date"
+#                 },
+#                 },
+#         },
+#         target_doc,
+#     )
+#     doclist.update({'generate_invoice_at_period_start':0, "generate_new_invoices_past_due_date":0})
+#
+#     doclist.append('plans',{
+#         "plan" : frappe.db.get_value('Customer', source_name, 'custom_subscription_plan'),
+#         'qty':1
+#     })
+#
+#     return doclist
 
-    return doclist
 
+# def check_subscription_period():
+#     customer = []
+#     doc_list = frappe.get_list("Subscription" , pluck = "name")
+#     for row in doc_list:
+#         doc = frappe.get_doc("Subscription" , row)
+#         if getdate(doc.end_date) < getdate():
+#             customer.append(doc.customer)
+#     if customer:
+#         for row in customer:
+#             users = frappe.db.sql(f""" Select user
+#                                     From `tabContact` as c
+#                                     left join `tabDynamic Link` as dl On dl.parent = c.name
+#                                     Where dl.link_doctype = "Customer" and dl.name = '{row}' """,as_dict = 1)
+#             user = users[0].user
+#             frappe.db.set_value("User" , user , "enable" , 0)
 
-def check_subscription_period():
-    customer = []
-    doc_list = frappe.get_list("Subscription" , pluck = "name")
-    for row in doc_list:
-        doc = frappe.get_doc("Subscription" , row)
-        if getdate(doc.end_date) < getdate():
-            customer.append(doc.customer)
-    if customer:
-        for row in customer:
-            users = frappe.db.sql(f""" Select user
-                                    From `tabContact` as c
-                                    left join `tabDynamic Link` as dl On dl.parent = c.name
-                                    Where dl.link_doctype = "Customer" and dl.name = '{row}' """,as_dict = 1)
-            user = users[0].user
-            frappe.db.set_value("User" , user , "enable" , 0)
-        
 
 
 # on submit of subscription allocate a credit point
@@ -281,188 +285,189 @@ def invite_user(contact):
         user.add_roles('Customer Rental Booking' , 'Astart Customer')
         return user.name
 
-def update_subscription_plan_cost(self):
-    if self.is_new() or not self.custom_subscription_plan:
-        return
-
-    if not self.has_value_changed("custom_membership_costmonthly"):
-        return
-
-    frappe.db.set_value("Subscription Plan", self.custom_subscription_plan, "cost", self.custom_membership_costmonthly)
-
-
-def update_subscription_agreement_dates(self):
-    if self.is_new() or not self.custom_subscription:
-        return
-
-    if not (
-        self.has_value_changed("custom_agreement_start_date")
-        or self.has_value_changed("custom_agreement_end_date")
-    ):
-        return
-
-    if not frappe.db.exists("Subscription", self.custom_subscription):
-        return
-
-    frappe.db.set_value("Subscription", self.custom_subscription, {
-        "start_date": self.custom_agreement_start_date,
-        "end_date": self.custom_agreement_end_date,
-    })
+# Subscription is no longer created or used in this app (requirement change).
+# def update_subscription_plan_cost(self):
+#     if self.is_new() or not self.custom_subscription_plan:
+#         return
+#
+#     if not self.has_value_changed("custom_membership_costmonthly"):
+#         return
+#
+#     frappe.db.set_value("Subscription Plan", self.custom_subscription_plan, "cost", self.custom_membership_costmonthly)
 
 
-def backfill_subscription_plan_costs():
-    """One-off: sync every customer's existing Subscription Plan cost to
-    their current custom_membership_costmonthly value. Run once via:
-    bench --site <site> execute rental.api.backfill_subscription_plan_costs
-    """
-    customers = frappe.db.get_all(
-        "Customer",
-        filters={"custom_subscription_plan": ("is", "set")},
-        fields=["name", "custom_subscription_plan", "custom_membership_costmonthly"],
-    )
-
-    updated, skipped = 0, 0
-    for row in customers:
-        current_cost = frappe.db.get_value("Subscription Plan", row.custom_subscription_plan, "cost")
-        if current_cost == row.custom_membership_costmonthly:
-            skipped += 1
-            continue
-
-        frappe.db.set_value(
-            "Subscription Plan",
-            row.custom_subscription_plan,
-            "cost",
-            row.custom_membership_costmonthly,
-        )
-        updated += 1
-
-    frappe.db.commit()
-    print(f"Subscription Plan cost backfill done: {updated} updated, {skipped} already in sync.")
+# def update_subscription_agreement_dates(self):
+#     if self.is_new() or not self.custom_subscription:
+#         return
+#
+#     if not (
+#         self.has_value_changed("custom_agreement_start_date")
+#         or self.has_value_changed("custom_agreement_end_date")
+#     ):
+#         return
+#
+#     if not frappe.db.exists("Subscription", self.custom_subscription):
+#         return
+#
+#     frappe.db.set_value("Subscription", self.custom_subscription, {
+#         "start_date": self.custom_agreement_start_date,
+#         "end_date": self.custom_agreement_end_date,
+#     })
 
 
-def backfill_customer_subscription_links():
-    """One-off: for every Subscription raised against a Customer, make sure
-    that Customer's custom_subscription and custom_membership fields point
-    back to it. Run once via:
-    bench --site <site> execute rental.api.backfill_customer_subscription_links
-    """
-    subscriptions = frappe.db.get_all(
-        "Subscription",
-        filters={"party_type": "Customer"},
-        fields=["name", "party"],
-    )
-
-    updated, skipped, orphaned = 0, 0, 0
-    for row in subscriptions:
-        if not row.party or not frappe.db.exists("Customer", row.party):
-            orphaned += 1
-            continue
-
-        current = frappe.db.get_value("Customer", row.party, ["custom_subscription", "custom_membership"], as_dict=1)
-        if current.custom_subscription == row.name and current.custom_membership == row.name:
-            skipped += 1
-            continue
-
-        frappe.db.set_value("Customer", row.party, {
-            "custom_subscription": row.name,
-            "custom_membership": row.name,
-        })
-        updated += 1
-
-    frappe.db.commit()
-    print(f"Customer-Subscription link backfill done: {updated} updated, {skipped} already in sync, {orphaned} orphaned (customer missing).")
+# def backfill_subscription_plan_costs():
+#     """One-off: sync every customer's existing Subscription Plan cost to
+#     their current custom_membership_costmonthly value. Run once via:
+#     bench --site <site> execute rental.api.backfill_subscription_plan_costs
+#     """
+#     customers = frappe.db.get_all(
+#         "Customer",
+#         filters={"custom_subscription_plan": ("is", "set")},
+#         fields=["name", "custom_subscription_plan", "custom_membership_costmonthly"],
+#     )
+#
+#     updated, skipped = 0, 0
+#     for row in customers:
+#         current_cost = frappe.db.get_value("Subscription Plan", row.custom_subscription_plan, "cost")
+#         if current_cost == row.custom_membership_costmonthly:
+#             skipped += 1
+#             continue
+#
+#         frappe.db.set_value(
+#             "Subscription Plan",
+#             row.custom_subscription_plan,
+#             "cost",
+#             row.custom_membership_costmonthly,
+#         )
+#         updated += 1
+#
+#     frappe.db.commit()
+#     print(f"Subscription Plan cost backfill done: {updated} updated, {skipped} already in sync.")
 
 
-def backfill_subscription_agreement_dates():
-    """One-off: sync every non-cancelled/non-completed Subscription's
-    start_date/end_date to its Customer's custom_agreement_start_date/
-    custom_agreement_end_date, since many are currently mismatched. Run via:
-    bench --site <site> execute rental.api.backfill_subscription_agreement_dates
-    """
-    subscriptions = frappe.db.get_all(
-        "Subscription",
-        filters={
-            "party_type": "Customer",
-            "status": ("not in", ["Cancelled", "Completed"]),
-        },
-        fields=["name", "party", "start_date", "end_date"],
-    )
-
-    updated, skipped, orphaned = 0, 0, 0
-    for row in subscriptions:
-        if not row.party or not frappe.db.exists("Customer", row.party):
-            orphaned += 1
-            continue
-
-        customer = frappe.db.get_value(
-            "Customer", row.party,
-            ["custom_agreement_start_date", "custom_agreement_end_date"],
-            as_dict=1,
-        )
-
-        if (
-            customer.custom_agreement_start_date == row.start_date
-            and customer.custom_agreement_end_date == row.end_date
-        ):
-            skipped += 1
-            continue
-
-        frappe.db.set_value("Subscription", row.name, {
-            "start_date": customer.custom_agreement_start_date,
-            "end_date": customer.custom_agreement_end_date,
-        })
-        updated += 1
-
-    frappe.db.commit()
-    print(f"Subscription agreement-date backfill done: {updated} updated, {skipped} already in sync, {orphaned} orphaned (customer missing).")
+# def backfill_customer_subscription_links():
+#     """One-off: for every Subscription raised against a Customer, make sure
+#     that Customer's custom_subscription and custom_membership fields point
+#     back to it. Run once via:
+#     bench --site <site> execute rental.api.backfill_customer_subscription_links
+#     """
+#     subscriptions = frappe.db.get_all(
+#         "Subscription",
+#         filters={"party_type": "Customer"},
+#         fields=["name", "party"],
+#     )
+#
+#     updated, skipped, orphaned = 0, 0, 0
+#     for row in subscriptions:
+#         if not row.party or not frappe.db.exists("Customer", row.party):
+#             orphaned += 1
+#             continue
+#
+#         current = frappe.db.get_value("Customer", row.party, ["custom_subscription", "custom_membership"], as_dict=1)
+#         if current.custom_subscription == row.name and current.custom_membership == row.name:
+#             skipped += 1
+#             continue
+#
+#         frappe.db.set_value("Customer", row.party, {
+#             "custom_subscription": row.name,
+#             "custom_membership": row.name,
+#         })
+#         updated += 1
+#
+#     frappe.db.commit()
+#     print(f"Customer-Subscription link backfill done: {updated} updated, {skipped} already in sync, {orphaned} orphaned (customer missing).")
 
 
-def create_subscription_plan(self):
-    if not self.custom_subscription_plan:
-        old_plan = None
-        if not self.is_new():
-            before_save = self.get_doc_before_save()
-            if before_save:
-                old_plan = before_save.custom_subscription_plan
-            if not old_plan:
-                old_plan = frappe.db.get_value("Customer", self.name, "custom_subscription_plan")
+# def backfill_subscription_agreement_dates():
+#     """One-off: sync every non-cancelled/non-completed Subscription's
+#     start_date/end_date to its Customer's custom_agreement_start_date/
+#     custom_agreement_end_date, since many are currently mismatched. Run via:
+#     bench --site <site> execute rental.api.backfill_subscription_agreement_dates
+#     """
+#     subscriptions = frappe.db.get_all(
+#         "Subscription",
+#         filters={
+#             "party_type": "Customer",
+#             "status": ("not in", ["Cancelled", "Completed"]),
+#         },
+#         fields=["name", "party", "start_date", "end_date"],
+#     )
+#
+#     updated, skipped, orphaned = 0, 0, 0
+#     for row in subscriptions:
+#         if not row.party or not frappe.db.exists("Customer", row.party):
+#             orphaned += 1
+#             continue
+#
+#         customer = frappe.db.get_value(
+#             "Customer", row.party,
+#             ["custom_agreement_start_date", "custom_agreement_end_date"],
+#             as_dict=1,
+#         )
+#
+#         if (
+#             customer.custom_agreement_start_date == row.start_date
+#             and customer.custom_agreement_end_date == row.end_date
+#         ):
+#             skipped += 1
+#             continue
+#
+#         frappe.db.set_value("Subscription", row.name, {
+#             "start_date": customer.custom_agreement_start_date,
+#             "end_date": customer.custom_agreement_end_date,
+#         })
+#         updated += 1
+#
+#     frappe.db.commit()
+#     print(f"Subscription agreement-date backfill done: {updated} updated, {skipped} already in sync, {orphaned} orphaned (customer missing).")
 
-        doc = frappe.new_doc('Subscription Plan')
-        doc.currency = "SGD"
-        doc.plan_name = self.customer_name + ' - '+ str(self.custom_membership_costmonthly)
-        doc.item = "Credit Points"
-        doc.cost = self.custom_membership_costmonthly
-        doc.price_determination = 'Fixed Rate'
-        doc.billing_interval = 'Month'
-        doc.billing_interval_count = 1
-        doc.flags.ignore_permissions = 1
-        doc.save()
-        self.custom_subscription_plan = doc.name
 
-        if self.custom_subscription:
-            swap_subscription_plan(self.custom_subscription, old_plan, doc.name)
+# def create_subscription_plan(self):
+#     if not self.custom_subscription_plan:
+#         old_plan = None
+#         if not self.is_new():
+#             before_save = self.get_doc_before_save()
+#             if before_save:
+#                 old_plan = before_save.custom_subscription_plan
+#             if not old_plan:
+#                 old_plan = frappe.db.get_value("Customer", self.name, "custom_subscription_plan")
+#
+#         doc = frappe.new_doc('Subscription Plan')
+#         doc.currency = "SGD"
+#         doc.plan_name = self.customer_name + ' - '+ str(self.custom_membership_costmonthly)
+#         doc.item = "Credit Points"
+#         doc.cost = self.custom_membership_costmonthly
+#         doc.price_determination = 'Fixed Rate'
+#         doc.billing_interval = 'Month'
+#         doc.billing_interval_count = 1
+#         doc.flags.ignore_permissions = 1
+#         doc.save()
+#         self.custom_subscription_plan = doc.name
+#
+#         if self.custom_subscription:
+#             swap_subscription_plan(self.custom_subscription, old_plan, doc.name)
 
 
-def swap_subscription_plan(subscription_name, old_plan, new_plan):
-    if not frappe.db.exists("Subscription", subscription_name):
-        return
-
-    sub_doc = frappe.get_doc("Subscription", subscription_name)
-    qty = 1
-    for row in sub_doc.plans:
-        if row.plan != new_plan:
-            qty = row.qty or 1
-
-    # A customer's Subscription should only ever carry one membership
-    # plan at a time - drop every row that isn't the new plan, not just
-    # the specific old_plan we were told about, so a stale/duplicate
-    # plan can never linger if old_plan couldn't be determined.
-    sub_doc.set("plans", [row for row in sub_doc.plans if row.plan == new_plan])
-    if not sub_doc.plans:
-        sub_doc.append("plans", {"plan": new_plan, "qty": qty})
-
-    sub_doc.flags.ignore_permissions = True
-    sub_doc.save()
+# def swap_subscription_plan(subscription_name, old_plan, new_plan):
+#     if not frappe.db.exists("Subscription", subscription_name):
+#         return
+#
+#     sub_doc = frappe.get_doc("Subscription", subscription_name)
+#     qty = 1
+#     for row in sub_doc.plans:
+#         if row.plan != new_plan:
+#             qty = row.qty or 1
+#
+#     # A customer's Subscription should only ever carry one membership
+#     # plan at a time - drop every row that isn't the new plan, not just
+#     # the specific old_plan we were told about, so a stale/duplicate
+#     # plan can never linger if old_plan couldn't be determined.
+#     sub_doc.set("plans", [row for row in sub_doc.plans if row.plan == new_plan])
+#     if not sub_doc.plans:
+#         sub_doc.append("plans", {"plan": new_plan, "qty": qty})
+#
+#     sub_doc.flags.ignore_permissions = True
+#     sub_doc.save()
 
 
 def on_trash_customer(self, method):
