@@ -4,3 +4,4 @@ rental.patches.fix_subscription_plan_links
 rental.patches.rename_mismatched_customer_warehouses
 rental.patches.disable_subscription_auto_invoicing
 rental.patches.hide_customer_membership_fields
+rental.patches.assign_september_credit_allocation

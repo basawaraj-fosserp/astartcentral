@@ -230,22 +230,45 @@ def monthly_credit_allocation():
         if not len(sle_list):
             continue
 
-        sr_doc = frappe.new_doc("Stock Reconciliation")
-        sr_doc.company = frappe.db.get_value("Warehouse", warehouse, "company")
-        sr_doc.purpose = "Stock Reconciliation"
-        sr_doc.append('items', {
-            'item_code': "Credit Points",
-            "warehouse": warehouse,
-            'qty': 0,
-        })
+        customer = frappe.get_doc("Customer", row)
+        new_credit_score = flt(customer.custom_credit_assigned_monthly)
+        company = frappe.db.get_value("Warehouse", warehouse, "company")
+
+        current_qty = flt(frappe.db.get_value(
+            "Bin", {"item_code": "Credit Points", "warehouse": warehouse}, "actual_qty"
+        ))
+
         try:
-            sr_doc.save(ignore_permissions=True)
-            sr_doc.submit()
-            customer = frappe.get_doc("Customer", row)
+            # Remove previous credit points first, if any are left.
+            if current_qty != 0:
+                clear_doc = frappe.new_doc("Stock Reconciliation")
+                clear_doc.company = company
+                clear_doc.purpose = "Stock Reconciliation"
+                clear_doc.append('items', {
+                    'item_code': "Credit Points",
+                    "warehouse": warehouse,
+                    'qty': 0,
+                })
+                clear_doc.save(ignore_permissions=True)
+                clear_doc.submit()
+
+            # Allocate the new credit points.
+            if new_credit_score != 0:
+                sr_doc = frappe.new_doc("Stock Reconciliation")
+                sr_doc.company = company
+                sr_doc.purpose = "Stock Reconciliation"
+                sr_doc.append('items', {
+                    'item_code': "Credit Points",
+                    "warehouse": warehouse,
+                    'qty': new_credit_score,
+                })
+                sr_doc.save(ignore_permissions=True)
+                sr_doc.submit()
+
             doc = frappe.new_doc("Credit Allocation")
             doc.customer = row
-            doc.company = sr_doc.company
-            doc.credit_score = customer.custom_credit_assigned_monthly
+            doc.company = company
+            doc.credit_score = new_credit_score
             doc.save(ignore_permissions=True)
             doc.submit()
         except Exception:
