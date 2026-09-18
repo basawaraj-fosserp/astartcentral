@@ -1,6 +1,5 @@
 import frappe
-from frappe.utils import now , getdate
-from datetime import datetime , timedelta
+from frappe.utils import now, getdate, get_datetime
 import json
 @frappe.whitelist()
 def current_room_booking_data(room):
@@ -19,7 +18,7 @@ def current_room_booking_data(room):
                                 Order by from_datetime
                                  """, as_dict=True)
 
-    now_time = datetime.strptime(str( current_time ), "%Y-%m-%d %H:%M:%S.%f")
+    now_time = get_datetime(current_time)
 
     display_data = []
     current_booking = None
