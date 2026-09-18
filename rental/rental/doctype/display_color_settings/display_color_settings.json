@@ -6,6 +6,13 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "section_break_bg_colors",
+  "time_date_box_background",
+  "availability_box_background",
+  "column_break_bg_colors",
+  "room_title_box_background",
+  "upcoming_box_background",
+  "section_break_text_colors",
   "current_time",
   "current_day_and_date",
   "available",
@@ -20,6 +27,40 @@
   "upcomming_time"
  ],
  "fields": [
+  {
+   "fieldname": "section_break_bg_colors",
+   "fieldtype": "Section Break",
+   "label": "Box Background Colors"
+  },
+  {
+   "fieldname": "time_date_box_background",
+   "fieldtype": "Color",
+   "label": "Time/Date Box Background"
+  },
+  {
+   "fieldname": "availability_box_background",
+   "fieldtype": "Color",
+   "label": "Availability Box Background"
+  },
+  {
+   "fieldname": "column_break_bg_colors",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "room_title_box_background",
+   "fieldtype": "Color",
+   "label": "Room Title Box Background"
+  },
+  {
+   "fieldname": "upcoming_box_background",
+   "fieldtype": "Color",
+   "label": "Upcoming Box Background"
+  },
+  {
+   "fieldname": "section_break_text_colors",
+   "fieldtype": "Section Break",
+   "label": "Text Colors"
+  },
   {
    "fieldname": "current_time",
    "fieldtype": "Color",

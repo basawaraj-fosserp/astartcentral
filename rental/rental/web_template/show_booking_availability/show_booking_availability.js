@@ -1,3 +1,15 @@
+// Converts a hex color (#rgb or #rrggbb) to an rgba() string with the given opacity
+function hexToRgba(hex, opacity) {
+    hex = hex.replace('#', '')
+    if (hex.length === 3) {
+        hex = hex.split('').map(c => c + c).join('')
+    }
+    var r = parseInt(hex.substring(0, 2), 16)
+    var g = parseInt(hex.substring(2, 4), 16)
+    var b = parseInt(hex.substring(4, 6), 16)
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + opacity + ')'
+}
+
 // Function to refresh the page
 function refreshPage() {
     
@@ -80,6 +92,20 @@ frappe.ready(function() {
     frappe.call({
         method:"rental.rental.web_template.show_booking_availability.get_booking_data.get_color_code",
         callback:function(r){
+            var main_bg_screen = document.querySelector('.main-bg-screen')
+            if(r.message.time_date_box_background){
+                main_bg_screen.style.setProperty('--time-date-box-bg', hexToRgba(r.message.time_date_box_background, 0.5))
+            }
+            if(r.message.availability_box_background){
+                main_bg_screen.style.setProperty('--availability-box-bg', hexToRgba(r.message.availability_box_background, 0.5))
+            }
+            if(r.message.room_title_box_background){
+                main_bg_screen.style.setProperty('--room-title-box-bg', hexToRgba(r.message.room_title_box_background, 0.78))
+            }
+            if(r.message.upcoming_box_background){
+                main_bg_screen.style.setProperty('--upcoming-box-bg', hexToRgba(r.message.upcoming_box_background, 0.72))
+            }
+
             var room_title = document.querySelector('.room_title')
             room_title.style.color = r.message.room_title
 

@@ -32,7 +32,6 @@
     }
     .main-bg-screen {
       display: flex;
-      background-color: aqua;
       background-image: url('{{ image }}');
       padding-left:0rem;
       padding-right: 0rem;
@@ -62,25 +61,25 @@
         height: 50%;
     }
     .inner-box1{
-        background-color: rgba(0, 188, 141, 0.5);
+        background-color: var(--time-date-box-bg, rgba(0, 188, 141, 0.5));
     }
     .inner-box2available{
-      background-color: rgba(0, 255, 0, 0.5);
+      background-color: var(--availability-box-bg, rgba(0, 255, 0, 0.5));
         text-align: center;
         padding-top: 80px;
     }
     .inner-box2not-available{
-      background-color: rgba(255, 0, 0, 0.4);
+      background-color: var(--availability-box-bg, rgba(255, 0, 0, 0.4));
         text-align: center;
         padding-top: 80px;
     }
     .inner-box3{
       padding-left: 40px;
-        background-color: rgba(0, 0, 0, 0.72);
+        background-color: var(--upcoming-box-bg, rgba(0, 0, 0, 0.72));
         height : 100%;
     }
     .center-div{
-        background-color: rgba(230, 230, 230, 0.78);
+        background-color: var(--room-title-box-bg, rgba(230, 230, 230, 0.78));
         width: 50%;
         padding-left: 80px;
     }
