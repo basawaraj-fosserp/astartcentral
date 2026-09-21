@@ -9,6 +9,7 @@
   "section_break_bg_colors",
   "time_date_box_background",
   "availability_box_background",
+  "not_available_box_background",
   "column_break_bg_colors",
   "room_title_box_background",
   "upcoming_box_background",
@@ -41,6 +42,11 @@
    "fieldname": "availability_box_background",
    "fieldtype": "Color",
    "label": "Availability Box Background"
+  },
+  {
+   "fieldname": "not_available_box_background",
+   "fieldtype": "Color",
+   "label": "Not Available Box Background"
   },
   {
    "fieldname": "column_break_bg_colors",

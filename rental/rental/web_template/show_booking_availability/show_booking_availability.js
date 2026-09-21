@@ -87,9 +87,12 @@ frappe.ready(function() {
                     main_element.appendChild(titleReservation)
                 }
             }
+            applyColorSettings()
         }
     })
-    frappe.call({
+
+    function applyColorSettings() {
+        frappe.call({
         method:"rental.rental.web_template.show_booking_availability.get_booking_data.get_color_code",
         callback:function(r){
             var main_bg_screen = document.querySelector('.main-bg-screen')
@@ -98,6 +101,9 @@ frappe.ready(function() {
             }
             if(r.message.availability_box_background){
                 main_bg_screen.style.setProperty('--availability-box-bg', hexToRgba(r.message.availability_box_background, 0.5))
+            }
+            if(r.message.not_available_box_background){
+                main_bg_screen.style.setProperty('--not-available-box-bg', hexToRgba(r.message.not_available_box_background, 0.5))
             }
             if(r.message.room_title_box_background){
                 main_bg_screen.style.setProperty('--room-title-box-bg', hexToRgba(r.message.room_title_box_background, 0.78))
@@ -130,16 +136,21 @@ frappe.ready(function() {
                 element.style.color = r.message.title_booking
             });
             
-            var uptiming = document.querySelector('.uptiming')
+            var uptiming = document.querySelectorAll('.uptiming')
             uptiming.forEach(function(element) {
                 element.style.color = r.message.upcomming_time
             });
-            
+
             var current_reservation_title = document.querySelector('.current_resevation')
-            current_reservation_title.style.color = r.message.current_resevation
+            if (current_reservation_title) {
+                current_reservation_title.style.color = r.message.current_reservation_title
+            }
 
             var current_reservation_time_log = document.querySelector('.current_timelog')
-            current_reservation_time_log.style.color = r.message.current_reservation_time_log
+            if (current_reservation_time_log) {
+                current_reservation_time_log.style.color = r.message.current_reservation_time_log
+            }
         }
-    })
+        })
+    }
 })
