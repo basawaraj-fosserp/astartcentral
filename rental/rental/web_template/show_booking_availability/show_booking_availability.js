@@ -37,9 +37,13 @@ frappe.ready(function() {
                 current_date.innerHTML = data.today
                 var available = document.querySelector('.available')
                 available.innerHTML = data.availability
-                if (data.availability == 'NOT AVAILABLE'){
+                var next_available_slot = document.querySelector('.next_available_slot')
+                if (data.availability == 'OCCUPIED'){
                     var innerbox2 = document.querySelector('.inner-box2')
                     innerbox2.classList.add('inner-box2not-available')
+                    if (data.next_available_slot){
+                        next_available_slot.innerHTML = "Next Available: " + data.next_available_slot
+                    }
                 }
                 else{
                     var innerbox2 = document.querySelector('.inner-box2')
@@ -67,7 +71,7 @@ frappe.ready(function() {
                     center_main_element.append(contact_title)
                     center_main_element.append(contact_name)
                 }
-                if(data.event.length > 0 && data.event != "No Upcomming Event"){
+                if(data.event.length > 0 && data.event != "No Upcoming Event"){
                     var main_element = document.querySelector('.inner-box3')
                     data.event.forEach(a => {
                         var titleReservation = document.createElement('h3');
@@ -124,7 +128,7 @@ frappe.ready(function() {
             current_day_and_date.style.color = r.message.current_day_and_date
 
             var available = document.querySelector('.available')
-            if(available.innerHTML == "NOT AVAILABLE"){
+            if(available.innerHTML == "OCCUPIED"){
                 available.style.color = r.message.not_available
             }else{
                 available.style.color = r.message.available

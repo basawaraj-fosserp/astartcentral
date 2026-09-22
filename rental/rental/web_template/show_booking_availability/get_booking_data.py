@@ -33,11 +33,24 @@ def current_room_booking_data(room):
     event = []
     if len(display_data) >= 1:
         event = display_data
+
+    next_available_slot = None
+    if current_booking:
+        next_available_slot = current_booking.end_time
+        last_end = current_booking.end_datetime
+        for row in display_data:
+            if row.from_datetime <= last_end:
+                next_available_slot = row.end_time
+                last_end = row.end_datetime
+            else:
+                break
+
     display.update({'current_booking' : current_booking,
                     'current_time' : str(now_time.time())[0:5] ,
                     'today': formatted_date,
-                    'event' : event if event else 'No Upcomming Event',
-                    'availability':"NOT AVAILABLE" if current_booking else 'AVAILABLE',
+                    'event' : event if event else 'No Upcoming Event',
+                    'availability':"OCCUPIED" if current_booking else 'AVAILABLE',
+                    'next_available_slot' : next_available_slot,
                     })
 
     return display
