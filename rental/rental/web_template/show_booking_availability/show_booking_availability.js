@@ -166,6 +166,11 @@ frappe.ready(function() {
             if (meeting_leader_name) {
                 meeting_leader_name.style.color = r.message.meeting_leader_name
             }
+
+            var next_available_slot = document.querySelector('.next_available_slot')
+            if (next_available_slot) {
+                next_available_slot.style.color = r.message.next_available_slot
+            }
         }
         })
     }

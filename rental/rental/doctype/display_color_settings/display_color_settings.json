@@ -24,6 +24,7 @@
   "current_reservation_time_log",
   "meeting_leader_label",
   "meeting_leader_name",
+  "next_available_slot",
   "column_break_69tm4",
   "label_upcoming",
   "title_booking",
@@ -136,6 +137,11 @@
    "fieldname": "meeting_leader_name",
    "fieldtype": "Color",
    "label": "Meeting Leader Name"
+  },
+  {
+   "fieldname": "next_available_slot",
+   "fieldtype": "Color",
+   "label": "Next Available Slot"
   }
  ],
  "index_web_pages_for_search": 1,
