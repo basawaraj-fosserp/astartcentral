@@ -22,6 +22,8 @@
   "room_title",
   "current_reservation_title",
   "current_reservation_time_log",
+  "meeting_leader_label",
+  "meeting_leader_name",
   "column_break_69tm4",
   "label_upcoming",
   "title_booking",
@@ -124,6 +126,16 @@
    "fieldname": "current_reservation_time_log",
    "fieldtype": "Color",
    "label": "Current Reservation Time Log"
+  },
+  {
+   "fieldname": "meeting_leader_label",
+   "fieldtype": "Color",
+   "label": "Meeting Leader Label"
+  },
+  {
+   "fieldname": "meeting_leader_name",
+   "fieldtype": "Color",
+   "label": "Meeting Leader Name"
   }
  ],
  "index_web_pages_for_search": 1,

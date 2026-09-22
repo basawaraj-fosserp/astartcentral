@@ -58,7 +58,9 @@ frappe.ready(function() {
                     var contact_title = document.createElement('p');
                     var contact_name = document.createElement('b');
                     contact_title.innerHTML = "Meeting Leader"
-                    contact_name.innerHTML = data.current_booking.contact_name  
+                    contact_title.className = "meeting_leader_label"
+                    contact_name.innerHTML = data.current_booking.contact_name
+                    contact_name.className = "meeting_leader_name"
                     center_main_element.append(title_of_current)
                     center_main_element.append(current_log)
                     center_main_element.append(br)
@@ -149,6 +151,16 @@ frappe.ready(function() {
             var current_reservation_time_log = document.querySelector('.current_timelog')
             if (current_reservation_time_log) {
                 current_reservation_time_log.style.color = r.message.current_reservation_time_log
+            }
+
+            var meeting_leader_label = document.querySelector('.meeting_leader_label')
+            if (meeting_leader_label) {
+                meeting_leader_label.style.color = r.message.meeting_leader_label
+            }
+
+            var meeting_leader_name = document.querySelector('.meeting_leader_name')
+            if (meeting_leader_name) {
+                meeting_leader_name.style.color = r.message.meeting_leader_name
             }
         }
         })
