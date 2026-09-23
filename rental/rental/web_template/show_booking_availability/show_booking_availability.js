@@ -43,6 +43,8 @@ frappe.ready(function() {
                     innerbox2.classList.add('inner-box2not-available')
                     if (data.next_available_slot){
                         next_available_slot.innerHTML = "Next Available: " + data.next_available_slot
+                    }else{
+                        next_available_slot.innerHTML = "No Available Slots Today"
                     }
                 }
                 else{
