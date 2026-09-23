@@ -44,6 +44,7 @@ frappe.ready(function() {
                     if (data.next_available_slot){
                         next_available_slot.innerHTML = "Next Available: " + data.next_available_slot
                     }else{
+                        available.innerHTML = ""
                         next_available_slot.innerHTML = "No Available Slots Today"
                     }
                 }
