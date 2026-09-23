@@ -1,5 +1,5 @@
 import frappe
-from frappe.utils import now, getdate, get_datetime
+from frappe.utils import now, getdate, get_datetime, get_time
 import json
 @frappe.whitelist()
 def current_room_booking_data(room):
@@ -44,6 +44,10 @@ def current_room_booking_data(room):
                 last_end = row.end_datetime
             else:
                 break
+
+        booking_hours_to = frappe.db.get_single_value("Admin Setting", "booking_hours_to")
+        if booking_hours_to and get_time(next_available_slot) >= get_time(booking_hours_to):
+            next_available_slot = None
 
     display.update({'current_booking' : current_booking,
                     'current_time' : str(now_time.time())[0:5] ,
