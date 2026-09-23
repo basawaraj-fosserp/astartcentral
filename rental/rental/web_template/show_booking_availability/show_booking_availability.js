@@ -91,7 +91,7 @@ frappe.ready(function() {
                 else{
                     var main_element = document.querySelector('.inner-box3')
                     var titleReservation = document.createElement('span');
-                    titleReservation.innerHTML = "No Upcomming Event"
+                    titleReservation.innerHTML = "No Upcoming Event"
                     main_element.appendChild(titleReservation)
                 }
             }
