@@ -5,3 +5,4 @@ rental.patches.rename_mismatched_customer_warehouses
 rental.patches.disable_subscription_auto_invoicing
 rental.patches.hide_customer_membership_fields
 rental.patches.assign_september_credit_allocation
+rental.patches.reverse_october_duplicate_credit_allocation
