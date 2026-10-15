@@ -252,19 +252,10 @@ def monthly_credit_allocation():
                 clear_doc.save(ignore_permissions=True)
                 clear_doc.submit()
 
-            # Allocate the new credit points.
-            if new_credit_score != 0:
-                sr_doc = frappe.new_doc("Stock Reconciliation")
-                sr_doc.company = company
-                sr_doc.purpose = "Stock Reconciliation"
-                sr_doc.append('items', {
-                    'item_code': "Credit Points",
-                    "warehouse": warehouse,
-                    'qty': new_credit_score,
-                })
-                sr_doc.save(ignore_permissions=True)
-                sr_doc.submit()
-
+            # Allocate the new credit points. Credit Allocation.on_submit()
+            # creates its own Stock Entry for this, so do not also reconcile
+            # the bin to new_credit_score here or the customer gets double
+            # credited (reconciliation + the Credit Allocation's own entry).
             doc = frappe.new_doc("Credit Allocation")
             doc.customer = row
             doc.company = company
