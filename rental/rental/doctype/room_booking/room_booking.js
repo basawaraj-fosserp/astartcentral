@@ -87,14 +87,21 @@ function time_to_minutes(t) {
 	return h * 60 + m;
 }
 
-function get_disabled_slots(booked_slots) {
+function get_disabled_slots(booked_slots, picking_end) {
+	// As a start time, a slot is blocked when it falls inside [b_from, b_to).
+	// As an end time, a slot is blocked when it falls inside (b_from, b_to] —
+	// i.e. a slot exactly at another booking's start time is still a valid
+	// end time (bookings are half-open: ending when the next one starts is fine).
 	const disabled = new Set();
 	booked_slots.forEach(function(b) {
 		const b_from = time_to_minutes(b.from_time);
 		const b_to   = time_to_minutes(b.end_time);
 		ALL_TIMES.forEach(function(t) {
 			const tm = time_to_minutes(t);
-			if (tm >= b_from && tm < b_to) {
+			const blocked = picking_end
+				? (tm > b_from && tm <= b_to)
+				: (tm >= b_from && tm < b_to);
+			if (blocked) {
 				disabled.add(t);
 			}
 		});
@@ -183,20 +190,23 @@ function open_time_picker_dialog(frm) {
 				visible_slots = ALL_TIMES.slice();
 			}
 
-			const disabled_set = get_disabled_slots(booked);
-
-			// Disable past times when booking date is today (server decides is_today)
-			if (is_today) {
-				visible_slots.forEach(function(t) {
-					if (time_to_minutes(t) < current_minutes) {
-						disabled_set.add(t);
-					}
-				});
-				// Clear picker selections if they are now in the past
-				if (picker_from && time_to_minutes(picker_from) < current_minutes) {
-					picker_from = null;
-					picker_to   = null;
+			function compute_disabled_set() {
+				const disabled_set = get_disabled_slots(booked, picker_from !== null && picker_to === null);
+				// Disable past times when booking date is today (server decides is_today)
+				if (is_today) {
+					visible_slots.forEach(function(t) {
+						if (time_to_minutes(t) < current_minutes) {
+							disabled_set.add(t);
+						}
+					});
 				}
+				return disabled_set;
+			}
+
+			// Clear picker selections if they are now in the past
+			if (is_today && picker_from && time_to_minutes(picker_from) < current_minutes) {
+				picker_from = null;
+				picker_to   = null;
 			}
 
 			const d = new frappe.ui.Dialog({
@@ -205,7 +215,7 @@ function open_time_picker_dialog(frm) {
 					{
 						fieldtype: 'HTML',
 						fieldname: 'time_grid_html',
-						options: build_time_grid_html(visible_slots, disabled_set, picker_from, picker_to, max_booking_hours)
+						options: build_time_grid_html(visible_slots, compute_disabled_set(), picker_from, picker_to, max_booking_hours)
 					}
 				],
 				primary_action_label: __('Confirm'),
@@ -253,7 +263,7 @@ function open_time_picker_dialog(frm) {
 				}
 
 				d.fields_dict['time_grid_html'].$wrapper.html(
-					build_time_grid_html(visible_slots, disabled_set, picker_from, picker_to, max_booking_hours)
+					build_time_grid_html(visible_slots, compute_disabled_set(), picker_from, picker_to, max_booking_hours)
 				);
 			});
 		}
