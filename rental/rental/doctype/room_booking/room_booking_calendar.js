@@ -51,6 +51,7 @@ frappe.views.calendar["Room Booking"] = {
     get_events_method: "rental.rental.doctype.room_booking.room_booking.get_booking_data",
 
 	options: {
+		selectOverlap: false,
 		select: function(startDate, endDate, jsEvent, view) {
 			// Single day click in month view — let dayClick handle it, ignore here
 			if (view.name === "month" && endDate - startDate === 86400000) return;
@@ -65,6 +66,17 @@ frappe.views.calendar["Room Booking"] = {
 			// Block past time slots on today
 			if (startStr === today && startDate.isBefore(moment())) {
 				frappe.show_alert({ message: __('Booking for past times is not allowed.'), indicator: 'red' });
+				return;
+			}
+			// Block slots overlapping an already-booked event (half-open: ending
+			// exactly when another booking starts, or starting when one ends, is fine)
+			const $cal = $(jsEvent.target).closest(".fc");
+			const existing_events = $cal.length ? $cal.fullCalendar("clientEvents") : [];
+			const overlaps = (existing_events || []).some(function(ev) {
+				return ev.start.isBefore(endDate) && ev.end.isAfter(startDate);
+			});
+			if (overlaps) {
+				frappe.show_alert({ message: __('This time slot overlaps with an existing booking.'), indicator: 'red' });
 				return;
 			}
 			// Block slots outside Admin Setting's configured booking hours window
